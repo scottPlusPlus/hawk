@@ -1,0 +1,14 @@
+-lib pbkdf2
+-lib json2object
+-lib dataclass
+-lib utest
+-lib zenlog
+-lib compiletime
+-lib uuid 
+-lib tink_core
+-lib jwt
+-debug
+-cp src
+-cp test
+-main test.MyTests
+-js bin/js/test.js 

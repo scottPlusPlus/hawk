@@ -1,0 +1,26 @@
+{
+	"name": "kajar",
+	"url": "https://github.com/scottPlusPlus/hawk",
+	"license": "MIT",
+	"tags": [
+		"wip"
+	],
+	"description": "Haxe WebKit: make web apps quickly",
+	"version": "0.0.1",
+	"releasenote": "tbd",
+	"contributors": [
+		"scottPlusPlus"
+	],
+	"classPath": "src",
+	"dependencies": {
+		"pbkdf2": "",
+		"json2object": "",
+		"dataclass": "",
+		"utest": "",
+		"zenlog": "",
+		"compiletime": "",
+		"uuid": "",
+		"tink_core": "",
+		"jwt": ""
+	}
+}
