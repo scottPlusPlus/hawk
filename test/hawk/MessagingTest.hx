@@ -11,7 +11,7 @@ import haxe.io.Bytes;
 
 using tink.CoreApi.OutcomeTools;
 using hawk.util.PromiseX;
-using test.hawk.testutils.PromiseTestUtils;
+using hawk.testutils.PromiseTestUtils;
 
 class MessagingTest extends utest.Test {
 	function testSanity() {

@@ -6,7 +6,7 @@ import utest.ui.Report;
 import utest.Assert;
 import utest.Async;
 import utest.Runner;
-import test.TestLogger;
+import hawk.testutils.TestLogger;
 
 class MyTests {
 	public static function main() {

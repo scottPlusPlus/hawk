@@ -1,5 +1,6 @@
 package test.hawk.authservice;
 
+import hawk.testutils.TestLogger;
 import hawk.datatypes.Password;
 import hawk.authservice.Token;
 import tink.CoreApi.Outcome;
@@ -15,7 +16,7 @@ import zenlog.Log;
 import hawk.authservice.AuthService;
 import hawk.core.UUID;
 import utest.Assert;
-import test.TestLogger;
+
 
 using hawk.util.OutcomeX;
 using hawk.util.PromiseX;

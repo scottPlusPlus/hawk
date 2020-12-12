@@ -1,4 +1,4 @@
-package test.hawk.testutils;
+package hawk.testutils;
 
 import tink.CoreApi;
 import utest.Assert;
