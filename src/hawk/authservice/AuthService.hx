@@ -4,7 +4,7 @@ import zenlog.Log;
 import hawk.util.FutureX;
 import hawk.messaging.Message;
 import hawk.datatypes.Password;
-import hawk.messaging.ISubscriber;
+import hawk.messaging.ISubscriber; 
 import hawk.messaging.IPublisher;
 import hawk.store.IKVStore;
 import jwt.JWT;
@@ -21,7 +21,7 @@ using hawk.util.ErrorX;
 using hawk.util.PromiseX;
 
 class AuthService {
-	private var _tokenProvider:Void->String;
+	private var _tokenSecret:Void->String;
 	private var _tokenIssuer:String;
 	private var _userPassStore:IKVStore<Email, AuthUser>;
 	private var _newUserPub:IPublisher;
@@ -33,7 +33,7 @@ class AuthService {
 
 	public function init(deps:AuthServiceDeps): AuthService {
 		_tokenIssuer = deps.tokenIssuer;
-		_tokenProvider = deps.tokenProvider;
+		_tokenSecret = deps.tokenSecret;
 		_userPassStore = deps.userStore;
 		_newUserPub = deps.newUserPub;
 		_newUserSub = deps.newUserSub;
@@ -107,7 +107,7 @@ class AuthService {
 	}
 
 	public function actorFromToken(token:Token):Outcome<UUID, Error> {
-		var result:JWTResult<TPayload> = JWT.verify(token, _tokenProvider());
+		var result:JWTResult<TPayload> = JWT.verify(token, _tokenSecret());
 		switch (result) {
 			case Valid(payload):
 				{
@@ -125,7 +125,7 @@ class AuthService {
 	}
 
 	public function genToken(user:UUID):Token {
-		var token:String = JWT.sign({iss: _tokenIssuer, hawkUserID: user}, _tokenProvider());
+		var token:String = JWT.sign({iss: _tokenIssuer, hawkUserID: user}, _tokenSecret());
 		return new Token(token);
 	}
 
@@ -139,7 +139,7 @@ typedef NewUserToken = {
 }
 
 typedef AuthServiceDeps = {
-	tokenProvider:Void->String,
+	tokenSecret:Void->String,
 	tokenIssuer:String,
 	userStore:IKVStore<Email, AuthUser>,
 	newUserPub:IPublisher,

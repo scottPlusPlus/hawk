@@ -133,7 +133,7 @@ class AuthServiceTest extends utest.Test {
 
 		// specify the type of the deps to force using interface
 		var deps:AuthServiceDeps = {
-			tokenProvider: function() {
+			tokenSecret: function() {
 				return "super duper secret";
 			},
 			tokenIssuer: "hawk auth service",
