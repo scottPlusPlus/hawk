@@ -13,7 +13,10 @@ class WebLogger {
 		filter = new FilteredLogger(store);
 		filter.calibrateIndentStart();
 		filter.enableDebug = true;
-		zenlog.Log.Logger = filter;
+        zenlog.Log.Logger = filter;
+        
+        Log.info("initting weblog for build " + CompileTime.buildDateString());
+
 	}
 
 	public static function setDebug(val:Bool) {
