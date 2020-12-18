@@ -1,4 +1,4 @@
-package test.hawk;
+package hawk_test;
 
 import tink.core.Promise;
 import tink.CoreApi.Error;

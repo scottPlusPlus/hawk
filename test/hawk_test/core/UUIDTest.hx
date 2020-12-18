@@ -1,4 +1,4 @@
-package test.hawk.core;
+package hawk_test.core;
 
 import zenlog.Log;
 import hawk.core.UUID;

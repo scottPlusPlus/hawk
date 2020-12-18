@@ -1,4 +1,4 @@
-package test.hawk.util;
+package hawk_test.util;
 
 import tink.core.Noise;
 import tink.core.Future;

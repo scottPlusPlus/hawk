@@ -10,5 +10,5 @@
 -debug
 -cp src
 -cp test
--main test.MyTests
+-main MyTests
 -js bin/js/test.js 

@@ -1,5 +1,3 @@
-package test;
-
 import zenlog.Log;
 import haxe.Json;
 import utest.ui.Report;
@@ -14,7 +12,7 @@ class MyTests {
 		TestLogger.filter.indentStackStart = 18;
 
 		var runner = new Runner();
-		runner.addCases(test.hawk);
+		runner.addCases(hawk_test);
 
 		Report.create(runner);
 

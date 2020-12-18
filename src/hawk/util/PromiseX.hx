@@ -13,6 +13,14 @@ class PromiseX {
 		});
 	}
 
+	public static function waitPromise(ms:UInt):Promise<Noise> {
+		var pt = new PromiseTrigger<Noise>();
+		Timer.delay(function() {
+			pt.resolve(Noise);
+		}, ms);   
+		return pt.asPromise();
+	}
+
 	public static function thenWait<T>(p:Promise<T>, ms:UInt):Promise<T> {
 		var pt = new PromiseTrigger<T>();
 

@@ -1,4 +1,4 @@
-package test.hawk.authservice;
+package hawk_test.authservice;
 
 import hawk.testutils.TestLogger;
 import hawk.datatypes.Password;

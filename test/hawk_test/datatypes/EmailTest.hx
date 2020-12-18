@@ -1,4 +1,4 @@
-package test.hawk.datatypes;
+package hawk_test.datatypes;
 
 import hawk.datatypes.Email;
 import utest.Assert;
