@@ -1,10 +1,11 @@
 package hawk.authservice;
 
+import hawk.authservice.EvNewUser;
 import zenlog.Log;
 import hawk.util.FutureX;
 import hawk.messaging.Message;
 import hawk.datatypes.Password;
-import hawk.messaging.ISubscriber; 
+import hawk.messaging.ISubscriber;
 import hawk.messaging.IPublisher;
 import hawk.store.IKVStore;
 import jwt.JWT;
@@ -24,14 +25,12 @@ class AuthService {
 	private var _tokenSecret:Void->String;
 	private var _tokenIssuer:String;
 	private var _userPassStore:IKVStore<Email, AuthUser>;
-	private var _newUserPub:IPublisher;
-    private var _newUserSub:ISubscriber;
-    
+	private var _newUserPub:IPublisher<EvNewUser>;
+	private var _newUserSub:ISubscriber<EvNewUser>;
 
-	public function new() {
-	}
+	public function new() {}
 
-	public function init(deps:AuthServiceDeps): AuthService {
+	public function init(deps:AuthServiceDeps):AuthService {
 		_tokenIssuer = deps.tokenIssuer;
 		_tokenSecret = deps.tokenSecret;
 		_userPassStore = deps.userStore;
@@ -65,32 +64,26 @@ class AuthService {
 			timestamp: Date.now().getUTCSeconds(),
 			user: user
 		});
-		var msg = Message.fromString(event.toJson());
 
-		return _newUserPub.publish(msg)
-		.wrapErr('infra error with AuthService.register')
-		.next(function(_:Noise){
+		return _newUserPub.publish(event).wrapErr('infra error with AuthService.register').next(function(_:Noise) {
 			return Success({
 				id: user.id,
 				token: genToken(user.id)
 			});
 		});
-    }
-    
-    private function handleNewUser(msg:Message):Promise<Noise>{
-        var event = EvNewUser.fromJson(msg.toString() );
+	}
+
+	private function handleNewUser(event:EvNewUser):Promise<Noise> {
 		var user = event.user;
-		return  _userPassStore.set(user.email, user)
-		.wrapErr('infra err with AuthService.handleNewUser');
-    }
+		return _userPassStore.set(user.email, user).wrapErr('infra err with AuthService.handleNewUser');
+	}
 
 	// should return an authToken
 	public function logIn(email:Email, pass:Password):Promise<Token> {
 		Log.debug("AuthService.login");
-		return _userPassStore.get(email)
-		.next(function(authUser:Null<AuthUser>){
+		return _userPassStore.get(email).next(function(authUser:Null<AuthUser>) {
 			Log.debug("AuthService.login have user");
-			if (authUser == null){
+			if (authUser == null) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
 			var hashed = hashPass(pass, authUser.salt);
@@ -134,16 +127,16 @@ class AuthService {
 }
 
 typedef NewUserToken = {
-    id: UUID,
-    token: Token
+	id:UUID,
+	token:Token
 }
 
 typedef AuthServiceDeps = {
 	tokenSecret:Void->String,
 	tokenIssuer:String,
 	userStore:IKVStore<Email, AuthUser>,
-	newUserPub:IPublisher,
-	newUserSub:ISubscriber,
+	newUserPub:IPublisher<EvNewUser>,
+	newUserSub:ISubscriber<EvNewUser>,
 }
 
 typedef TPayload = {

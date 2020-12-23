@@ -5,6 +5,6 @@ import tink.CoreApi.Error;
 import tink.CoreApi.Noise;
 import tink.CoreApi.Outcome;
 
-interface IPublisher {
-    function publish(msg:Message):Promise<Noise>;
+interface IPublisher<T> {
+    function publish(msg:T):Promise<Noise>;
 }

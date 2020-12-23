@@ -1,4 +1,4 @@
-package hawk_test;
+package hawk_test.messaging;
 
 import tink.core.Promise;
 import tink.CoreApi.Error;
@@ -14,25 +14,37 @@ using hawk.util.PromiseX;
 using hawk.testutils.PromiseTestUtils;
 
 class MessagingTest extends utest.Test {
+	
+	public function newStringChannel():LocalChannel<String> {
+		var toMsg = function(str:String):Message {
+			return Message.fromString(str);
+		}
+		var fromMsg = function(msg:Message):String {
+			return msg.toString();
+		}
+		var channel = new LocalChannel("foo", toMsg, fromMsg);
+		return channel;
+	}
+	
 	function testSanity() {
 		Assert.equals(2, 1 + 1);
 	}
 
+
+
 	function testPushesSingleMessage(async:utest.Async) {
-		var channel = new LocalChannel("foo");
+		var channel = newStringChannel();
 		var sub = new SubscriberTest();
 		channel.subscribe(sub.handler);
 
 		var expected = "my secret message";
-		var bytes = Bytes.ofString(expected);
-		var msg = new Message(bytes);
 
-		channel.publish(msg)
+		channel.publish(expected)
 		.thenWait(channel.delayMS + 10)
 		.assertNoErr()
 		.next(function(_){
 			Assert.equals(1, sub.messages.length);
-			var actual = sub.messages[0].body().toString();
+			var actual = sub.messages[0];
 			Assert.equals(expected, actual);
 			async.done();
 			return Noise;
@@ -40,24 +52,20 @@ class MessagingTest extends utest.Test {
 	}
 
 	function testMultipleSubscribers(async:utest.Async) {
-		var channel = new LocalChannel("foo");
+		var channel = newStringChannel();
 		var sub1 = new SubscriberTest();
 		var sub2 = new SubscriberTest();
 		channel.subscribe(sub1.handler);
 		channel.subscribe(sub2.handler);
 
 		var expected = "my secret message";
-		var bytes = Bytes.ofString(expected);
-		var msg = new Message(bytes);
 
-
-		channel.publish(msg)
+		channel.publish(expected)
 		.thenWait(channel.delayMS + 10)
 		.assertNoErr()
 		.next(function(_){
-			Assert.equals(expected, sub1.messages[0].body().toString());
-
-			Assert.equals(expected, sub2.messages[0].body().toString());
+			Assert.equals(expected, sub1.messages[0]);
+			Assert.equals(expected, sub2.messages[0]);
 			async.done();
 			return Noise;
 		}).eager();
@@ -67,10 +75,10 @@ class MessagingTest extends utest.Test {
 class SubscriberTest {
 	public function new() {}
 
-	public var messages:Array<Message> = [];
+	public var messages:Array<String> = [];
 	public var nextHandleResponse = Success(Noise);
 
-	public function handler(msg:Message):Promise<Noise> {
+	public function handler(msg:String):Promise<Noise> {
 		messages.push(msg);
 		return nextHandleResponse;
 	}

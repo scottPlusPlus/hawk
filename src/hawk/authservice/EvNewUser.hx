@@ -1,5 +1,7 @@
 package hawk.authservice;
 
+import hawk.messaging.Message;
+
 class EvNewUser implements DataClass {
 
     public final timestamp: Int;
@@ -24,5 +26,17 @@ class EvNewUser implements DataClass {
             timestamp:  Date.now().getUTCSeconds(),
             user: AuthUser.testExample()
         });
+    }
+
+    public static function toMessage(ev:EvNewUser):Message {
+        var str = ev.toJson();
+        var msg = Message.fromString(str);
+        return msg;
+    }
+
+    public static function fromMessage(msg:Message):EvNewUser {
+        var str = msg.toString();
+        var ev = fromJson(str);
+        return ev;
     }
 }

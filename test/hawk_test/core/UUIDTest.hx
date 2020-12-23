@@ -14,14 +14,4 @@ class UUIDTest extends utest.Test {
         var copy =  UUID.fromString(u1.toString());
         Assert.isTrue(u1 == copy);
     }
-
-    function testTimestamps(){
-        var now = Date.now();
-
-        Log.info("time now = " + now);
-        now.getTime();
-        Log.info("now float = " + now.getTime());
-        Log.info ("now seconds = " + now.getUTCSeconds());
-        Assert.isTrue(true);
-    }
 }

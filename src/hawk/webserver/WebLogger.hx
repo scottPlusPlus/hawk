@@ -23,11 +23,7 @@ class WebLogger {
 		filter.enableDebug = val;
     }
     
-    public static function dump():String {
-        var res = "";
-        for (l in store.logs){
-            res += l + "\n";
-        }
-        return res;
+    public static function dump():Array<String> {
+        return store.logs.copy();
     }
 }

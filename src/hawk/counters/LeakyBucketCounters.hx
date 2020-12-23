@@ -16,7 +16,7 @@ class LeakyBucketCounters {
 	@:jignored
 	private var _getTime:Void->Timestamp;
 
-	public function new(limit:UInt, durationMS:UInt, ?getTime:Void->Timestamp) {
+	public function new(limit:UInt, durationMS:UInt) {
 		this.durationMS = durationMS;
 		this.limit = limit;
 		leakPerMS = limit / durationMS;

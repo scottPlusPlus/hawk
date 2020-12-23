@@ -9,20 +9,25 @@ import tink.CoreApi.Outcome;
 
 using hawk.util.OutcomeX;
 
-class LocalChannel implements IPublisher implements ISubscriber {
+class LocalChannel<T> implements IPublisher<T> implements ISubscriber<T> {
 	public final key:String;
 	public var delayMS:Int = 100;
 	public var onError:Error->Void;
 	public var pending:UInt = 0;
 
-	private var _handlers:Array<MsgHandler>;
+	private var _handlers:Array<MsgHandler<T>>;
+	private var _toMsg:T->Message;
+	private var _fromMsg:Message->T;
 
-	public function new(key:String) {
+	public function new(key:String, toMessage:T->Message, fromMessage:Message->T) {
 		this.key = key;
 		_handlers = [];
+		_toMsg = toMessage;
+		_fromMsg = fromMessage;
 	}
 
-	public function publish(msg:Message):Promise<Noise> {
+	public function publish(m:T):Promise<Noise> {
+		var msg = _toMsg(m);
 		Log.debug('LocalChannel publish: ${msg.body().toString()}');
 		pending++;
 		Timer.delay(function() {
@@ -34,8 +39,9 @@ class LocalChannel implements IPublisher implements ISubscriber {
 
 	private function pushToSubscribers(msg:Message) {
 		Log.debug('pushToSubscribers with ${_handlers.length} handlers');
-		for (h in _handlers) {
-			var tryHandle = h(msg);
+		var obj = _fromMsg(msg);
+		for (handler in _handlers) {
+			var tryHandle = handler(obj);
 			tryHandle.handle(function(o){
 				if (o.isFailure()){
 					var err = o.failure();
@@ -51,7 +57,7 @@ class LocalChannel implements IPublisher implements ISubscriber {
 		}
 	}
 
-	public function subscribe(handler:MsgHandler):Void {
+	public function subscribe(handler:MsgHandler<T>):Void {
 		for (h in _handlers) {
 			if (h == handler) {
 				return;

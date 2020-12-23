@@ -15,7 +15,7 @@ class LeakyBucketCountersTest extends utest.Test {
         var getTime = function():Timestamp {
             return Timestamp.fromUInt(fakeTimeMS);
         };
-        var counters = new LeakyBucketCounters(10, 1000, getTime);
+        var counters = new LeakyBucketCounters(10, 1000).init(getTime);
         
         final key = "key";
 
@@ -44,7 +44,7 @@ class LeakyBucketCountersTest extends utest.Test {
         var getTime = function():Timestamp {
             return Timestamp.fromUInt(fakeTimeMS);
         };
-        var counters = new LeakyBucketCounters(10, 1000, getTime);
+        var counters = new LeakyBucketCounters(10, 1000).init(getTime);
         
         final key1 = "key1";
         final key2 = "key2";
@@ -77,7 +77,7 @@ class LeakyBucketCountersTest extends utest.Test {
         var getTime = function():Timestamp {
             return Timestamp.fromUInt(fakeTimeMS);
         };
-        var counters = new LeakyBucketCounters(10, 1000, getTime);
+        var counters = new LeakyBucketCounters(10, 1000).init(getTime);
         
         final key1 = "key1";
         final key2 = "key2";
@@ -86,7 +86,5 @@ class LeakyBucketCountersTest extends utest.Test {
         Assert.same(10, actual);
         actual = counters.add(key2, 5);
         Assert.same(5, actual);
-
-
     }
 }

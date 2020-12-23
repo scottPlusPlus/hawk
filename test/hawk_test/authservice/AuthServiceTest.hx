@@ -1,5 +1,7 @@
 package hawk_test.authservice;
 
+import hawk.messaging.Message;
+import hawk.authservice.EvNewUser;
 import hawk.testutils.TestLogger;
 import hawk.datatypes.Password;
 import hawk.authservice.Token;
@@ -129,7 +131,8 @@ class AuthServiceTest extends utest.Test {
 			valFromStr: AuthUser.fromJson
 		};
 		var store = new InMemoryKVPStore<Email, AuthUser>(storedeps);
-		var channel = new LocalChannel("authNewUser");
+
+		var channel = new LocalChannel("authNewUser", EvNewUser.toMessage, EvNewUser.fromMessage);
 
 		// specify the type of the deps to force using interface
 		var deps:AuthServiceDeps = {
