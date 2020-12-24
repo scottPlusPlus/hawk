@@ -42,7 +42,7 @@ class AuthService {
 		return this;
 	}
 
-	public function  (email:Email, password:Password):Promise<NewUserToken> {
+	public function register(email:Email, password:Password):Promise<NewUserToken> {
 		var validateEmail = email.isValid();
 		if (validateEmail.isFailure()) {
 			return Failure(validateEmail.failure());
