@@ -3,10 +3,9 @@ package hawk.authservice;
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
 import hawk.util.FutureX;
-import hawk.messaging.Message;
+import hawk.util.Poller;
+import hawk.messaging.*;
 import hawk.datatypes.Password;
-import hawk.messaging.ISubscriber;
-import hawk.messaging.IPublisher;
 import hawk.store.IKVStore;
 import jwt.JWT;
 import tink.CoreApi.Promise;
@@ -24,48 +23,65 @@ using hawk.util.PromiseX;
 class AuthService {
 	private var _tokenSecret:Void->String;
 	private var _tokenIssuer:String;
-	private var _userPassStore:IKVStore<Email, AuthUser>;
+	private var _authUserStore:IKVStore<Email, AuthUser>;
 	private var _newUserPub:IPublisher<EvNewUser>;
 	private var _newUserSub:ISubscriber<EvNewUser>;
+	private var _pendingRegistrations:Map<String, Noise>;
 
 	public function new() {}
 
 	public function init(deps:AuthServiceDeps):AuthService {
 		_tokenIssuer = deps.tokenIssuer;
 		_tokenSecret = deps.tokenSecret;
-		_userPassStore = deps.userStore;
+		_authUserStore = deps.userStore;
 		_newUserPub = deps.newUserPub;
 		_newUserSub = deps.newUserSub;
 
 		_newUserSub.subscribe(handleNewUser);
-
+		_pendingRegistrations = new Map();
 		return this;
 	}
 
-	public function register(email:Email, password:String):Promise<NewUserToken> {
-		var validateMail = Email.createValid(email);
-		if (validateMail.isFailure()) {
-			return Failure(validateMail.failure());
+	public function  (email:Email, password:Password):Promise<NewUserToken> {
+		var validateEmail = email.isValid();
+		if (validateEmail.isFailure()) {
+			return Failure(validateEmail.failure());
 		}
-		var validatePassword = Password.createValid(password);
+		var validatePassword = password.isValid();
 		if (validatePassword.isFailure()) {
 			return Failure(validatePassword.failure());
 		}
 
-		var salt = UUID.gen();
-		var user = new AuthUser({
-			id: UUID.gen(),
-			email: email,
-			salt: salt,
-			passHash: hashPass(password, salt)
-		});
+		var user:AuthUser;
+		var emailTakenErr = new Error(ErrorCode.Conflict, 'User for ${email} already exists');
 
-		var event = new EvNewUser({
-			timestamp: Date.now().getUTCSeconds(),
-			user: user
-		});
+		return _authUserStore.exists(email).next(function(exists) {
+			Log.debug('${email} exists in store?  ${exists}');
+			if (exists) {
+				return Failure(emailTakenErr);
+			};
+			return Success(Noise);
+		}).next(function(_) {
+			var isPending = _pendingRegistrations.exists(email);
+			Log.debug('${email} exists in pending?  ${isPending}');
+			if (isPending) {
+				return Failure(emailTakenErr);
+			}
+			_pendingRegistrations.set(email, Noise);
 
-		return _newUserPub.publish(event).wrapErr('infra error with AuthService.register').next(function(_:Noise) {
+			var salt = UUID.gen();
+			user = new AuthUser({
+				id: UUID.gen(),
+				email: email,
+				salt: salt,
+				passHash: hashPass(password, salt)
+			});
+			var event = new EvNewUser({
+				timestamp: Date.now().getUTCSeconds(),
+				user: user
+			});
+			return _newUserPub.publish(event).wrapErr('infra error with AuthService.register');
+		}).next(function(_) {
 			return Success({
 				id: user.id,
 				token: genToken(user.id)
@@ -73,15 +89,27 @@ class AuthService {
 		});
 	}
 
+	private function waitForNewlyCreatedUser(email:Email):Promise<AuthUser> {
+		return Poller.waitUntil(function() {
+			return _authUserStore.exists(email);
+		}, 100, 5000).next(function(_:Noise) {
+			return _authUserStore.get(email);
+		}).eager();
+	}
+
 	private function handleNewUser(event:EvNewUser):Promise<Noise> {
 		var user = event.user;
-		return _userPassStore.set(user.email, user).wrapErr('infra err with AuthService.handleNewUser');
+		var email = user.email;
+		return _authUserStore.set(email, user).next(function(_) {
+			_pendingRegistrations.remove(email);
+			return Noise;
+		}).wrapErr('infra err with AuthService.handleNewUser');
 	}
 
 	// should return an authToken
 	public function logIn(email:Email, pass:Password):Promise<Token> {
 		Log.debug("AuthService.login");
-		return _userPassStore.get(email).next(function(authUser:Null<AuthUser>) {
+		return _authUserStore.get(email).next(function(authUser:Null<AuthUser>) {
 			Log.debug("AuthService.login have user");
 			if (authUser == null) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));

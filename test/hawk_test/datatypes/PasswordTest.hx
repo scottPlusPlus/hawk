@@ -7,6 +7,7 @@ import utest.Assert;
 using hawk.util.OutcomeX;
 
 class PasswordTest extends utest.Test {
+
 	function testValidates() {
 
         var attempt = Password.createValid("short"); //too short

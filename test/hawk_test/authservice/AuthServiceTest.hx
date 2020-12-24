@@ -41,7 +41,7 @@ class AuthServiceTest extends utest.Test {
 		Log.debug('testBadLoginFails');
 		var service = authServiceTester();
 
-		service.logIn("some@email.com", "anypassword").flatMap(function(o:Outcome<Token, Error>) {
+		service.logIn("some@email.com", "anypassword").map(function(o:Outcome<Token, Error>) {
 			Log.debug('testBadLoginFails handle outcome');
 			Assert.isTrue(o.isFailure());
 			var err = o.failure().nullSure();
@@ -120,6 +120,29 @@ class AuthServiceTest extends utest.Test {
 				return Noise;
 			})
 			.eager();
+	}
+
+	function testDoubleRegisterFails(async:utest.Async){
+		TestLogger.setDebug(true);
+		Log.debug('testDoubleRegisterFails');
+		var service = authServiceTester();
+
+		var mail:Email = "some@email.com";
+		var pass:Password = "anypassword";
+
+		service.register(mail, pass)
+			.map(function(o:Outcome<NewUserToken,Error>){
+				Assert.isTrue(o.isSuccess());
+				return Noise;
+			})
+			.next(function(_) {
+				return service.register(mail, pass);
+			})
+			.map(function(o:Outcome<NewUserToken,Error>){
+				Assert.isTrue(o.isFailure());
+				async.done();
+				return Noise;
+			}).eager();
 	}
 
 	function authServiceTester():AuthService {
