@@ -29,6 +29,10 @@ class OpBatcher {
 		}).eager();
 	}
 
+	public function force(){
+		_signalTrigger.trigger(this);
+	}
+
 	public function new(limitMS:UInt) {
 		this.limitMS = limitMS;
 		_signalTrigger = new SignalTrigger();
