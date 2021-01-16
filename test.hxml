@@ -6,8 +6,10 @@
 -lib compiletime
 -lib uuid 
 -lib tink_core
+-lib tink_http
 -lib jwt
 -lib polygonal-ds
+-lib thx.core
 -debug
 -cp src
 -cp test
