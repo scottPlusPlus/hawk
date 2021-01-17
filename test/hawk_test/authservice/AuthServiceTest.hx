@@ -1,15 +1,11 @@
 package hawk_test.authservice;
 
-import hawk.messaging.Message;
 import hawk.authservice.EvNewUser;
 import hawk.testutils.TestLogger;
 import hawk.datatypes.Password;
-import hawk.authservice.Token;
 import tink.CoreApi.Outcome;
 import tink.core.Noise;
 import tink.core.Error;
-import hawk.messaging.ISubscriber;
-import hawk.messaging.IPublisher;
 import hawk.messaging.LocalChannel;
 import hawk.authservice.AuthUser;
 import hawk.datatypes.Email;
@@ -41,7 +37,7 @@ class AuthServiceTest extends utest.Test {
 		Log.debug('testBadLoginFails');
 		var service = authServiceTester();
 
-		service.logIn("some@email.com", "anypassword").map(function(o:Outcome<Token, Error>) {
+		service.signIn("some@email.com", "anypassword").map(function(o:Outcome<SignInResponse, Error>) {
 			Log.debug('testBadLoginFails handle outcome');
 			Assert.isTrue(o.isFailure());
 			var err = o.failure().nullSure();
@@ -57,11 +53,11 @@ class AuthServiceTest extends utest.Test {
 		var service = authServiceTester();
 
 		service.register("bademail", "anypassword")
-			.flatMap(function(o:Outcome<NewUserToken, Error>) {
+			.flatMap(function(o:Outcome<RegisterResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				return service.register("good@email.com", "bp");
 			})
-			.flatMap(function(o:Outcome<NewUserToken, Error>) {
+			.flatMap(function(o:Outcome<RegisterResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				async.done();
 				TestLogger.setDebug(false);
@@ -76,21 +72,21 @@ class AuthServiceTest extends utest.Test {
 
 		var mail:Email = "some@email.com";
 		var pass:Password = "anypassword";
-		var nut:NewUserToken;
+		var res:RegisterResponse;
 
 		service.register(mail, pass)
-			.next(function(nt:NewUserToken) {
-				nut = nt;
+			.next(function(r:RegisterResponse) {
+				res = r;
 				return Noise;
 			})
 			.thenWait(100)
 			.next(function(_) {
-				return service.logIn(mail, pass);
+				return service.signIn(mail, pass);
 			})
-			.next(function(t:Token) {
-				Assert.isTrue(t.toString().length > 0);
-				var actor = service.actorFromToken(t).sure();
-				Assert.equals(nut.id, actor);
+			.next(function(r:SignInResponse) {
+				Assert.isTrue(r.token.toString().length > 0);
+				var actor = service.actorFromToken(r.token).sure();
+				Assert.equals(res.id, actor);
 				async.done();
 				TestLogger.setDebug(false);
 				return Noise;
@@ -108,9 +104,9 @@ class AuthServiceTest extends utest.Test {
 		service.register(mail, pass)
 			.thenWait(100)
 			.next(function(_) {
-				return service.logIn(mail, pass + "bad");
+				return service.signIn(mail, pass + "bad");
 			})
-			.flatMap(function(o:Outcome<Token, Error>) {
+			.flatMap(function(o:Outcome<SignInResponse, Error>) {
 				Log.debug('testBadLoginFails handle outcome');
 				Assert.isTrue(o.isFailure());
 				var err = o.failure().nullSure();
@@ -131,14 +127,14 @@ class AuthServiceTest extends utest.Test {
 		var pass:Password = "anypassword";
 
 		service.register(mail, pass)
-			.map(function(o:Outcome<NewUserToken,Error>){
+			.map(function(o:Outcome<RegisterResponse,Error>){
 				Assert.isTrue(o.isSuccess());
 				return Noise;
 			})
 			.next(function(_) {
 				return service.register(mail, pass);
 			})
-			.map(function(o:Outcome<NewUserToken,Error>){
+			.map(function(o:Outcome<RegisterResponse,Error>){
 				Assert.isTrue(o.isFailure());
 				async.done();
 				return Noise;
