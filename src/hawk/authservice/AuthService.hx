@@ -42,7 +42,7 @@ class AuthService {
 		return this;
 	}
 
-	public function register(email:Email, password:Password):Promise<RegisterResponse> {
+	public function register(email:Email, password:Password):Promise<AuthResponse> {
 		var validateEmail = email.isValid();
 		if (validateEmail.isFailure()) {
 			return Failure(validateEmail.failure());
@@ -107,7 +107,7 @@ class AuthService {
 	}
 
 	// should return an authToken
-	public function signIn(email:Email, pass:Password):Promise<SignInResponse> {
+	public function signIn(email:Email, pass:Password):Promise<AuthResponse> {
 		Log.debug("AuthService.login");
 		return _authUserStore.get(email).next(function(authUser:Null<AuthUser>) {
 			Log.debug("AuthService.login have user");
@@ -119,7 +119,10 @@ class AuthService {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
 			var token = genToken(authUser.id);
-			var res = { token: token };
+			var res = {
+				id: authUser.id, 
+				token: token 
+			};
 			return Success(res);
 		});
 	}
@@ -155,12 +158,8 @@ class AuthService {
 	private final BAD_LOGIN_CODE = ErrorCode.Unauthorized;
 }
 
-typedef RegisterResponse = {
+typedef AuthResponse = {
 	id:UUID,
-	token:Token
-}
-
-typedef SignInResponse = {
 	token:Token
 }
 

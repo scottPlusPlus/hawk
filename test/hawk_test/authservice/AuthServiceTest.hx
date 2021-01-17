@@ -37,7 +37,7 @@ class AuthServiceTest extends utest.Test {
 		Log.debug('testBadLoginFails');
 		var service = authServiceTester();
 
-		service.signIn("some@email.com", "anypassword").map(function(o:Outcome<SignInResponse, Error>) {
+		service.signIn("some@email.com", "anypassword").map(function(o:Outcome<AuthResponse, Error>) {
 			Log.debug('testBadLoginFails handle outcome');
 			Assert.isTrue(o.isFailure());
 			var err = o.failure().nullSure();
@@ -53,11 +53,11 @@ class AuthServiceTest extends utest.Test {
 		var service = authServiceTester();
 
 		service.register("bademail", "anypassword")
-			.flatMap(function(o:Outcome<RegisterResponse, Error>) {
+			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				return service.register("good@email.com", "bp");
 			})
-			.flatMap(function(o:Outcome<RegisterResponse, Error>) {
+			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				async.done();
 				TestLogger.setDebug(false);
@@ -72,10 +72,10 @@ class AuthServiceTest extends utest.Test {
 
 		var mail:Email = "some@email.com";
 		var pass:Password = "anypassword";
-		var res:RegisterResponse;
+		var res:AuthResponse;
 
 		service.register(mail, pass)
-			.next(function(r:RegisterResponse) {
+			.next(function(r:AuthResponse) {
 				res = r;
 				return Noise;
 			})
@@ -83,7 +83,7 @@ class AuthServiceTest extends utest.Test {
 			.next(function(_) {
 				return service.signIn(mail, pass);
 			})
-			.next(function(r:SignInResponse) {
+			.next(function(r:AuthResponse) {
 				Assert.isTrue(r.token.toString().length > 0);
 				var actor = service.actorFromToken(r.token).sure();
 				Assert.equals(res.id, actor);
@@ -106,7 +106,7 @@ class AuthServiceTest extends utest.Test {
 			.next(function(_) {
 				return service.signIn(mail, pass + "bad");
 			})
-			.flatMap(function(o:Outcome<SignInResponse, Error>) {
+			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Log.debug('testBadLoginFails handle outcome');
 				Assert.isTrue(o.isFailure());
 				var err = o.failure().nullSure();
@@ -127,14 +127,14 @@ class AuthServiceTest extends utest.Test {
 		var pass:Password = "anypassword";
 
 		service.register(mail, pass)
-			.map(function(o:Outcome<RegisterResponse,Error>){
+			.map(function(o:Outcome<AuthResponse,Error>){
 				Assert.isTrue(o.isSuccess());
 				return Noise;
 			})
 			.next(function(_) {
 				return service.register(mail, pass);
 			})
-			.map(function(o:Outcome<RegisterResponse,Error>){
+			.map(function(o:Outcome<AuthResponse,Error>){
 				Assert.isTrue(o.isFailure());
 				async.done();
 				return Noise;
