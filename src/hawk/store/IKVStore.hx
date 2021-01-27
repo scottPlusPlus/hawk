@@ -10,7 +10,7 @@ interface IKVStore<K,V> {
 
     function exists(key:K):Promise<Bool>;
 
-    function get(key:K):Promise<Null<V>>;
+    function get(key:K):Promise<V>;
 
     function set(key:K, value:V):Promise<Noise>;
 

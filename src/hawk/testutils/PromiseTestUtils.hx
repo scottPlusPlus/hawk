@@ -12,4 +12,13 @@ class PromiseTestUtils {
             return err;
 		});
 	}
+
+	public static inline function endTestChain<T>(p:Promise<T>, async:utest.Async){
+		return PromiseTestUtils.assertNoErr(p).next(function(v:T){
+			async.done();
+			return v;
+		}).eager();
+
+
+	}
 }

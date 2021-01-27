@@ -4,5 +4,5 @@ import tink.CoreApi;
 
 interface IStringStore {
     function load():Promise<String>;
-    function save(data:String):Promise<Noise>;
+    function save(data:String):Promise<String>;
 }

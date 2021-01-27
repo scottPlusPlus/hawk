@@ -7,11 +7,11 @@ import tink.CoreApi.Error;
 import tink.CoreApi.Outcome;
 
 @:generic
-class InMemoryKVPStore<K, Int> implements  IKIntStore<K> {
+class InMemoryKIntStore<K> implements  IKIntStore<K> {
 
     public function new(ser:KSerializer<K>){
         _data = new Map();
-        _keyToStr = ser.keyToStr;
+        _keyToStr = ser.toString;
     }
 
     private var _data:Map<String,Int>;
@@ -21,7 +21,7 @@ class InMemoryKVPStore<K, Int> implements  IKIntStore<K> {
     public function get(key:K):Promise<Int>{
         var kstr = _keyToStr(key);
         var val = _data.get(kstr);
-        if (vstr == null){
+        if (val == null){
             return Failure(new Error( 'key ${key} doesnt exist'));
         }
         return Success(val);
@@ -46,7 +46,7 @@ class InMemoryKVPStore<K, Int> implements  IKIntStore<K> {
             return Failure(new Error( 'key ${key} doesnt exist'));
         }
         var sum = current + value;
-        _data.set(sum);
+        _data.set(kstr, sum);
         return Success(sum);
     }
 
@@ -58,5 +58,6 @@ class InMemoryKVPStore<K, Int> implements  IKIntStore<K> {
 }
 
 typedef KSerializer<K> = {
-    keyToStr: K->String,
+    toString: K->String,
+    fromString: String->K
 }

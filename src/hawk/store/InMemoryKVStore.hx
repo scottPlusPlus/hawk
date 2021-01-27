@@ -25,9 +25,9 @@ class InMemoryKVPStore<K, V> implements  IKVStore<K, V> {
         var kstr = _keyToStr(key);
         var vstr = _data.get(kstr);
         if (vstr == null){
-            return Success(null);
+            return Failure(new Error('no value for key ${kstr}'));
         }
-        Log.info('kvp store get ${kstr} == ${vstr}');
+        //Log.info('kvp store get ${kstr} == ${vstr}');
         var val = _valFromStr(vstr);
         return Success(val);
     }

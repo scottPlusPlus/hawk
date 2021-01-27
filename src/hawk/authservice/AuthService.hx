@@ -109,19 +109,21 @@ class AuthService {
 	// should return an authToken
 	public function signIn(email:Email, pass:Password):Promise<AuthResponse> {
 		Log.debug("AuthService.login");
-		return _authUserStore.get(email).next(function(authUser:Null<AuthUser>) {
-			Log.debug("AuthService.login have user");
-			if (authUser == null) {
+		return _authUserStore.exists(email).next(function(exists:Bool) {
+			if (!exists) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
+			return _authUserStore.get(email);
+		}).next(function(authUser:AuthUser) {
+			Log.debug("AuthService.login have user");
 			var hashed = hashPass(pass, authUser.salt);
 			if (hashed != authUser.passHash) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
 			var token = genToken(authUser.id);
 			var res = {
-				id: authUser.id, 
-				token: token 
+				id: authUser.id,
+				token: token
 			};
 			return Success(res);
 		});
