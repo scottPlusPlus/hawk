@@ -1,7 +1,7 @@
 package hawk.datatypes;
 
 /*
-* Represents a timestamp, in milliseconds
+* Represents a unix timestamp, in milliseconds
 */
 abstract Timestamp(UInt) {
 
@@ -44,11 +44,15 @@ abstract Timestamp(UInt) {
     @:op(A < B) static function ls(a:Timestamp, b:Timestamp):Bool;
     @:op(A + B) static function add(a:Timestamp, b:Timestamp):Timestamp;
     @:op(A - B) static function sub(a:Timestamp, b:Timestamp):Timestamp;
-    @:op(A * B) static function mp(a:Timestamp, b:Float):Float;
+    @:op(A * B) static function mp(a:Timestamp, b:Int):Timestamp;
+
 
     public static function now():Timestamp {
         return Timestamp.fromDate(Date.now());
     }
 
-   
+
+    public static final HOUR:Timestamp = Timestamp.fromUInt(1000 * 60 * 60);
+    public static final SECOND:Timestamp = Timestamp.fromUInt(1000);
+    public static final DAY:Timestamp = Timestamp.fromUInt(1000 * 60 * 60 * 24);
 }
