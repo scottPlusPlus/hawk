@@ -1,7 +1,10 @@
 package hawk.testutils;
 
+import zenlog.Log;
 import tink.CoreApi;
 import utest.Assert;
+
+using hawk.util.OutcomeX;
 
 class PromiseTestUtils {
 	public function new(){}
@@ -18,7 +21,16 @@ class PromiseTestUtils {
 			async.done();
 			return v;
 		}).eager();
+	}
 
-
+	public static inline function logOutcome<T>(p:Promise<T>, str:String = ""):Promise<T>{
+		return p.map(function(o:Outcome<T,Error>){
+			if (o.isFailure()){
+				Log.error('${str}${o.failure()}');
+			} else {
+				Log.info('${str}${o.sure()}');
+			}
+			return o;
+		});
 	}
 }

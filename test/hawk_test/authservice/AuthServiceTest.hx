@@ -19,6 +19,7 @@ import utest.Assert;
 using hawk.util.OutcomeX;
 using hawk.util.PromiseX;
 using hawk.util.NullX;
+using hawk.testutils.PromiseTestUtils;
 
 class AuthServiceTest extends utest.Test {
 	// @:timeout(600)
@@ -67,6 +68,7 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function testGoodRegisterLogin(async:utest.Async) {
+		TestLogger.setDebug(true);
 		Log.debug('testGoodRegisterLogin');
 		var service = authServiceTester();
 
@@ -74,7 +76,7 @@ class AuthServiceTest extends utest.Test {
 		var pass:Password = "anypassword";
 		var res:AuthResponse;
 
-		service.register(mail, pass)
+		service.register(mail, pass).logOutcome()
 			.next(function(r:AuthResponse) {
 				res = r;
 				return Noise;
@@ -95,7 +97,7 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function testGoodRegisterBadLoginFails(async:utest.Async) {
-		Log.debug('testGoodRegisterLogin');
+		Log.debug('testGoodRegisterBadLoginFails');
 		var service = authServiceTester();
 
 		var mail:Email = "some@email.com";

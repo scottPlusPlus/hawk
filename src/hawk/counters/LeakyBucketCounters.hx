@@ -40,7 +40,7 @@ class LeakyBucketCounters {
 		var counter = c.nullSure();
 		var now = _getTime();
 		var timePassed = now - counter.last;
-		counter.count -= timePassed * leakPerMS;
+		counter.count -= timePassed.toInt() * leakPerMS;
 		if (counter.count < 0) {
 			counter.count = 0;
 		}
