@@ -39,11 +39,11 @@ class InMemoryKIntStore<K> implements  IKIntStore<K> {
         return Success(Noise);
     }
 
-    public function add(key:K, value:Int):Promise<Int> {
+    public function add(key:K, value:Int, d:Int=0):Promise<Int> {
         var kstr = _keyToStr(key);
         var current = _data.get(kstr);
         if (current == null){
-            return Failure(new Error( 'key ${key} doesnt exist'));
+            current = d;
         }
         var sum = current + value;
         _data.set(kstr, sum);

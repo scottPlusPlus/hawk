@@ -14,7 +14,7 @@ interface IKIntStore<K> {
 
     function set(key:K, value:Int):Promise<Int>;
 
-    function add(key:K, value:Int):Promise<Int>;
+    function add(key:K, value:Int, d:Int=0):Promise<Int>;
 
     function remove(key:K):Promise<Noise>;
     
