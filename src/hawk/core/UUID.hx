@@ -1,5 +1,6 @@
 package hawk.core;
 
+import hawk.general_tools.adapters.Adapter;
 import uuid.*;
 
 abstract UUID(String) {
@@ -21,6 +22,13 @@ abstract UUID(String) {
     public static inline function gen():UUID {
         var nano = Uuid.nanoId();
         return new UUID(nano);
+    }
+
+    public static function stringAdapter():Adapter<UUID,String> {
+      var toStr = function(x:UUID):String {
+        return x.toString();
+      }
+      return new Adapter<UUID,String>(toStr, UUID.fromString);
     }
     
 }

@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
 
 abstract Password(String) {
@@ -42,5 +43,12 @@ abstract Password(String) {
 			return Failure(new Error('password must be less than 128 chars'));
 		}
 		return Success(new Password(str));
+	}
+
+	public static function stringAdapter():Adapter<Password,String> {
+		var toStr = function(p:Password):String {
+		  return p.toString();
+		}
+		return new Adapter<Password,String>(toStr, Password.fromString);
 	}
 }
