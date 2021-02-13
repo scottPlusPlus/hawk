@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
 import js.html.audio.BiquadFilterNode;
 
@@ -21,6 +22,13 @@ abstract Email(String) {
     @:to
     public function toString() {
       return this;
+    }
+
+    public static function stringAdapter():Adapter<Email,String> {
+      var toStr = function(e:Email):String {
+        return e.toString();
+      }
+      return new Adapter<Email,String>(toStr, Email.fromString);
     }
 
     public function isValid():Outcome<Noise,Error> {

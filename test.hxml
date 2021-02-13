@@ -10,6 +10,7 @@
 -lib jwt
 -lib polygonal-ds
 -lib thx.core
+
 -debug
 -cp src
 -cp test

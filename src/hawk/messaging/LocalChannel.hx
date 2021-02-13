@@ -1,5 +1,6 @@
 package hawk.messaging;
 
+import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi.Promise;
 import zenlog.Log;
 import haxe.Timer;

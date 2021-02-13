@@ -1,9 +1,9 @@
 package hawk_test.store;
 
+import hawk.general_tools.adapters.SelfAdapter;
 import hawk.testutils.TestLogger;
 import zenlog.Log;
 import tink.core.Noise;
-import hawk.store.CommonSerializers;
 import hawk.store.InMemoryKIntStore;
 import utest.Assert;
 import utest.Async;
@@ -14,7 +14,8 @@ class InMemoryKIntStoreTest extends utest.Test {
 	public function testSetAddGet(async:utest.Async) {
 		//TestLogger.setDebug(true);
 		Log.debug('testSetAddGet');
-		var store = new InMemoryKIntStore<String>(CommonSerializers.string());
+		var adapter = SelfAdapter.create();
+		var store = new InMemoryKIntStore<String>(adapter);
 		var key = "key";
 
 		store.set(key, 0)

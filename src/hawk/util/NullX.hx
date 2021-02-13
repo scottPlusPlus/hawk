@@ -6,13 +6,6 @@ class NullX {
         return n != null ? n : alt;
     }
 
-    // public static inline function sure<T>(n:Null<T>):T {
-    //     if (n == null){
-    //         throw('unexpected null!');
-    //     }
-    //     return n;
-    // }
-
     public static inline function nullSure<T>(n:Null<T>):T {
         if (n == null){
             throw('unexpected null!');

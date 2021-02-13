@@ -1,5 +1,7 @@
 package hawk_test.authservice;
 
+import hawk.general_tools.adapters.Adapter;
+import hawk.store.InMemoryKVStore;
 import hawk.authservice.EvNewUser;
 import hawk.testutils.TestLogger;
 import hawk.datatypes.Password;
@@ -9,7 +11,6 @@ import tink.core.Error;
 import hawk.messaging.LocalChannel;
 import hawk.authservice.AuthUser;
 import hawk.datatypes.Email;
-import hawk.store.InMemoryKVStore.InMemoryKVPStore;
 import zenlog.Log;
 import hawk.authservice.AuthService;
 import hawk.core.UUID;
@@ -144,14 +145,8 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function authServiceTester():AuthService {
-		var storedeps = {
-			keyToStr: Std.string,
-			valToStr: function(val:AuthUser):String {
-				return val.toJson();
-			},
-			valFromStr: AuthUser.fromJson
-		};
-		var store = new InMemoryKVPStore<Email, AuthUser>(storedeps);
+		var authUserAdapter = new Adapter<AuthUser,String>(AuthUser.toJson, AuthUser.fromJson);
+		var store = new InMemoryKVStore<Email, AuthUser>(Email.stringAdapter(), authUserAdapter);
 
 		var channel = new LocalChannel("authNewUser", EvNewUser.toMessage, EvNewUser.fromMessage);
 

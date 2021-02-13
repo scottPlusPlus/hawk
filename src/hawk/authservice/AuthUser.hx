@@ -14,9 +14,9 @@ class AuthUser implements DataClass {
         return parser.fromJson(str);
     }
 
-    public function toJson():String {
+    public static function toJson(user:AuthUser):String {
         var writer = new json2object.JsonWriter<AuthUser>();
-        return writer.write(this);
+        return writer.write(user);
     }
 
     @:access(hawk.authservice.AuthService.hashPass)

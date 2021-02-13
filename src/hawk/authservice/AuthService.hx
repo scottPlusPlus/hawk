@@ -2,7 +2,6 @@ package hawk.authservice;
 
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
-import hawk.util.FutureX;
 import hawk.util.Poller;
 import hawk.messaging.*;
 import hawk.datatypes.Password;
@@ -13,7 +12,6 @@ import tink.core.Noise;
 import tink.core.Error;
 import hawk.core.UUID;
 import tink.CoreApi.Outcome;
-import hawk.util.ErrorX;
 import hawk.datatypes.Email;
 
 using hawk.util.OutcomeX;
@@ -21,6 +19,9 @@ using hawk.util.ErrorX;
 using hawk.util.PromiseX;
 
 class AuthService {
+	private final BAD_LOGIN_MSG = 'invalid email / password';
+	private final BAD_LOGIN_CODE = ErrorCode.Unauthorized;
+
 	private var _tokenSecret:Void->String;
 	private var _tokenIssuer:String;
 	private var _authUserStore:IKVStore<Email, AuthUser>;
@@ -155,9 +156,6 @@ class AuthService {
 		var token:String = JWT.sign({iss: _tokenIssuer, hawkUserID: user}, _tokenSecret());
 		return new Token(token);
 	}
-
-	private final BAD_LOGIN_MSG = 'invalid email / password';
-	private final BAD_LOGIN_CODE = ErrorCode.Unauthorized;
 }
 
 typedef AuthResponse = {

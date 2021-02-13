@@ -1,5 +1,8 @@
 package hawk.store;
 
+import haxe.Constraints.IMap;
+import hawk.general_tools.adapters.*;
+import js.html.CSSFontFeatureValuesRule;
 import tink.CoreApi.Promise;
 import zenlog.Log;
 import tink.CoreApi.Noise;
@@ -9,55 +12,48 @@ import tink.CoreApi.Outcome;
 @:generic
 class InMemoryKIntStore<K> implements  IKIntStore<K> {
 
-    public function new(ser:KSerializer<K>){
-        _data = new Map();
-        _keyToStr = ser.toString;
+    public function new(adapter:Adapter<K,String>){
+        _data = new MapAdapterK<K,String,Int>(adapter, new Map<String,Int>());
     }
 
-    private var _data:Map<String,Int>;
-    private var _keyToStr: K->String;
+    private var _data:IMap<K,Int>;
 
-
-    public function get(key:K):Promise<Int>{
-        var kstr = _keyToStr(key);
-        var val = _data.get(kstr);
-        if (val == null){
-            return Failure(new Error( 'key ${key} doesnt exist'));
-        }
+    public function get(key:K):Promise<Null<Int>>{
+        var val = _data.get(key);
         return Success(val);
     }
 
+    public function getSure(key:K):Promise<Int> {
+        return get(key).next(function(val:Null<Int>){
+            if (val == null){
+                return Failure(new Error('no value for ${key}'));
+            }
+            return Success(val);
+        });
+    }
+
     public function set(key:K, value:Int):Promise<Int>{
-        var kstr = _keyToStr(key);
-        _data.set(kstr,value);
+        _data.set(key,value);
         return Success(value);
     }
     
-    public function remove(key:K):Promise<Noise>{
-        var kstr = _keyToStr(key);
-        _data.remove(kstr);
-        return Success(Noise);
+    public function remove(key:K):Promise<Bool>{
+        var r = _data.remove(key);
+        return Success(r);
     }
 
     public function add(key:K, value:Int, d:Int=0):Promise<Int> {
-        var kstr = _keyToStr(key);
-        var current = _data.get(kstr);
+        var current = _data.get(key);
         if (current == null){
             current = d;
         }
         var sum = current + value;
-        _data.set(kstr, sum);
+        _data.set(key, sum);
         return Success(sum);
     }
 
     public function exists(key:K):Promise<Bool>{
-        var kstr = _keyToStr(key);
-        var ex = _data.exists(kstr);
-        return Success(ex);
+        var exists = _data.exists(key);
+        return Success(exists);
     }
-}
-
-typedef KSerializer<K> = {
-    toString: K->String,
-    fromString: String->K
 }

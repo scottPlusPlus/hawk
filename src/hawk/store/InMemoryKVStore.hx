@@ -1,5 +1,7 @@
 package hawk.store;
 
+import haxe.Constraints.IMap;
+import hawk.general_tools.adapters.*;
 import tink.CoreApi.Promise;
 import zenlog.Log;
 import tink.CoreApi.Noise;
@@ -7,54 +9,42 @@ import tink.CoreApi.Error;
 import tink.CoreApi.Outcome;
 
 @:generic
-class InMemoryKVPStore<K, V> implements  IKVStore<K, V> {
+class InMemoryKVStore<K, V> implements  IKVStore<K, V> {
 
-    public function new(ser:KVSerializer<K,V>){
-        _data = new Map();
-        _keyToStr = ser.keyToStr;
-        _valToStr = ser.valToStr;
-        _valFromStr = ser.valFromStr;
+    public function new(keyAdapter: TStringAdapter<K>, valAdapter:TStringAdapter<V>){
+        // we enforce storing as String/String to ensure types passed in are serializable
+        var map = new Map<String,String>();
+        _data = new MapAdapterKV<K,String,V,String>(keyAdapter, valAdapter, map);
     }
 
-    private var _data:Map<String,String>;
-    private var _keyToStr: K->String;
-    private var _valToStr: V->String;
-    private var _valFromStr: String->V;
-
-    public function get(key:K):Promise<Null<V>>{
-        var kstr = _keyToStr(key);
-        var vstr = _data.get(kstr);
-        if (vstr == null){
-            return Failure(new Error('no value for key ${kstr}'));
-        }
-        //Log.info('kvp store get ${kstr} == ${vstr}');
-        var val = _valFromStr(vstr);
-        return Success(val);
-    }
-
-    public function set(key:K, value:V):Promise<Noise>{
-        var kstr = _keyToStr(key);
-        var vstr = _valToStr(value);
-        //Log.info('kvp store set ${kstr} == ${vstr}');
-        _data.set(kstr,vstr);
-        return Success(Noise);
-    }
-    
-    public function remove(key:K):Promise<Noise>{
-        var kstr = _keyToStr(key);
-        _data.remove(kstr);
-        return Success(Noise);
-    }
+    private var _data:IMap<K,V>;
 
     public function exists(key:K):Promise<Bool>{
-        var kstr = _keyToStr(key);
-        var ex = _data.exists(kstr);
-        return Success(ex);
+        var exists = _data.exists(key);
+        return Success(exists);
     }
-}
 
-typedef KVSerializer<K,V> = {
-    keyToStr: K->String,
-    valToStr: V->String,
-    valFromStr: String->V
+    public function get(key:K):Promise<Null<V>>{
+        var r = _data.get(key);
+        return Success(r);
+    }
+
+    public function getSure(key:K):Promise<V> {
+        return get(key).next(function(val:Null<V>){
+            if (val == null){
+                return Failure(new Error('no value for ${key}'));
+            }
+            return Success(val);
+        });
+    }
+
+    public function set(key:K, value:V):Promise<V>{
+        _data.set(key,value);
+        return Success(value);
+    }
+    
+    public function remove(key:K):Promise<Bool>{
+        var r = _data.remove(key);
+        return Success(r);
+    }
 }
