@@ -21,8 +21,8 @@ class Json {
         return mapToJson(map);
     }
 
-    public static function jsonResponseToMap(res: tink.http.CompleteResponse):IMap<String,String> {
-        var obj = haxe.Json.parse(res.body);
+    public static function jsonToAnonMap(json:String):IMap<String,String> {
+        var obj = haxe.Json.parse(json);
         return new AnonymousMap(obj);
     }
 }
