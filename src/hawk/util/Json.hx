@@ -2,7 +2,6 @@ package hawk.util;
 
 import haxe.Constraints.IMap;
 import thx.AnonymousMap;
-import tink.http.Fetch.CompleteResponse;
 
 class Json {
 
