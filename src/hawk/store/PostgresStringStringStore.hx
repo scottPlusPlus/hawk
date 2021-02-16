@@ -38,7 +38,7 @@ class PostgresStringStringStore implements IKVStore<String,String> {
         var p = new PromiseTrigger<String>();
         _postgresClient.query(query, key, function(err:Dynamic, res:Dynamic) {
             if (err != null) {
-                var e = new Error('error creating table ${_tableName} in postgres:  ${err}');
+                var e = new Error('error for postgres.GET  ${key}  :  ${err}');
                 Log.error(e);
                 p.reject(e);
             }
@@ -59,7 +59,7 @@ class PostgresStringStringStore implements IKVStore<String,String> {
         var p = new PromiseTrigger<String>();
         _postgresClient.query(query,  function(err:Dynamic, res:Dynamic) {
             if (err != null) {
-                var e = new Error('error creating table ${_tableName} in postgres:  ${err}');
+                var e = new Error('error for postgres.SET  ${key}  ${value}:  ${err}');
                 Log.error(e);
                 p.reject(e);
             }
