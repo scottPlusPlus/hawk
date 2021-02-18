@@ -2,7 +2,6 @@ package hawk.store;
 
 import haxe.Constraints.IMap;
 import hawk.general_tools.adapters.*;
-import js.html.CSSFontFeatureValuesRule;
 import tink.CoreApi.Promise;
 import zenlog.Log;
 import tink.CoreApi.Noise;

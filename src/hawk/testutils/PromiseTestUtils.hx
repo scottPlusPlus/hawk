@@ -16,7 +16,7 @@ class PromiseTestUtils {
 		});
 	}
 
-	public static inline function endTestChain<T>(p:Promise<T>, async:utest.Async){
+	public static inline function closeTestChain<T>(p:Promise<T>, async:utest.Async){
 		return PromiseTestUtils.assertNoErr(p).next(function(v:T){
 			async.done();
 			return v;

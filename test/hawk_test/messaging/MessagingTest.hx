@@ -46,9 +46,9 @@ class MessagingTest extends utest.Test {
 			Assert.equals(1, sub.messages.length);
 			var actual = sub.messages[0];
 			Assert.equals(expected, actual);
-			async.done();
+
 			return Noise;
-		}).eager();
+		}).closeTestChain(async);
 	}
 
 	function testMultipleSubscribers(async:utest.Async) {
@@ -66,9 +66,9 @@ class MessagingTest extends utest.Test {
 		.next(function(_){
 			Assert.equals(expected, sub1.messages[0]);
 			Assert.equals(expected, sub2.messages[0]);
-			async.done();
+
 			return Noise;
-		}).eager();
+		}).closeTestChain(async);
 	}
 }
 

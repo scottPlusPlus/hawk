@@ -39,7 +39,6 @@ class InMemoryKIntStoreTest extends utest.Test {
 				Log.debug('adds 5');
 				Assert.equals(5, v);
 				return Noise;
-			})
-			.endTestChain(async);
+			}).closeTestChain(async);
 	}
 }
