@@ -1,7 +1,7 @@
-package hawk_test.core;
+package hawk_test.datatypes;
 
 import zenlog.Log;
-import hawk.core.UUID;
+import hawk.datatypes.UUID;
 import utest.Assert;
 
 class UUIDTest extends utest.Test {

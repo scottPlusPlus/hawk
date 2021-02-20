@@ -1,7 +1,7 @@
 package hawk.authservice;
 
 import hawk.datatypes.Email;
-import hawk.core.UUID;
+import hawk.datatypes.UUID;
 
 class AuthUser implements DataClass {
     public final id:UUID;

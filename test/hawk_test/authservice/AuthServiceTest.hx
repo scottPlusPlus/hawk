@@ -14,7 +14,7 @@ import hawk.authservice.AuthUser;
 import hawk.datatypes.Email;
 import zenlog.Log;
 import hawk.authservice.AuthService;
-import hawk.core.UUID;
+import hawk.datatypes.UUID;
 import utest.Assert;
 
 

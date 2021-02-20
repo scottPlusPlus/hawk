@@ -1,4 +1,4 @@
-package hawk.core;
+package hawk.datatypes;
 
 import hawk.general_tools.adapters.Adapter;
 import uuid.*;

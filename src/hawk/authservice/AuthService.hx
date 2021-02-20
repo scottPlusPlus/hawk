@@ -10,7 +10,7 @@ import jwt.JWT;
 import tink.CoreApi.Promise;
 import tink.core.Noise;
 import tink.core.Error;
-import hawk.core.UUID;
+import hawk.datatypes.UUID;
 import tink.CoreApi.Outcome;
 import hawk.datatypes.Email;
 

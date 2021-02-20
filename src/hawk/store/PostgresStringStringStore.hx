@@ -7,7 +7,7 @@ class PostgresStringStringStore implements IKVStore<String,String> {
 
     private var _postgresClient:Dynamic;
     private var _tableName:String;
-
+   
     public function new(postgresClient:Dynamic, tableName:String){
         if (tableName.toLowerCase() != tableName){
             throw('table name should be lowercase');
