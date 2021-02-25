@@ -11,7 +11,11 @@ class LocalMemoryStore implements IKVStore<String,String> {
     
     private var _map:Map<String,String> = [];
 
-    public function new(){}
+    public function new(?map:Map<String,String>){
+        if (map != null){
+            _map = map;
+        }
+    }
 
     public function exists(key:String):Promise<Bool> {
         return _map.exists(key);

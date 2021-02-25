@@ -35,6 +35,4 @@ class AdapterX<A,B> {
         }
         return new Adapter(aToB, bToA);
     }
-
-
 }

@@ -5,6 +5,8 @@ class TestVals {
     public static final bar = "BAR";
     public static final foo2 = "foo2";
     public static final bar2 = "foo2";
+    public static final foo3 = "foo3";
+    public static final bar3 = "foo3";
     public static final gibberish = "gibberish";
     public static final jibbaJabba= "jibbaJabba";
     public static final exampleText = "exampleText";
