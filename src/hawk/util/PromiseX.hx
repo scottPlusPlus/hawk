@@ -36,6 +36,18 @@ class PromiseX {
 		return pt.asPromise();
     }
 
+	public static function errOnNull<T>(p:Promise<Null<T>>, ?err:Error):Promise<T> {
+		if (err == null){
+			err = new Error('value was null');
+		}
+		return p.next(function(v){
+			if (v == null){
+				return Promise.reject(err);
+			}
+			return Promise.resolve(v);
+		});
+	}
+
 	// public static function then<T1, T2>(p1:Promise<T1>, handler:Outcome<T1,Error>->Promise<T2>):Promise<T2> {
 	// 	var res = new PromiseTrigger<T2>();
 	// 	p1.handle(function(o1:Outcome<T1,Error>) {

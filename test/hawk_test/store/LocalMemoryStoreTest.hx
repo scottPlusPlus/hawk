@@ -5,6 +5,7 @@ import hawk.store.LocalMemoryStore;
 import utest.Assert;
 import utest.Async;
 
+using hawk.store.IKVStoreX;
 using hawk.testutils.PromiseTestUtils;
 
 class LocalMemoryStoreTest extends utest.Test {
@@ -33,10 +34,6 @@ class LocalMemoryStoreTest extends utest.Test {
 
             return store.get(foo);   
         }).next(function(v:Null<String>){
-            Assert.equals(bar, v);
-
-            return store.getSure(foo);   
-        }).next(function(v:String){
             Assert.equals(bar, v);
 
             return store.remove(foo);

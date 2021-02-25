@@ -1,5 +1,7 @@
 package hawk.store;
 
+import hawk.async_iterator.AsyncIteratorWrapper;
+import hawk.async_iterator.AsyncIterator;
 import tink.CoreApi;
 
 
@@ -19,12 +21,14 @@ class LocalMemoryStore implements IKVStore<String,String> {
         return _map.get(key);
     }
 
-	public function getSure(key:String):Promise<String>{
-        var v = _map.get(key);
-        if (v == null){
-            return Failure(new Error('no value for ${key}'));
+    public function getMany(keys:Array<String>):Promise<Array<KV<String,Null<String>>>> {
+        var kvs = new Array<KV<String,Null<String>>>();
+        for (k in keys){
+            var v = _map.get(k);
+            var kv = new KVX(k, v);
+            kvs.push(kv);
         }
-        return Success(v);
+        return kvs;
     }
 
 	public function set(key:String, val:String):Promise<String>{
@@ -32,7 +36,19 @@ class LocalMemoryStore implements IKVStore<String,String> {
         return  val;
     }
 
+    // public function setMany(keyValues:Array<KV<String,String>>):Promise<Array<KV<String,String>>> {
+    //     for (kv in keyValues){
+    //         _map.set(kv.key, kv.value);
+    //     }
+    //     return keyValues;
+    // }
+
 	public function remove(key:String):Promise<Bool>{
         return _map.remove(key);
+    }
+
+    public function keyValueIterator():AsyncIterator<KV<String,String>> {
+        var i = _map.keyValueIterator();
+        return new AsyncIteratorWrapper(i);
     }
 }

@@ -1,5 +1,7 @@
 package hawk.store;
 
+import hawk.async_iterator.PagedAsyncIterator;
+import hawk.async_iterator.AsyncIterator;
 import zenlog.Log;
 import tink.CoreApi;
 
@@ -87,14 +89,18 @@ class PostgresStringStringStore implements IKVStore<String,String> {
         return p;
     }
 
-	public function getSure(key:String):Promise<String>{
-        return get(key).next(function(str:Null<String>){
-            if (str == null){
-                return Failure(new Error('no value for ${key}'));
-            }
-            return Success(str);
-        });
+    public function getMany(keys:Array<String>):Promise<Array<KV<String,Null<String>>>> {
+        var getPromises = new Array<Promise<KV<String,Null<String>>>>();
+        for (k in keys){
+            var p = get(k).next(function(ns):KV<String,Null<String>>{
+                return new KVX(k, ns);
+            });
+            getPromises.push(p);
+        }
+        var res = Promise.inSequence(getPromises);
+        return res;
     }
+
 
 	public function set(key:String, value:String):Promise<String>{
         var query = "INSERT INTO $0 (key, val)
@@ -120,6 +126,7 @@ class PostgresStringStringStore implements IKVStore<String,String> {
         return p;
     }
 
+
 	public function remove(key:String):Promise<Bool>{
         var query = "DELETE FROM $0 WHERE key = '$1'";
         query = StringTools.replace(query, "$0", _tableName);
@@ -138,6 +145,38 @@ class PostgresStringStringStore implements IKVStore<String,String> {
         return false;
     }
 
+    public function keyValueIterator():AsyncIterator<KV<String,String>> {
+        var postgresPager = new PostgresPager(25, getPage);
+        var pagedIterator = new PagedAsyncIterator(postgresPager.loadNext);
+        return pagedIterator;
+    }
+
+    public function getPage(limit:UInt, offset:UInt):Promise<Array<KV<String,String>>>{
+        var query = "SELECT * FROM $0 ORDER BY key ASC LIMIT $2 OFFSET $3";
+        query = StringTools.replace(query, "$0", _tableName);
+        query = StringTools.replace(query, "$2", Std.string(limit));
+        query = StringTools.replace(query, "$3", Std.string(offset));
+        logQuery(query);
+        
+        var p = new PromiseTrigger<Array<KV<String,String>>>();
+        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
+            if (err != null) {
+                var e = queryErr('GET PAGE ${limit} ${offset}:  ${err}');
+                Log.error(e);
+                p.reject(e);
+            }
+
+            var rows:Array<PostgresRow> = res.rows;
+            var arr = new Array<KV<String,String>>();
+            for (r in rows){
+                var kv = new KVX(r.key, r.val);
+                arr.push(kv);
+            }
+            p.resolve(arr);
+        });
+        return p;
+    }
+    
     public function clear():Promise<Noise> {
         var query = "DROP TABLE $0";
         query = StringTools.replace(query, "$0", _tableName);
@@ -184,6 +223,26 @@ class PostgresStringStringStore implements IKVStore<String,String> {
 
     private inline function queryErr(err:String):Error{
         return new Error('postgres error:  ${err}');
+    }
+}
+
+class PostgresPager {
+
+    private var _limit:UInt;
+    private var _offset:UInt;
+    private var _next:UInt->UInt->Promise<Array<KV<String,String>>>;
+
+    public function new(limit:UInt, next:UInt->UInt->Promise<Array<KV<String,String>>>){
+        _limit = limit;
+        _offset = 0;
+        _next = next;
+    }
+
+    public function loadNext():Promise<Array<KV<String,String>>> {
+        return _next(_limit, _offset).next(function(v){
+            _offset += _limit;
+            return v;
+        });
     }
 }
 
