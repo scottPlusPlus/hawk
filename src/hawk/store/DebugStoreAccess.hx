@@ -79,7 +79,7 @@ class DebugStoreAccess {
 	private function dropAll(store:IKVStore<String, String>, key:String):Promise<String> {
 		if (_dropKey == "") {
 			_dropKey = UUID.gen();
-			return 'Are you sure you want to drop all?  Submit again with key = ${_dropKey}';
+			return 'Are you sure you want to clear all data from the store?  Submit again with key = ${_dropKey}';
 		}
 		if (key != _dropKey) {
 			_dropKey = "";
