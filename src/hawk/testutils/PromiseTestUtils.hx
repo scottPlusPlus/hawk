@@ -16,6 +16,17 @@ class PromiseTestUtils {
 		});
 	}
 
+	public static inline function assertErrAndContinue<T>(p:Promise<T>, onFail:String = "expected an error"):Promise<Noise> {
+		return p.flatMap(function(o){
+            switch o {
+                case Failure(failure):
+                case Success(u):
+                    Assert.fail(onFail);
+            }
+            return Noise;
+		});
+	}
+
 	public static inline function closeTestChain<T>(p:Promise<T>, async:utest.Async){
 		return PromiseTestUtils.assertNoErr(p).next(function(v:T){
 			async.done();

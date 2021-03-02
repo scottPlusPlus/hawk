@@ -8,6 +8,7 @@ class AuthUser implements DataClass {
     public final email:Email;
     public final salt:UUID;
     public final passHash:String;
+    public final displayName:String;
 
     public static function fromJson(str:String): AuthUser {
         var parser = new json2object.JsonParser<AuthUser>();
@@ -28,7 +29,8 @@ class AuthUser implements DataClass {
             id: UUID.gen(),
             email: "test@test.com",
             salt: salt,
-            passHash: passHash
+            passHash: passHash,
+            displayName: "test@test.com"
         });
     }
 }

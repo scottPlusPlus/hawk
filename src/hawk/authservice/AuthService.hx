@@ -74,6 +74,7 @@ class AuthService {
 			user = new AuthUser({
 				id: UUID.gen(),
 				email: email,
+				displayName: email,
 				salt: salt,
 				passHash: hashPass(password, salt)
 			});
@@ -90,13 +91,14 @@ class AuthService {
 		});
 	}
 
-	private function waitForNewlyCreatedUser(email:Email):Promise<AuthUser> {
-		return Poller.waitUntil(function() {
-			return _authUserStore.exists(email);
-		}, 100, 5000).next(function(_:Noise) {
-			return _authUserStore.get(email);
-		}).eager();
-	}
+	// TODO - used this before _pendingRegistrations.  Can probably kill
+	// private function waitForNewlyCreatedUser(email:Email):Promise<AuthUser> {
+	// 	return Poller.waitUntil(function() {
+	// 		return _authUserStore.exists(email);
+	// 	}, 100, 5000).next(function(_:Noise) {
+	// 		return _authUserStore.get(email);
+	// 	}).eager();
+	// }
 
 	private function handleNewUser(event:EvNewUser):Promise<Noise> {
 		var user = event.user;
@@ -129,6 +131,11 @@ class AuthService {
 			return Success(res);
 		});
 	}
+
+	// public function displayNames(ids:Array<UUID>):Promise<Array<KV<UUID,String>>>{
+
+	// 	return ErrorX.notYetImplemented();
+	// }
 
 	private static inline function hashPass(pass:String, salt:String):String {
 		return PBKDF2.encode(pass, salt, 100, 256);
