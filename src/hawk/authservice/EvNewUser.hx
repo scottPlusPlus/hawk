@@ -1,10 +1,11 @@
 package hawk.authservice;
 
+import hawk.datatypes.Timestamp;
 import hawk.messaging.Message;
 
 class EvNewUser implements DataClass {
 
-    public final timestamp: Int;
+    public final timestamp: Timestamp;
     public final user:AuthUser;
 
     public function key():String {
@@ -23,7 +24,7 @@ class EvNewUser implements DataClass {
 
     public static function testExample():EvNewUser {
         return new EvNewUser({
-            timestamp:  Date.now().getUTCSeconds(),
+            timestamp:  Timestamp.now(),
             user: AuthUser.testExample()
         });
     }

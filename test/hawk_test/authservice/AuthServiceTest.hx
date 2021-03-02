@@ -1,5 +1,7 @@
 package hawk_test.authservice;
 
+import hawk.authservice.AuthUserStore;
+import hawk.store.LocalDataStore;
 import hawk.store.KVStoreAdapter;
 import hawk.store.LocalMemoryStore;
 import hawk.general_tools.adapters.Adapter;
@@ -146,9 +148,8 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function authServiceTester():AuthService {
-		var authUserAdapter = new Adapter<AuthUser,String>(AuthUser.toJson, AuthUser.fromJson);
-		var baseStore = new LocalMemoryStore();
-		var store = new KVStoreAdapter<Email,String,AuthUser,String>(Email.stringAdapter(), authUserAdapter, baseStore);
+		var localStore = new LocalDataStore(AuthUserStore.model());
+		var store = new AuthUserStore(localStore);
 
 		var channel = new LocalChannel("authNewUser", EvNewUser.toMessage, EvNewUser.fromMessage);
 

@@ -3,13 +3,15 @@ package hawk.authservice;
 import hawk.datatypes.Email;
 import hawk.datatypes.UUID;
 
-class AuthUser implements DataClass {
-    public final id:UUID;
-    public final email:Email;
-    public final salt:UUID;
-    public final passHash:String;
-    public final displayName:String;
+class AuthUser {
+    public var id:UUID;
+    public var email:Email;
+    public var displayName:String;
+    public var salt:UUID;
+    public var passHash:String;
 
+    public function new(){}
+    
     public static function fromJson(str:String): AuthUser {
         var parser = new json2object.JsonParser<AuthUser>();
         return parser.fromJson(str);
@@ -25,13 +27,14 @@ class AuthUser implements DataClass {
         var salt = UUID.gen();
         var passHash = AuthService.hashPass("password", salt);
 
-        return new AuthUser({
-            id: UUID.gen(),
-            email: "test@test.com",
-            salt: salt,
-            passHash: passHash,
-            displayName: "test@test.com"
-        });
+        var user = new AuthUser();
+        user.id = UUID.gen();
+        user.email = "test@test.com";
+        user.salt = salt;
+        user.passHash = passHash;
+        user.displayName = "testUser";
+
+        return user;
     }
 }
 

@@ -1,11 +1,10 @@
 package hawk.authservice;
 
+import hawk.store.IDataItem;
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
-import hawk.util.Poller;
 import hawk.messaging.*;
 import hawk.datatypes.Password;
-import hawk.store.IKVStore;
 import jwt.JWT;
 import tink.CoreApi.Promise;
 import tink.core.Noise;
@@ -24,7 +23,7 @@ class AuthService {
 
 	private var _tokenSecret:Void->String;
 	private var _tokenIssuer:String;
-	private var _authUserStore:IKVStore<Email, AuthUser>;
+	private var _authUserStore:AuthUserStore;
 	private var _newUserPub:IPublisher<EvNewUser>;
 	private var _newUserSub:ISubscriber<EvNewUser>;
 	private var _pendingRegistrations:Map<String, Noise>;
@@ -56,9 +55,10 @@ class AuthService {
 		var user:AuthUser;
 		var emailTakenErr = new Error(ErrorCode.Conflict, 'User for ${email} already exists');
 
-		return _authUserStore.exists(email).next(function(exists) {
-			Log.debug('${email} exists in store?  ${exists}');
-			if (exists) {
+		var indexByEmail = _authUserStore.indexByEmail();
+
+		return indexByEmail.get(email).next(function(res){
+			if (res != null){
 				return Failure(emailTakenErr);
 			};
 			return Success(Noise);
@@ -70,14 +70,13 @@ class AuthService {
 			}
 			_pendingRegistrations.set(email, Noise);
 
-			var salt = UUID.gen();
-			user = new AuthUser({
-				id: UUID.gen(),
-				email: email,
-				displayName: email,
-				salt: salt,
-				passHash: hashPass(password, salt)
-			});
+			user = new AuthUser();
+			user.id = UUID.gen();
+			user.email = email;
+			user.displayName = email;
+			user.salt = UUID.gen();
+			user.passHash = hashPass(password, user.salt);
+
 			var event = new EvNewUser({
 				timestamp: Date.now().getUTCSeconds(),
 				user: user
@@ -103,7 +102,7 @@ class AuthService {
 	private function handleNewUser(event:EvNewUser):Promise<Noise> {
 		var user = event.user;
 		var email = user.email;
-		return _authUserStore.set(email, user).next(function(_) {
+		return _authUserStore.create(user).next(function(_) {
 			_pendingRegistrations.remove(email);
 			return Noise;
 		}).wrapErr('infra err with AuthService.handleNewUser');
@@ -112,20 +111,20 @@ class AuthService {
 	// should return an authToken
 	public function signIn(email:Email, pass:Password):Promise<AuthResponse> {
 		Log.debug("AuthService.login");
-		return _authUserStore.exists(email).next(function(exists:Bool) {
-			if (!exists) {
+		var indexByEmail = _authUserStore.indexByEmail();
+		return indexByEmail.get(email).next(function(res:Null<IDataItem<AuthUser>>) {
+			if (res == null) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
-			return _authUserStore.get(email);
-		}).next(function(authUser:AuthUser) {
+			var user = res.value();
 			Log.debug("AuthService.login have user");
-			var hashed = hashPass(pass, authUser.salt);
-			if (hashed != authUser.passHash) {
+			var hashed = hashPass(pass, user.salt);
+			if (hashed != user.passHash) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
-			var token = genToken(authUser.id);
+			var token = genToken(user.id);
 			var res = {
-				id: authUser.id,
+				id: user.id,
 				token: token
 			};
 			return Success(res);
@@ -137,7 +136,7 @@ class AuthService {
 	// 	return ErrorX.notYetImplemented();
 	// }
 
-	private static inline function hashPass(pass:String, salt:String):String {
+	private static function hashPass(pass:String, salt:String):String {
 		return PBKDF2.encode(pass, salt, 100, 256);
 	}
 
@@ -173,7 +172,7 @@ typedef AuthResponse = {
 typedef AuthServiceDeps = {
 	tokenSecret:Void->String,
 	tokenIssuer:String,
-	userStore:IKVStore<Email, AuthUser>,
+	userStore: AuthUserStore,
 	newUserPub:IPublisher<EvNewUser>,
 	newUserSub:ISubscriber<EvNewUser>,
 }
