@@ -18,7 +18,7 @@ class DebugDataStoreAccess {
 		_stores.set(storeName, store);
 	}
 
-	public function query(command:String, store:String, column:String = "", key:String = "", val:String = ""):Promise<String> {
+	public function query(command:String, store:String, column:String = "", key:String = "", value:String = "", quote:String=""):Promise<String> {
 		var s = _stores.get(store);
 		if (s == null) {
 			var keys = "";
@@ -40,7 +40,10 @@ class DebugDataStoreAccess {
 				});
 
 			case "create":
-				return s.create(val).next(function(di) {
+				if (quote.length > 0){
+					value = StringTools.replace(value, quote, '"');
+				}
+				return s.create(value).next(function(di) {
 					return di.value();
 				});
 
