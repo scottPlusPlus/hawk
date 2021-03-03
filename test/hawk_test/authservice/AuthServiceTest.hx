@@ -72,7 +72,7 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function testGoodRegisterLogin(async:utest.Async) {
-		TestLogger.setDebug(true);
+		//TestLogger.setDebug(true);
 		Log.debug('testGoodRegisterLogin');
 		var service = authServiceTester();
 
@@ -125,7 +125,7 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function testDoubleRegisterFails(async:utest.Async){
-		TestLogger.setDebug(true);
+		//TestLogger.setDebug(true);
 		Log.debug('testDoubleRegisterFails');
 		var service = authServiceTester();
 
@@ -145,6 +145,39 @@ class AuthServiceTest extends utest.Test {
 				async.done();
 				return Noise;
 			}).eager();
+	}
+
+	function testDisplayNames(async:utest.Async){
+		TestLogger.setDebug(true);
+		TestLogger.resetIdent();
+		Log.debug('AuthServiceTest.testDisplayNames');
+		var service = authServiceTester();
+
+		var pass:Password = "somepass";
+		var mail1:Email = "some@mail.com";
+		var mail2:Email = "another@mail.com";
+
+		var user1ID:UUID;
+		var user2ID:UUID;
+
+		service.register(mail1, pass).next(function(res){
+			user1ID = res.id;
+			return service.register(mail2, pass).next(function(res2){
+				user2ID = res2.id;
+				return Noise;
+			});
+		}).thenWait(100).next(function(_){
+			return service.displayNames([user1ID, user2ID]).next(function(res){
+				var map = new Map<UUID,String>();
+				for (kv in res){
+					map.set(kv.key, kv.value);
+				};
+				Assert.equals(2, res.length);
+				Assert.same(mail1, map.get(user1ID));
+				Assert.same(mail2, map.get(user2ID));
+				return Noise;
+			});
+		}).closeTestChain(async);
 	}
 
 	function authServiceTester():AuthService {

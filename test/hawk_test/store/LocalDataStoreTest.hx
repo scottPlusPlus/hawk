@@ -130,7 +130,8 @@ class LocalDataStoreTest extends utest.Test {
 	}
 
 	public function testGetMany(async:utest.Async) {
-		TestLogger.filter.enableDebug = true;
+		//TestLogger.setDebug(true);
+		TestLogger.resetIdent();
 		var table = new ExampleTable();
 		var indexByName = table.indexByName();
 

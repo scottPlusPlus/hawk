@@ -30,5 +30,15 @@ abstract UUID(String) {
       }
       return new Adapter<UUID,String>(toStr, UUID.fromString);
     }
+
+    public static inline function adaptArrayIn(v:Array<UUID>):Array<String>{
+      return v.map(function(x):String{
+        return x.toString();
+      });
+    }
+
+    public static inline function adaptArrayOut(v:Array<String>):Array<UUID>{
+      return v.map(fromString);
+    }
     
 }

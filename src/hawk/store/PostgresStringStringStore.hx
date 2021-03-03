@@ -142,7 +142,7 @@ class PostgresStringStringStore implements IKVStore<String,String> {
             }
             p.resolve(true);
         });
-        return false;
+        return p;
     }
 
     public function keyValueIterator():AsyncIterator<KV<String,String>> {

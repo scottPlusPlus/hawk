@@ -1,5 +1,7 @@
 package hawk.authservice;
 
+import hawk.store.KVX;
+import hawk.store.ArrayKV;
 import hawk.store.IDataItem;
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
@@ -100,6 +102,7 @@ class AuthService {
 	// }
 
 	private function handleNewUser(event:EvNewUser):Promise<Noise> {
+		Log.debug('AuthService.handleNewUser:  ${event.user}');
 		var user = event.user;
 		var email = user.email;
 		return _authUserStore.create(user).next(function(_) {
@@ -131,10 +134,26 @@ class AuthService {
 		});
 	}
 
-	// public function displayNames(ids:Array<UUID>):Promise<Array<KV<UUID,String>>>{
-
-	// 	return ErrorX.notYetImplemented();
-	// }
+	public function displayNames(ids:Array<UUID>):Promise<Array<KVX<UUID,Null<String>>>>{
+		var indexByID = _authUserStore.indexByID();
+		var idsStr = UUID.adaptArrayIn(ids);
+		return indexByID.getMany(idsStr).next(function(resIn){
+			var resOut = new Array<KVX<UUID,String>>();
+			resOut.resize(resIn.length);
+			for (i in 0...resIn.length){
+				var kv = resIn[i];
+				var keyOut = UUID.fromString(kv.key);
+				if (kv.value == null){
+					Log.debug('dataItem for ${keyOut} is null');
+					resOut[i] = new KVX(keyOut, null);
+				} else {
+					Log.debug('dataItem for ${keyOut} is ${kv.value.value().displayName}');
+					resOut[i] = new KVX(keyOut, kv.value.value().displayName);
+				}
+			}
+			return resOut;
+		});
+	}
 
 	private static function hashPass(pass:String, salt:String):String {
 		return PBKDF2.encode(pass, salt, 100, 256);

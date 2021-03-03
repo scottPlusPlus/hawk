@@ -8,11 +8,15 @@ class TestLogger {
 	public static function init() {
 		filter = new FilteredLogger(new TraceLogger());
 		filter.calibrateIndentStart();
-		filter.enableDebug = true;
+		filter.enableDebug = false;
 		zenlog.Log.Logger = filter;
 	}
 
 	public static function setDebug(val:Bool) {
 		filter.enableDebug = val;
+	}
+
+	public static function resetIdent(){
+		filter.calibrateIndentStart();
 	}
 }
