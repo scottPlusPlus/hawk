@@ -28,6 +28,10 @@ class DebugDataStoreAccess {
 			return Failure(new Error('no store registered for ${store}.  Have:  ${keys}'));
 		}
 
+		if (quote.length > 0){
+			value = StringTools.replace(value, quote, '"');
+		}
+
 		command = StringTools.trim(command.toLowerCase());
 		if (_dropKey != "" && command != DROP) {
 			_dropKey = "";
@@ -40,9 +44,7 @@ class DebugDataStoreAccess {
 				});
 
 			case "create":
-				if (quote.length > 0){
-					value = StringTools.replace(value, quote, '"');
-				}
+
 				return s.create(value).next(function(di) {
 					return di.value();
 				});
@@ -64,7 +66,7 @@ class DebugDataStoreAccess {
 				return dropAll(s, key);
 
 			default:
-				return Failure(new Error('dont recognize command ${command}.  Try exists, get, set, remove'));
+				return Failure(new Error('dont recognize command ${command}.  Try get, create, delete, print, drop'));
 		}
 	}
 

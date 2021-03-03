@@ -26,11 +26,9 @@ class PostgresDataStore<T> implements IDataStore<T> {
 	}
 
     public function init():Promise<PostgresDataStore<T>>{
-        var p = new PromiseTrigger<PostgresDataStore<T>>();
-
         var fields = "";
         for (f in _model.fields){
-            fields += f.name;
+            fields += f.name + " VARCHAR";
             if (f.unique){
                 fields += " UNIQUE";
             }
@@ -45,19 +43,19 @@ class PostgresDataStore<T> implements IDataStore<T> {
           );
         ';
 
-        logQuery(query);
-        _postgresClient.query(query, function(err:Dynamic, res:Dynamic){
-            if (err != null) {
-                var e = queryErr('Create Table ${_tableName}:  ${err}');
-                Log.error(e);
-                p.reject(e);
-                return;
-            }
-            //Log.info('successfully created table ${_tableName} in db');
-            p.resolve(this);
-        });
-        return p;
+		return dropTable().next(function(_) {
+			return makeQuery(query).next(function(_) {
+				return this;
+            });
+		});
     }
+
+    public function dropTable():Promise<Noise> {
+        var query = "DROP TABLE $0";
+        query = StringTools.replace(query, "$0", _tableName);
+        return makeQuery(query).noise();
+    }
+
 
     public function create(data:T):Promise<IDataItem<T>> {
 		var row = _model.adapter.toB(data);
@@ -68,21 +66,9 @@ class PostgresDataStore<T> implements IDataStore<T> {
         query = StringTools.replace(query, "_fields_", fieldsCSV());
         query = StringTools.replace(query, "_vals_", valsCSV(row));
 
-        logQuery(query);
-
-        var p = new PromiseTrigger<Int>();
-        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
-            if (err != null) {
-                var e = queryErr('create:  ${err}');
-                Log.error(e);
-                p.reject(e);
-                return;
-            }
-            Log.info('Postgres Create RES = ${res}');
-            p.resolve(res.pk);
-        });
-        return p.asPromise().next(function(pk:Int){
-            return createDataItem(pk, row);
+        return makeQuery(query).next(function(res){
+            Log.debug('Postgres Create RES = ${Std.string(res)}');
+            return createDataItem(res.pk, row);
         });
 	}
 
@@ -130,19 +116,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
         query = StringTools.replace(query, "_setters_", settersCSV(row));
         query = StringTools.replace(query, "_pk_", Std.string(primaryKey));
 
-        logQuery(query);
-
-        var p = new PromiseTrigger<Noise>();
-        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
-            if (err != null) {
-                var e = queryErr('UPDATE  ${primaryKey}:  ${err}');
-                Log.error(e);
-                p.reject(e);
-                return;
-            }
-            p.resolve(Noise);
-        });
-        return p;
+        return makeQuery(query).noise();
     }
 
     private function deleteByPK(pk:Int):Promise<Bool> {
@@ -150,17 +124,9 @@ class PostgresDataStore<T> implements IDataStore<T> {
         query = StringTools.replace(query, "_table_", _tableName);
         query = StringTools.replace(query, "_pk_", Std.string(pk));
 
-        logQuery(query);
-        var p = new PromiseTrigger<Bool>();
-        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
-            if (err != null) {
-                var e = queryErr('remove ${pk}:  ${err}');
-                Log.error(e);
-                p.reject(e);
-            }
-            p.resolve(true);
+        return makeQuery(query).next(function(res){
+            return true;
         });
-        return p;
     }
 
     private function selectByPK(pk:Int):Promise<Null<IDataItem<T>>> {
@@ -168,26 +134,15 @@ class PostgresDataStore<T> implements IDataStore<T> {
         query = StringTools.replace(query, "_table_", _tableName);
         query = StringTools.replace(query, "_pk_", Std.string(pk));
 
-        logQuery(query);
-        var p = new PromiseTrigger<Null<IDataItem<T>>>();
-        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
-            if (err != null) {
-                var e = queryErr('remove ${pk}:  ${err}');
-                Log.error(e);
-                p.reject(e);
-            }
+        return makeQuery(query).next(function(res){
             var rows:Array<Dynamic> = res.rows;
 
             if (rows == null){
-                //Log.debug("rows is null");
-                p.resolve(null);
-                return;
+                return Promise.resolve(null);
             }
 
             if (rows.length == 0){
-                //Log.debug("rows is empty");
-                p.resolve(null);
-                return;
+                return Promise.resolve(null);
             }
 
             if (rows.length != 1){
@@ -196,9 +151,8 @@ class PostgresDataStore<T> implements IDataStore<T> {
 
             var dataRow = rowToDataRow(rows[0]);
             var dataItem = createDataItem(pk, dataRow);
-            p.resolve(dataItem);
+            return Promise.resolve(dataItem);
         });
-        return p;
     }
 
     private function rowToDataRow(row:Dynamic):DataRow {
@@ -256,4 +210,22 @@ class PostgresDataStore<T> implements IDataStore<T> {
     private inline function queryErr(err:String):Error{
         return new Error('postgres error:  ${err}');
     }
+
+    private var _queryID:Int=0;
+
+    private inline function makeQuery(query:String):Promise<Dynamic> {
+        var qid = _queryID++;
+        Log.debug('postgres query ${qid}:  ${query}');
+        var p = new PromiseTrigger<Dynamic>();
+        _postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
+            if (err != null) {
+                var e = new Error('err with postgres query ${qid}:  ${err}');
+                Log.error(e);
+                p.reject(e);
+            }
+            p.resolve(res);
+        });
+        return p;
+    }
+
 }
