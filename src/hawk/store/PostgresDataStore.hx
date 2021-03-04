@@ -60,7 +60,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
     public function create(data:T):Promise<IDataItem<T>> {
 		var row = _model.adapter.toB(data);
         var query = "INSERT INTO _table_ (_fields_)
-        VALUES(_vals_)";
+        VALUES(_vals_) RETURNING *";
 
         query = StringTools.replace(query, "_table_", _tableName);
         query = StringTools.replace(query, "_fields_", fieldsCSV());
@@ -166,7 +166,9 @@ class PostgresDataStore<T> implements IDataStore<T> {
     }
 
     private function rowToDataRow(row:Dynamic):DataRow {
-        var map = new AnonymousMap<String>(row[0]);
+        Log.debug('try convert DB row:  ${Std.string(row)}');
+        var map = new AnonymousMap<String>(row);
+        Log.debug('- - got anonMap:  ${map}');
         var res = new Array<String>();
         for (f in _model.fields){
             res.push(map.get(f.name));
