@@ -14,6 +14,13 @@ class AuthUser {
     
     public static function fromJson(str:String): AuthUser {
         var parser = new json2object.JsonParser<AuthUser>();
+        var user = parser.fromJson(str);
+        if (user == null){
+            Log.error('failed to parse AuthUser from:  ${str}');
+            for (e in parser.errors){
+                Log.error('-- ' + e);
+            }
+        }
         return parser.fromJson(str);
     }
 

@@ -19,6 +19,8 @@ class DebugDataStoreAccess {
 	}
 
 	public function query(command:String, store:String, column:String = "", key:String = "", value:String = "", quote:String=""):Promise<String> {
+		Log.debug('DebugDataStoreAccess.query:  cmd=${command}  store=${store}  col=${column}  key=${key}  val=${value}  quote=${quote}');
+		
 		var s = _stores.get(store);
 		if (s == null) {
 			var keys = "";
