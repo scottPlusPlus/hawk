@@ -68,6 +68,16 @@ class PostgresDataStore<T> implements IDataStore<T> {
 
         return makeQuery(query).next(function(res){
             Log.debug('Postgres Create RES = ${Std.string(res)}');
+            var rows:Array<Dynamic> = res.rows;
+            if (rows != null){
+                Log.debug('- - ${rows.length} rows');
+                var row = rows[0];
+                if (row != null){
+                    Log.debug('- - ${Std.string(row)}');
+                    var dataRow = rowToDataRow(rows[0]);
+                    return createDataItem(row.pk, dataRow);
+                }
+            }
             return createDataItem(res.pk, row);
         });
 	}
