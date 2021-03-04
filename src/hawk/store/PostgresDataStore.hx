@@ -51,7 +51,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
     }
 
     public function dropTable():Promise<Noise> {
-        var query = "DROP TABLE $0";
+        var query = "DROP TABLE IF EXISTS $0";
         query = StringTools.replace(query, "$0", _tableName);
         return makeQuery(query).noise();
     }
