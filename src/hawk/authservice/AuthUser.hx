@@ -1,5 +1,6 @@
 package hawk.authservice;
 
+import zenlog.Log;
 import hawk.datatypes.Email;
 import hawk.datatypes.UUID;
 
