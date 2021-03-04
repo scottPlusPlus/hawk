@@ -34,7 +34,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
             }
             fields += ", ";
         }
-        fields = fields.substr(0,-1);
+        fields = fields.substr(0,-2);
 
         var query = '
         CREATE TABLE IF NOT EXISTS ${_tableName} (
