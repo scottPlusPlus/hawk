@@ -1,8 +1,18 @@
 package hawk.store;
 
+import haxe.iterators.ArrayIterator;
+
 abstract DataRow (Array<String>) {
     private function new(a:Array<String>) {
 		this = a;
+	}
+
+	public inline function length():Int {
+		return this.length;
+	}
+
+	public inline function iterator():ArrayIterator<String> {
+		return this.iterator();
 	}
 
 	@:from

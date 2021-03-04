@@ -16,6 +16,10 @@ class ExampleUser {
 		score = 0;
 	}
 
+	public static function example():ExampleUser {
+		return new ExampleUser("ExampleUser", "some@email.com");
+	}
+
 	public static function toJson(x:ExampleUser):String {
 		var writer = new json2object.JsonWriter<ExampleUser>();
 		return writer.write(x);

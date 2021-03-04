@@ -18,6 +18,13 @@ class LocalDataStore<T> implements IDataStore<T> {
 
 	public function new(model:DataModel<T>) {
 		Log.debug("creating new LDT with model");
+
+		var modelErrs = model.validationErrors();
+		if (modelErrs.length != 0){
+			var errStr = modelErrs.join(".. ");
+			throw ('Invalid Model:  ${errStr}');
+		}
+
 		_model = model;
 		_data = [];
 		_indexes = [];
@@ -33,7 +40,9 @@ class LocalDataStore<T> implements IDataStore<T> {
 	public function getIndexByColName(colName:String):IDataStoreIndex<String, T> {
 		var indexMap = _indexes.get(colName);
 		if (indexMap == null) {
-			throw('no column with name ${colName}');
+			var errStr = 'no column with name ${colName}';
+			Log.error(errStr);
+			throw(errStr);
 		}
 
 		// K->Promise<DataItem<V>>

@@ -24,12 +24,15 @@ class ExampleTable extends LocalDataStore<ExampleUser> {
 		Log.debug("create new table 2");
 		var adapter = new Adapter<ExampleUser, DataRow>(toRow, toUser);
 		var fields = new Array<DataField>();
-		fields.push(new DataField("id", true));
+		fields.push(new DataField("idx", true));
 		fields.push(new DataField("name", true));
+		fields.push(new DataField("email", false));
+		fields.push(new DataField("score", false));
 
 		var model = new DataModel<ExampleUser>();
 		model.adapter = adapter;
 		model.fields = fields;
+		model.example = ExampleUser.example();
 		super(model);
 	}
 
@@ -38,6 +41,6 @@ class ExampleTable extends LocalDataStore<ExampleUser> {
 	}
 
 	public function indexByID():IDataStoreIndex<String, ExampleUser> {
-		return getIndexByColName("id");
+		return getIndexByColName("idx");
 	}
 }

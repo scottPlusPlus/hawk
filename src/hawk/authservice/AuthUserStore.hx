@@ -18,7 +18,7 @@ abstract AuthUserStore(IDataStore<AuthUser>) {
     }
 
     public inline function indexByID():IDataStoreIndex<String, AuthUser> {
-        return this.getIndexByColName("id");
+        return this.getIndexByColName("uid");
     }
 
     public inline function indexByName():IDataStoreIndex<String, AuthUser> {
@@ -50,7 +50,7 @@ abstract AuthUserStore(IDataStore<AuthUser>) {
 		Log.debug("create new table 2");
 		var adapter = new Adapter<AuthUser, DataRow>(toRow, toUser);
 		var fields = new Array<DataField>();
-		fields.push(new DataField("id", true));
+		fields.push(new DataField("uid", true));
         fields.push(new DataField("email", true));
 		fields.push(new DataField("name", true));
         fields.push(new DataField("salt", false));
@@ -59,6 +59,7 @@ abstract AuthUserStore(IDataStore<AuthUser>) {
 		var model = new DataModel<AuthUser>();
 		model.adapter = adapter;
 		model.fields = fields;
+        model.example = AuthUser.testExample();
 
         return model;
     }
