@@ -50,6 +50,21 @@ class KeyBlobStore {
 		});
 	}
 
+	public static function kvStringToJson(kvx:KVX<String,String>):String {
+		var writer = new json2object.JsonWriter<KVX<String,String>>();
+		var j = writer.write(kvx);
+		return j;
+	}
+
+	public static function kvStringFromJson(j:String):KVX<String,String>{
+		var parser = new json2object.JsonParser<KVX<String,String>>();
+		var kvx = parser.fromJson(j);
+		if (kvx == null){
+			Log.error('error parsing kvx from ${j}');
+		}
+		return kvx;
+	}
+
 	public static function model():DataModel<KVX<String, String>> {
 		var example = new KVX("myKey", "myVal");
 
