@@ -115,7 +115,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
 			if (f.type == DataFieldType.Primary){
 				continue;
 			}
-			str += f.name + " = " + data.get(f.name) + ", ";
+			str += f.name + " = '" + data.get(f.name) + "', ";
 		}
 		return str.substr(0, -2);
 	}
@@ -155,7 +155,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
 
 
 	private function selectByPK(pk:Int):Promise<Null<T>> {
-		var query = "SELECT FROM _table_ WHERE _pkField_ = _pk_";
+		var query = "SELECT FROM _table_ WHERE _pkField_ = '_pk_'";
 		query = StringTools.replace(query, "_pkField_", _primaryKeyFieldName);
 		query = StringTools.replace(query, "_table_", _tableName);
 		query = StringTools.replace(query, "_pk_", Std.string(pk));
