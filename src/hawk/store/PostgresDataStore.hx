@@ -201,7 +201,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
 	}
 
 	private function selectWhere(colName:String, value:String):Promise<Null<T>> {
-		var query = "SELECT FROM _table_ WHERE _colName_ = _value_";
+		var query = "SELECT FROM _table_ WHERE _colName_ = '_value_'";
 		query = StringTools.replace(query, "_table_", _tableName);
 		query = StringTools.replace(query, "_colName_", colName);
 		query = StringTools.replace(query, "_value_", value);
