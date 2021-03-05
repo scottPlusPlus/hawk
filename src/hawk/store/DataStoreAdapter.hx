@@ -13,13 +13,6 @@ class DataStoreAdapter<A,B> implements IDataStore<A> {
     public function new (adapter:Adapter<A,B>, store:IDataStore<B>){
         _adapter = adapter;
         _store = store;
-
-        var diA_toB = function(diA:IDataItem<A>):IDataItem<B> {
-            return new DataItemAdapter(_adapter.invert(), diA);
-        }
-        var diB_toA = function(diB:IDataItem<B>):IDataItem<A> {
-            return new DataItemAdapter(_adapter, diB);
-        }
     }
 
     public function create(obj:A):Promise<A>{

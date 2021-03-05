@@ -1,5 +1,6 @@
 package hawk_test.store;
 
+import hawk.store.LocalDataStore;
 import hawk.testutils.TestVals;
 import tink.CoreApi;
 import hawk.store.KeyBlobStore;
@@ -13,17 +14,25 @@ class KeyBlobStoreTest  extends utest.Test {
 
 	public function testHappy(async:utest.Async) {
 	
-        var backingStore = new LocalMemoryStore();
+        var model = KeyBlobStore.model();
+        var backingStore = new LocalDataStore(model);
         var keyBlobStore = new KeyBlobStore(backingStore);
 
-        var stringStore = keyBlobStore.buildStringStore("xyz");
+        var stringStore:KeyBlobStringStore;
 
-        stringStore.save(TestVals.gibberish).next(function(v:String){
-            Assert.equals(TestVals.gibberish, v);
-            return stringStore.load();
-        }).next(function(v:String){
-            Assert.equals(TestVals.gibberish, v);
+        return keyBlobStore.buildStringStore("xyz").next(function(store){
+            stringStore = store;
             return Noise;
+        }).next(function(_){
+            return stringStore.save(TestVals.gibberish).next(function(v:String){
+                Assert.equals(TestVals.gibberish, v);
+                return Noise;
+            });
+        }).next(function(_){
+            return stringStore.load().next(function(v:String){
+                Assert.equals(TestVals.gibberish, v);
+                return Noise;
+            });
         }).closeTestChain(async);
     }
 }

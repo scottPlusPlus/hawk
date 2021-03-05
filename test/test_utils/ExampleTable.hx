@@ -7,7 +7,6 @@ import hawk.store.DataModel;
 import hawk.store.DataField;
 import hawk.general_tools.adapters.Adapter;
 import zenlog.Log;
-import hawk.store.DataRow;
 import hawk.store.LocalDataStore;
 
 class ExampleTable extends LocalDataStore<ExampleUser> {

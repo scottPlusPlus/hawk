@@ -2,7 +2,6 @@ package hawk.authservice;
 
 import hawk.store.KVX;
 import hawk.store.ArrayKV;
-import hawk.store.IDataItem;
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
 import hawk.messaging.*;
