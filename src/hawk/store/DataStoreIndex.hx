@@ -11,9 +11,9 @@ using hawk.util.ErrorX;
 @:generic
 class DataStoreIndex<K,V> implements IDataStoreIndex<K,V> {
 
-    private var _get:K->Promise<Null<IDataItem<V>>>;
+    private var _get:K->Promise<Null<V>>;
 
-    public function get(key:K): Promise<Null<IDataItem<V>>> {
+    public function get(key:K): Promise<Null<V>> {
         var nv = _get(key);
         if (nv == null){
             Log.debug('DSI: got null...');
@@ -21,8 +21,8 @@ class DataStoreIndex<K,V> implements IDataStoreIndex<K,V> {
         return nv;
     }
 
-    public function getMany(keys:Array<K>): Promise<ArrayKV<K,Null<IDataItem<V>>>> {
-        var res = new ArrayKV<K,Null<IDataItem<V>>>();
+    public function getMany(keys:Array<K>): Promise<ArrayKV<K,Null<V>>> {
+        var res = new ArrayKV<K,Null<V>>();
         var promises = new Array<Promise<Noise>>();
         for (k in keys){
             var p = _get(k).next(function(v){
@@ -40,7 +40,7 @@ class DataStoreIndex<K,V> implements IDataStoreIndex<K,V> {
         });
     }
 
-    public function new(getFunction:K->Promise<IDataItem<V>>){
+    public function new(getFunction:K->Promise<V>){
         _get = getFunction;
     }
 }

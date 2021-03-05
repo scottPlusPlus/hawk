@@ -1,5 +1,6 @@
 package hawk.store;
 
+import haxe.Constraints.IMap;
 import hawk.async_iterator.AsyncIteratorWrapper;
 import hawk.general_tools.adapters.IteratorAdapter;
 import hawk.async_iterator.AsyncIterator;
@@ -10,11 +11,13 @@ class LocalDataStore<T> implements IDataStore<T> {
 	// NOTE: we don't worry about any of these transactions being atomic, because none of the data is persisted
 	private var _model:DataModel<T>;
 
-	private var _data:Map<Int, DataRow>;
+	private var _data:Map<String, Map<String,String>>;
 
-	private var _indexes:Map<String, Map<String, Int>>;
+	private var _indexes:Map<String, Map<String,String>>;
 
 	private var _serial:Int;
+
+	private var _primaryKeyField:String;
 
 	public function new(model:DataModel<T>) {
 		Log.debug("creating new LDT with model");
@@ -29,7 +32,11 @@ class LocalDataStore<T> implements IDataStore<T> {
 		_data = [];
 		_indexes = [];
 		for (f in _model.fields) {
-			if (f.unique) {
+			if (f.type == DataFieldType.Primary){
+				_primaryKeyField = f.name;
+			}
+			//TODO - building a separate index for pk is not optimal
+			if (f.type == DataFieldType.Unique || f.type == DataFieldType.Primary) {
 				Log.debug('creating new index for ${f.name}');
 				_indexes.set(f.name, new Map());
 			}
@@ -46,51 +53,61 @@ class LocalDataStore<T> implements IDataStore<T> {
 		}
 
 		// K->Promise<DataItem<V>>
-		var getFunc = function(k:String):Promise<Null<IDataItem<T>>> {
-			Log.debug('get by col ${colName}:  ${k}');
-			var index = indexMap.get(k);
-			if (index == null) {
+		var getFunc = function(colVal:String):Promise<Null<T>> {
+			Log.debug('get by col ${colName}:  ${colVal}');
+			var pk = indexMap.get(colVal);
+			if (pk == null) {
 				Log.debug("is null...");
 				return Promise.resolve(null);
 			}
-			var data = _data.get(index);
+			var data = _data.get(pk);
 			if (data == null) {
 				return Promise.resolve(null);
 			}
-			var item = createDataItem(index, data);
-			return Promise.resolve(item);
+			var obj = _model.adapter.toA(data);
+			return Promise.resolve(obj);
 		}
 
 		return new DataStoreIndex(getFunc);
 	}
 
-	private function createDataItem(index:Int, data:DataRow):IDataItem<T> {
-		var deps = {
-			adapter: _model.adapter,
-			save: setByID,
-			delete: deleteByID
-		};
-		var dataItem = new DataItem<T>(deps, index, data);
-		return dataItem;
+	private function restoreItem(data:Map<String,String>):T {
+		return _model.adapter.toA(data);
 	}
 
-	private function deleteByID(id:Int):Promise<Bool> {
-		var row = _data.get(id);
-		if (row == null) {
+	private function primaryKey(data:IMap<String,String>):String {
+		return data.get(_primaryKeyField);
+	}
+
+	public function delete(obj:T):Promise<Bool> {
+		var data = _model.adapter.toB(obj);
+		var pk = primaryKey(data);
+		var existing = _data.get(pk);
+
+		if (existing == null) {
 			return false;
 		}
-		var colData = dataToColData(row);
+		var colData = dataToColData(existing);
 		for (col in colData) {
 			_indexes.get(col.colName).remove(col.value);
 		}
-		_data.remove(id);
+		_data.remove(pk);
 		return true;
 	}
 
-	private function setByID(id:Int, row:DataRow):Promise<Noise> {
-		Log.debug('set by id:  ${id}');
-		var colData = dataToColData(row);
-		var existingData = _data.get(id);
+	public function update(obj:T):Promise<T> {
+		var data = _model.adapter.toB(obj);
+		var pk = primaryKey(data);
+		if (pk == null || pk.length == 0){
+			return new Error('could not find primary key for  ${obj}');
+		}
+		return setByPK(pk, data);
+	}
+
+	private function setByPK(pk:String, data:IMap<String,String>):Promise<T> {
+		Log.debug('set by id:  ${pk}');
+		var colData = dataToColData(data);
+		var existingData = _data.get(pk);
 
 		for (col in colData) {
 			Log.debug('checking for conflict in ${col.colName} / ${col.value}');
@@ -102,7 +119,7 @@ class LocalDataStore<T> implements IDataStore<T> {
 			}
 			var foundIndex = indexMap.get(col.value);
 			Log.debug('got existing index  ${foundIndex}');
-			if (foundIndex != null && foundIndex != id) {
+			if (foundIndex != null && foundIndex != pk) {
 				return new Error('Data Conflict: col ${col.colName} already has a value for ${col.value}:  ${foundIndex}');
 			}
 		}
@@ -116,49 +133,60 @@ class LocalDataStore<T> implements IDataStore<T> {
 			}
 		}
 
-		_data.set(id, row);
+		//convert iMap to map...
+		var map = new Map<String,String>();
+		for (kv in data.keyValueIterator()){
+			map.set(kv.key, kv.value);
+		}
+
+		_data.set(pk, map);
 		for (col in colData) {
 			// need to remove old indexes...
 			var indexMap = _indexes.get(col.colName);
-			Log.debug('setting index for ${col.colName}  ${col.value} = ${id}');
-			indexMap.set(col.value, id);
+			Log.debug('setting index for ${col.colName}  ${col.value} = ${pk}');
+			indexMap.set(col.value, pk);
 		}
 
-		return Noise;
+		return _model.adapter.toA(data);
 	}
 
 	// returns the colName + value for each UNIQUE column
-	private function dataToColData(d:DataRow):Array<ColData> {
+	private function dataToColData(data:IMap<String,String>):Array<ColData> {
 		var uniqueCols = new Array<ColData>();
-		var data = d.toArray();
 		Log.debug('dataToColData:  ${data}');
-		var length = Math.round(Math.min(data.length, _model.fields.length));
-		for (i in 0...length) {
-			Log.debug('try col ${i}');
-			var field = _model.fields[i];
-			if (field.unique) {
-				var col = new ColData(field.name, data[i]);
+		for (field in _model.fields) {
+			if (field.type == DataFieldType.Unique || field.type == DataFieldType.Primary) {
+				var col = new ColData(field.name, data.get(field.name));
 				uniqueCols.push(col);
 			}
 		}
 		return uniqueCols;
 	}
 
-	public function create(data:T):Promise<IDataItem<T>> {
+	public function create(obj:T):Promise<T> {
 		// TODO - need some random ID creator??
-		var newIndex = _serial++;
-		Log.debug('Create New:  with index ${newIndex} and row:');
-		var row = _model.adapter.toB(data);
-		Log.debug('${row}');
-		return setByID(newIndex, row).next(function(_) {
-			return createDataItem(newIndex, row);
+		var data = _model.adapter.toB(obj);
+		var pk = primaryKey(data);
+
+		// if (_model.serial){
+		// 	if (pk != ""){
+		// 		return new Error('Primary key should be empty to create.  Got ${pk}');
+		// 	}
+		// 	pk = Std.string(_serial++);
+		// }
+
+
+		Log.debug('Create New:  with index ${pk} and row:');
+		return setByPK(pk, data).next(function(_) {
+			data.set(_primaryKeyField, pk);
+			return _model.adapter.toA(data);
 		});
 	}
 
-	public function iterator():AsyncIterator<IDataItem<T>> {
+	public function iterator():AsyncIterator<T> {
 		var kvIterator = _data.keyValueIterator();
-		var adapt = function(kv:{key:Int, value:DataRow}) {
-			return createDataItem(kv.key, kv.value);
+		var adapt = function(kv:{key:String, value:Map<String,String>}) {
+			return _model.adapter.toA(kv.value);
 		};
 		var diIterator = new IteratorAdapter(kvIterator, adapt);
 		var asyncIterator = new AsyncIteratorWrapper(diIterator);

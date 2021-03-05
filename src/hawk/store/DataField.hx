@@ -1,5 +1,6 @@
 package hawk.store;
 
+
 import tink.core.Error;
 
 class DataField {
@@ -8,10 +9,10 @@ class DataField {
     private static final _regex = ~/^[a-z]*$/i;
 
     public var name:String;
-    public var unique:Bool;
-    public function new(name:String, unique:Bool = false){
+    public var type:DataFieldType;
+    public function new(name:String, type:DataFieldType = DataFieldType.Other){
         this.name = name;
-        this.unique = unique;
+        this.type = type;
     }
 
     public function validationErrors():Array<String>{

@@ -10,8 +10,6 @@ class DataStoreAdapter<A,B> implements IDataStore<A> {
     private var _adapter:Adapter<A,B>;
     private var _store:IDataStore<B>;
 
-    private var _dataItemAdapter:Adapter<IDataItem<A>,IDataItem<B>>;
-
     public function new (adapter:Adapter<A,B>, store:IDataStore<B>){
         _adapter = adapter;
         _store = store;
@@ -22,26 +20,36 @@ class DataStoreAdapter<A,B> implements IDataStore<A> {
         var diB_toA = function(diB:IDataItem<B>):IDataItem<A> {
             return new DataItemAdapter(_adapter, diB);
         }
-        _dataItemAdapter = new Adapter(diA_toB, diB_toA);
     }
 
-    public function create(data:A):Promise<IDataItem<A>>{
-        var dataB = _adapter.toB(data);
-        return _store.create(dataB).next(function(diB){
-            var diA:IDataItem<A> = new DataItemAdapter(_adapter, diB);
-            return diA;
+    public function create(obj:A):Promise<A>{
+        var inB = _adapter.toB(obj);
+        return _store.create(inB).next(function(outB){
+            return _adapter.toA(outB);
         });
+    }
+
+    public function update(obj:A):Promise<A>{
+        var inB = _adapter.toB(obj);
+        return _store.update(inB).next(function(outB){
+            return _adapter.toA(outB);
+        });
+    }
+
+    public function delete(obj:A):Promise<Bool>{
+        var inB = _adapter.toB(obj);
+        return _store.delete(inB);
     }
 
     public function getIndexByColName(colName:String):IDataStoreIndex<String, A>{
         var indexB = _store.getIndexByColName(colName);
-        var indexA = new DataStoreIndexAdapter(_dataItemAdapter, indexB);
+        var indexA = new DataStoreIndexAdapter(_adapter, indexB);
         return indexA;
     }
 
-    public function iterator():AsyncIterator<IDataItem<A>> {
+    public function iterator():AsyncIterator<A> {
         var iteratorB = _store.iterator();
-        return new AsyncIteratorAdapter(_dataItemAdapter, iteratorB);
+        return new AsyncIteratorAdapter(_adapter, iteratorB);
     }
 
 }

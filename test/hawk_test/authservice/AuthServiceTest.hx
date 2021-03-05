@@ -48,7 +48,7 @@ class AuthServiceTest extends utest.Test {
 			var err = o.failure().nullSure();
 			Assert.equals(ErrorCode.Unauthorized, err.code);
 			async.done();
-			TestLogger.setDebug(false);
+			//TestLogger.setDebug(false);
 			return Noise;
 		}).eager();
 	}
@@ -65,7 +65,7 @@ class AuthServiceTest extends utest.Test {
 			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				async.done();
-				TestLogger.setDebug(false);
+				//TestLogger.setDebug(false);
 				return Noise;
 			})
 			.eager();
@@ -94,7 +94,7 @@ class AuthServiceTest extends utest.Test {
 				var actor = service.actorFromToken(r.token).sure();
 				Assert.equals(res.id, actor);
 				async.done();
-				TestLogger.setDebug(false);
+				//TestLogger.setDebug(false);
 				return Noise;
 			})
 			.eager();
@@ -118,7 +118,7 @@ class AuthServiceTest extends utest.Test {
 				var err = o.failure().nullSure();
 				Assert.equals(ErrorCode.Unauthorized, err.code);
 				async.done();
-				TestLogger.setDebug(false);
+				//TestLogger.setDebug(false);
 				return Noise;
 			})
 			.eager();
@@ -161,13 +161,16 @@ class AuthServiceTest extends utest.Test {
 		var user2ID:UUID;
 
 		service.register(mail1, pass).next(function(res){
+			Log.debug("finished first register");
 			user1ID = res.id;
 			return service.register(mail2, pass).next(function(res2){
 				user2ID = res2.id;
+				Log.debug('got both user ids... ${user2ID}  ');
 				return Noise;
 			});
 		}).thenWait(100).next(function(_){
-			return service.displayNames([user1ID, user2ID]).next(function(res){
+			Log.debug('CALL get displayNames...');
+			return service.displayNames([user1ID, user2ID]).assertNoErr().next(function(res){
 				var map = new Map<UUID,String>();
 				for (kv in res){
 					map.set(kv.key, kv.value);

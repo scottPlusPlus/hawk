@@ -18,6 +18,7 @@ import hawk.datatypes.Email;
 using hawk.util.OutcomeX;
 using hawk.util.ErrorX;
 using hawk.util.PromiseX;
+using hawk.util.NullX;
 
 class AuthService {
 	private final BAD_LOGIN_MSG = 'invalid email / password';
@@ -115,11 +116,11 @@ class AuthService {
 	public function signIn(email:Email, pass:Password):Promise<AuthResponse> {
 		Log.debug("AuthService.login");
 		var indexByEmail = _authUserStore.indexByEmail();
-		return indexByEmail.get(email).next(function(res:Null<IDataItem<AuthUser>>) {
+		return indexByEmail.get(email).next(function(res:Null<AuthUser>) {
 			if (res == null) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
-			var user = res.value();
+			var user = res.nullSure();
 			Log.debug("AuthService.login have user");
 			var hashed = hashPass(pass, user.salt);
 			if (hashed != user.passHash) {
@@ -137,7 +138,9 @@ class AuthService {
 	public function displayNames(ids:Array<UUID>):Promise<Array<KVX<UUID,Null<String>>>>{
 		var indexByID = _authUserStore.indexByID();
 		var idsStr = UUID.adaptArrayIn(ids);
+		Log.debug('displayNames:  get ${idsStr.length} ids...');
 		return indexByID.getMany(idsStr).next(function(resIn){
+			Log.debug('displayNames:  got ${resIn.length} users');
 			var resOut = new Array<KVX<UUID,String>>();
 			resOut.resize(resIn.length);
 			for (i in 0...resIn.length){
@@ -147,8 +150,8 @@ class AuthService {
 					Log.debug('dataItem for ${keyOut} is null');
 					resOut[i] = new KVX(keyOut, null);
 				} else {
-					Log.debug('dataItem for ${keyOut} is ${kv.value.value().displayName}');
-					resOut[i] = new KVX(keyOut, kv.value.value().displayName);
+					Log.debug('dataItem for ${keyOut} is ${kv.value.displayName}');
+					resOut[i] = new KVX(keyOut, kv.value.displayName);
 				}
 			}
 			return resOut;

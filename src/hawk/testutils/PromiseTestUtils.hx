@@ -11,6 +11,7 @@ class PromiseTestUtils {
 
 	public static inline function assertNoErr<T>(p:Promise<T>):Promise<T> {
 		return p.mapError(function(err:Error){
+			Log.error(err);
             Assert.isNull(err);
             return err;
 		});

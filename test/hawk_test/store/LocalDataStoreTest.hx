@@ -2,20 +2,11 @@ package hawk_test.store;
 
 import test_utils.ExampleTable;
 import test_utils.ExampleUser;
-import hawk.store.IDataItem;
-import hawk.store.KV;
+
 import zenlog.Log;
 import hawk.testutils.TestLogger;
 import tink.CoreApi;
-import hawk.store.IDataStoreIndex;
-import hawk.datatypes.UUID;
-import hawk.datatypes.Email;
-import hawk.store.DataField;
-import hawk.general_tools.adapters.Adapter;
-import hawk.store.DataItem;
-import hawk.store.DataRow;
-import hawk.store.DataModel;
-import hawk.store.LocalDataStore;
+
 import utest.Assert;
 import utest.Async;
 
@@ -37,16 +28,14 @@ class LocalDataStoreTest extends utest.Test {
 		var table = new ExampleTable();
 		var indexByName = table.indexByName();
 		table.create(_userX).next(function(_) {
-			return indexByName.get(_userX.name).next(function(dr) {
-				var foundUser = dr.value();
+			return indexByName.get(_userX.name).next(function(foundUser) {
 				Assert.same(_userX, foundUser);
 				foundUser.score = 5;
-				return dr.mutate(foundUser);
+				return table.update(foundUser);
 			});
 		}).next(function(_) {
-			return indexByName.get(_userX.name).next(function(dr) {
-				var foundUser = dr.value();
-				Assert.same(5, foundUser.score);
+			return indexByName.get(_userX.name).next(function(resUser) {
+				Assert.same(5, resUser.score);
 				return Noise;
 			});
 		}).closeTestChain(async);
@@ -77,10 +66,9 @@ class LocalDataStoreTest extends utest.Test {
 			return table.indexByName()
 				.get(_userX.name)
 				.errOnNull()
-				.next(function(di) {
-					var user = di.value();
-					user.name = _userY.name;
-					return di.mutate(user);
+				.next(function(foundUser) {
+					foundUser.name = _userY.name;
+					return table.update(foundUser); 
 				})
 				.assertErrAndContinue('expected err, conflicting name');
 		}).closeTestChain(async);
@@ -96,11 +84,10 @@ class LocalDataStoreTest extends utest.Test {
 			return table.create(_userX);
 		}).next(function(_) {
 			// change userX name
-			return indexByName.get(_userX.name).errOnNull().next(function(di) {
-				var foundUser = di.value();
+			return indexByName.get(_userX.name).errOnNull().next(function(foundUser) {
 				Assert.same(_userX, foundUser);
 				foundUser.name = "NOT" + foundUser.name;
-				return di.mutate(foundUser);
+				return table.update(foundUser);
 			});
 		}).next(function(_) {
 			// Create new user with userX old name
@@ -115,10 +102,8 @@ class LocalDataStoreTest extends utest.Test {
 		var indexByName = table.indexByName();
 		table.create(_userX).next(function(_) {
 			// get and delete userX
-			return indexByName.get(_userX.name).next(function(di) {
-				var foundUser = di.value();
-				Assert.same(_userX, foundUser);
-				return di.delete();
+			return indexByName.get(_userX.name).next(function(foundUser) {
+				return table.delete(foundUser);
 			});
 		}).next(function(_) {
 			// check userX is now null
@@ -144,7 +129,7 @@ class LocalDataStoreTest extends utest.Test {
 		}).next(function(_) {
 			var fakeName = "fakeNAme";
 			var keys = [_userX.name, _userY.name, fakeName];
-			var getRes = new Map<String, IDataItem<ExampleUser>>();
+			var getRes = new Map<String, ExampleUser>();
 			return indexByName.getMany(keys).next(function(res) {
 				var items = 0;
 				for (kv in res) {
@@ -156,9 +141,9 @@ class LocalDataStoreTest extends utest.Test {
 				var actual = getRes.get(fakeName);
 				Assert.isNull(actual);
 				actual = getRes.get(_userX.name);
-				Assert.same(_userX, actual.value());
+				Assert.same(_userX, actual);
 				actual = getRes.get(_userY.name);
-				Assert.same(_userY, actual.value());
+				Assert.same(_userY, actual);
 				return Noise;
 			});
 		}).closeTestChain(async);

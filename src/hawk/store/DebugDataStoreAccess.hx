@@ -41,22 +41,20 @@ class DebugDataStoreAccess {
 
 		switch command {
 			case "get":
-				return s.getIndexByColName(column).get(key).next(function(di) {
-					return di.value();
-				});
+				return s.getIndexByColName(column).get(key);
 
 			case "create":
+				return s.create(value);
 
-				return s.create(value).next(function(di) {
-					return di.value();
-				});
+			case "update":
+				return s.update(value);
 
 			case "delete":
-				return s.getIndexByColName(column).get(key).next(function(di) {
-					if (di == null) {
+				return s.getIndexByColName(column).get(key).next(function(obj) {
+					if (obj == null) {
 						return Promise.resolve("no such item");
 					}
-					return di.delete().next(function(_) {
+					return s.delete(obj).next(function(_) {
 						return Promise.resolve("item deleted");
 					});
 				});
@@ -75,8 +73,8 @@ class DebugDataStoreAccess {
 	private function printAll(store:IDataStore<String>):Promise<String> {
 		var str = "";
 		var it = store.iterator();
-		return AsyncIteratorX.forEach(it, function(di:IDataItem<String>) {
-			str += '${di.value()}\n';
+		return AsyncIteratorX.forEach(it, function(obj:String) {
+			str += '${obj}\n';
 			return Promise.NOISE;
 		}).next(function(_) {
 			return str;
@@ -92,16 +90,17 @@ class DebugDataStoreAccess {
 			_dropKey = "";
 			return 'wrong key, try again';
 		}
-		var allItems = new Array<IDataItem<String>>();
+		var allItems = new Array<String>();
 		var it = store.iterator();
-		return AsyncIteratorX.forEach(it, function(di:IDataItem<String>) {
-			allItems.push(di);
+		return AsyncIteratorX.forEach(it, function(item:String) {
+			allItems.push(item);
 			return Promise.NOISE;
 		}).next(function(_) {
 			var asyncKeys = new AsyncIteratorWrapper(allItems.iterator());
-			var dp = AsyncIteratorX.forEach(asyncKeys, function(di:IDataItem<String>) {
-				Log.debug('dropping ${di.value()}');
-				return di.delete();
+			var dp = AsyncIteratorX.forEach(asyncKeys, function(item:String) {
+				store.delete(item);
+				Log.debug('dropping ${item}');
+				return store.delete(item);
 			});
 			return dp;
 		}).next(function(_) {

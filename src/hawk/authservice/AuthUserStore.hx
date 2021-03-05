@@ -1,5 +1,6 @@
 package hawk.authservice;
 
+import haxe.Constraints.IMap;
 import hawk.general_tools.adapters.Adapter;
 import zenlog.Log;
 import hawk.async_iterator.AsyncIterator;
@@ -13,7 +14,7 @@ abstract AuthUserStore(IDataStore<AuthUser>) {
         this = store;
     }
 
-    public inline function create(data:AuthUser):Promise<IDataItem<AuthUser>>{
+    public inline function create(data:AuthUser):Promise<AuthUser>{
         return this.create(data);
     }
 
@@ -29,32 +30,37 @@ abstract AuthUserStore(IDataStore<AuthUser>) {
         return this.getIndexByColName("email");
     }
     
-    public inline function iterator():AsyncIterator<IDataItem<AuthUser>>{
+    public inline function iterator():AsyncIterator<AuthUser>{
         return this.iterator();
     };
 
     public static function model(): DataModel<AuthUser> {
-        var toRow = function(u:AuthUser):DataRow {
-			return [u.id, u.email, u.displayName, u.salt, u.passHash];
+        var toMap = function(u:AuthUser):IMap<String,String> {
+            var m = new Map<String,String>();
+            m.set("uid", u.id);
+            m.set("email", u.email);
+            m.set("name", u.displayName);
+            m.set("salt", u.salt);
+            m.set("pass", u.passHash);
+			return m;
 		};
-		var toUser = function(r:DataRow):AuthUser {
-			var arr = r.toArray();
+		var toUser = function(data:IMap<String,String>):AuthUser {
 			var u = new AuthUser();
-			u.id = arr[0];
-            u.email = arr[1];
-            u.displayName = arr[2];
-            u.salt = arr[3];
-            u.passHash = arr[4];
+			u.id = data.get("uid");
+            u.email = data.get("email");
+            u.displayName = data.get("name");
+            u.salt = data.get("salt");
+            u.passHash = data.get("pass");
 			return u;
 		};
 		Log.debug("create new table 2");
-		var adapter = new Adapter<AuthUser, DataRow>(toRow, toUser);
+		var adapter = new Adapter<AuthUser, IMap<String,String>>(toMap, toUser);
 		var fields = new Array<DataField>();
-		fields.push(new DataField("uid", true));
-        fields.push(new DataField("email", true));
-		fields.push(new DataField("name", true));
-        fields.push(new DataField("salt", false));
-        fields.push(new DataField("passhash", false));
+		fields.push(new DataField("uid", DataFieldType.Primary));
+        fields.push(new DataField("email", DataFieldType.Unique));
+		fields.push(new DataField("name", DataFieldType.Unique));
+        fields.push(new DataField("salt"));
+        fields.push(new DataField("pass"));
 
 		var model = new DataModel<AuthUser>();
 		model.adapter = adapter;
