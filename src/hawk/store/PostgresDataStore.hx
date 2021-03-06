@@ -54,10 +54,8 @@ class PostgresDataStore<T> implements IDataStore<T> {
           );
         ';
 
-		return dropTable().next(function(_) {
-			return makeQuery(query).next(function(_) {
-				return this;
-			});
+		return makeQuery(query).next(function(_) {
+			return this;
 		});
 	}
 

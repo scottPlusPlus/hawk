@@ -5,6 +5,9 @@ import thx.AnonymousMap;
 
 class Json {
 
+    private static var _writers:CommonJsonWriters;
+    private static var _readers:CommonJsonReaders;
+
     public static function mapToJson(map:IMap<String,String>):String {
         var res = '{';
         for (kv in map.keyValueIterator()){
@@ -23,5 +26,50 @@ class Json {
     public static function jsonToAnonMap(json:String):IMap<String,String> {
         var obj = haxe.Json.parse(json);
         return new AnonymousMap(obj);
+    }
+
+    public static function read():CommonJsonReaders {
+        if (_readers == null){
+            _readers = new CommonJsonReaders();
+        }
+        return _readers;
+    }
+
+    public static function write():CommonJsonWriters {
+        if (_writers == null){
+            _writers = new CommonJsonWriters();
+        }
+        return _writers;
+    }
+}
+
+
+class CommonJsonWriters {
+
+    public function new(){}
+
+    public function fromArrayOfString(x:Array<String>):String {
+        var writer = new json2object.JsonWriter<Array<String>>();
+        return writer.write(x);
+    }
+
+    public function fromArrayOfInt(x:Array<Int>):String {
+        var writer = new json2object.JsonWriter<Array<Int>>();
+        return writer.write(x);
+    }
+}
+
+class CommonJsonReaders {
+
+    public function new(){}
+
+    public function toArrayOfString(json:String):Array<String>{
+        var parser = new json2object.JsonParser<Array<String>>();
+        return parser.fromJson(json);
+    }
+
+    public function toArrayOfInt(json:String):Array<Int>{
+        var parser = new json2object.JsonParser<Array<Int>>();
+        return parser.fromJson(json);
     }
 }
