@@ -135,6 +135,7 @@ class AuthService {
 	}
 
 	public function displayNames(ids:Array<UUID>):Promise<Array<KVX<UUID,Null<String>>>>{
+		Log.debug('AuthService.displayNames: ${ids}');
 		var indexByID = _authUserStore.indexByID();
 		var idsStr = UUID.castArrayIn(ids);
 		Log.debug('displayNames:  get ${idsStr.length} ids...');
