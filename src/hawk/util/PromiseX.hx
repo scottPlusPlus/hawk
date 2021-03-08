@@ -1,5 +1,6 @@
 package hawk.util;
 
+import zenlog.Log;
 import haxe.Timer;
 import tink.core.Error;
 import tink.CoreApi;
@@ -10,6 +11,13 @@ class PromiseX {
 	public static inline function wrapErr<T>(p:Promise<T>, ?code:ErrorCode = InternalError, message:String, ?pos:Pos):Promise<T> {
 		return p.mapError(function(err:Error){
 			return ErrorX.wrap(err, code, message, pos);
+		});
+	}
+
+	public static inline function logErr<T>(p:Promise<T>):Promise<T> {
+		return p.mapError(function(err:Error){
+			Log.error(err);
+			return err;
 		});
 	}
 

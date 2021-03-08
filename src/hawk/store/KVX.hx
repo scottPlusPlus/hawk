@@ -9,14 +9,11 @@ class KVX<K, V> {
 	public var key:K;
 	public var value:V;
 
-
-	public static inline function compareStringKeys(a:KV<String,Dynamic>, b:KV<String,Dynamic>){
+	public static inline function compareStringKeys(a:KV<String, Dynamic>, b:KV<String, Dynamic>) {
 		return if (a.key < b.key) -1 else if (a.key > b.key) 1 else 0;
 	}
 
-	public static inline function compareIntKeys(a:KV<Int,Dynamic>, b:KV<Int,Dynamic>){
+	public static inline function compareIntKeys(a:KV<Int, Dynamic>, b:KV<Int, Dynamic>) {
 		return if (a.key < b.key) -1 else if (a.key > b.key) 1 else 0;
 	}
-
-
 }

@@ -51,6 +51,15 @@ abstract Timestamp(UInt) {
         return Timestamp.fromDate(Date.now());
     }
 
+    public static function toString(t:Timestamp):String {
+      return Std.string(t.toUInt());
+    }
+
+    public static function fromString(str:String):Timestamp {
+      var i = Std.parseInt(str);
+      return fromInt(i);
+    }
+
 
     public static final HOUR:Timestamp = Timestamp.fromUInt(1000 * 60 * 60);
     public static final SECOND:Timestamp = Timestamp.fromUInt(1000);
