@@ -1,6 +1,6 @@
 package hawk.authservice;
 
-import hawk.store.KVX;
+import hawk.store.KVC;
 import hawk.store.ArrayKV;
 import hawk.authservice.EvNewUser;
 import zenlog.Log;
@@ -134,24 +134,24 @@ class AuthService {
 		});
 	}
 
-	public function displayNames(ids:Array<UUID>):Promise<Array<KVX<UUID,Null<String>>>>{
+	public function displayNames(ids:Array<UUID>):Promise<Array<KVC<UUID,Null<String>>>>{
 		Log.debug('AuthService.displayNames: ${ids}');
 		var indexByID = _authUserStore.indexByID();
 		var idsStr = UUID.castArrayIn(ids);
 		Log.debug('displayNames:  get ${idsStr.length} ids...');
 		return indexByID.getMany(idsStr).next(function(resIn){
 			Log.debug('displayNames:  got ${resIn.length} users');
-			var resOut = new Array<KVX<UUID,String>>();
+			var resOut = new Array<KVC<UUID,String>>();
 			resOut.resize(resIn.length);
 			for (i in 0...resIn.length){
 				var kv = resIn[i];
 				var keyOut = UUID.fromString(kv.key);
 				if (kv.value == null){
 					Log.debug('dataItem for ${keyOut} is null');
-					resOut[i] = new KVX(keyOut, null);
+					resOut[i] = new KVC(keyOut, null);
 				} else {
 					Log.debug('dataItem for ${keyOut} is ${kv.value.displayName}');
-					resOut[i] = new KVX(keyOut, kv.value.displayName);
+					resOut[i] = new KVC(keyOut, kv.value.displayName);
 				}
 			}
 			return resOut;

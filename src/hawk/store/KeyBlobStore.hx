@@ -8,13 +8,13 @@ import tink.CoreApi;
 class KeyBlobStore {
 	private static final KEY_FIELD = "key";
 	
-	private var _store:IDataStore<KVX<String, String>>;
+	private var _store:IDataStore<KVC<String, String>>;
 	private var _built:Map<String, UInt> = [];
-	private var _index:IDataStoreIndex<String, KVX<String, String>>;
+	private var _index:IDataStoreIndex<String, KVC<String, String>>;
 
 	
 
-	public function new(store:IDataStore<KVX<String, String>>) {
+	public function new(store:IDataStore<KVC<String, String>>) {
 		_store = store;
 		_index = _store.getIndexByColName(KEY_FIELD);
 	}
@@ -33,7 +33,7 @@ class KeyBlobStore {
 			});
 		};
 		var set = function(data:String) {
-			var kvx = new KVX(key, data);
+			var kvx = new KVC(key, data);
 			return _store.update(kvx).noise();
 		};
 
@@ -41,7 +41,7 @@ class KeyBlobStore {
 
 		return _index.get(key).next(function(res) {
 			if (res == null) {
-				var kvx = new KVX(key, "");
+				var kvx = new KVC(key, "");
 				return _store.create(kvx);
 			}
 			return res;
@@ -50,14 +50,14 @@ class KeyBlobStore {
 		});
 	}
 
-	public static function kvStringToJson(kvx:KVX<String,String>):String {
-		var writer = new json2object.JsonWriter<KVX<String,String>>();
+	public static function kvStringToJson(kvx:KVC<String,String>):String {
+		var writer = new json2object.JsonWriter<KVC<String,String>>();
 		var j = writer.write(kvx);
 		return j;
 	}
 
-	public static function kvStringFromJson(j:String):KVX<String,String>{
-		var parser = new json2object.JsonParser<KVX<String,String>>();
+	public static function kvStringFromJson(j:String):KVC<String,String>{
+		var parser = new json2object.JsonParser<KVC<String,String>>();
 		var kvx = parser.fromJson(j);
 		if (kvx == null){
 			Log.error('error parsing kvx from ${j}');
@@ -65,27 +65,27 @@ class KeyBlobStore {
 		return kvx;
 	}
 
-	public static function model():DataModel<KVX<String, String>> {
-		var example = new KVX("myKey", "myVal");
+	public static function model():DataModel<KVC<String, String>> {
+		var example = new KVC("myKey", "myVal");
 
-		var toMap = function(item:KVX<String, String>):IMap<String, String> {
+		var toMap = function(item:KVC<String, String>):IMap<String, String> {
 			var m = new Map<String, String>();
 			m.set(KEY_FIELD, item.key);
 			m.set("value", item.value);
 			return m;
 		};
 
-		var toKVX = function(data:IMap<String, String>):KVX<String, String> {
+		var toKVC = function(data:IMap<String, String>):KVC<String, String> {
 			var k = data.get(KEY_FIELD);
 			var v = data.get("value");
-			return new KVX(k, v);
+			return new KVC(k, v);
 		};
-		var adapter = new Adapter(toMap, toKVX);
+		var adapter = new Adapter(toMap, toKVC);
 		var fields = new Array<DataField>();
 		fields.push(new DataField(KEY_FIELD, DataFieldType.Primary));
 		fields.push(new DataField("value"));
 
-		var model = new DataModel<KVX<String, String>>();
+		var model = new DataModel<KVC<String, String>>();
 		model.adapter = adapter;
 		model.fields = fields;
 		model.example = example;

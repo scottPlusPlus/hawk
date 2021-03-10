@@ -7,10 +7,10 @@ abstract KVAdapter<KA,VA,KB,VB> (Adapter<KV<KA,VA>,KV<KB,VB>>)   {
     public function new(keyAdapter:Adapter<KA,KB>, valAdapter:Adapter<VA,VB>){
 
         var bToA = function(kv: KV<KB,VB>){
-			return new KVX<KA,VA>(keyAdapter.toA(kv.key), valAdapter.toA(kv.value));
+			return new KVC<KA,VA>(keyAdapter.toA(kv.key), valAdapter.toA(kv.value));
 		};
 		var aToB = function(kv: KV<KA,VA>){
-			return new KVX<KB,VB>(keyAdapter.toB(kv.key), valAdapter.toB(kv.value));
+			return new KVC<KB,VB>(keyAdapter.toB(kv.key), valAdapter.toB(kv.value));
 		};
 		this = new Adapter<KV<KA,VA>,KV<KB,VB>>(aToB, bToA);
     }

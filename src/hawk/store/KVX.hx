@@ -1,15 +1,21 @@
 package hawk.store;
 
-class KVX<K, V> {
-	public function new(key:K, value:V) {
-		this.key = key;
-		this.value = value;
+import tink.CoreApi;
+import tink.core.Error;
+
+class KVX {
+    
+	public static function collapseNulls<K,V>(arr:Array<KV<K,Null<V>>>):Outcome<Array<KV<K,V>>,Error>{
+		for (i in 0...arr.length){
+			var kv = arr[i];
+			if (kv.value == null){
+				return Failure(new Error('value for ${kv.key} is null'));
+			}
+		}
+		return Success(arr);
 	}
 
-	public var key:K;
-	public var value:V;
-
-	public static inline function compareStringKeys(a:KV<String, Dynamic>, b:KV<String, Dynamic>) {
+    public static inline function compareStringKeys(a:KV<String, Dynamic>, b:KV<String, Dynamic>) {
 		return if (a.key < b.key) -1 else if (a.key > b.key) 1 else 0;
 	}
 

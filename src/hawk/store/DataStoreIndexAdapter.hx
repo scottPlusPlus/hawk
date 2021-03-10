@@ -31,10 +31,10 @@ class DataStoreIndexAdapter<K,A,B> implements IDataStoreIndex<K,A> {
             for (i in 0...mappedArray.length){
                 var kvB = resB[i];
                 if (kvB.value == null){
-                    mappedArray[i] = new KVX(kvB.key, null);
+                    mappedArray[i] = new KVC(kvB.key, null);
                 } else {
                     var valA = _adapter.toA(kvB.value);
-                    mappedArray[i] = new KVX(kvB.key, valA);
+                    mappedArray[i] = new KVC(kvB.key, valA);
                 }
             }
             return mappedArray;

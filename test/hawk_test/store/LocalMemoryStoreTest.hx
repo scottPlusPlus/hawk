@@ -1,5 +1,6 @@
 package hawk_test.store;
 
+import hawk.store.KVC;
 import hawk.store.KVX;
 import hawk.testutils.TestLogger;
 import zenlog.Log;
@@ -83,9 +84,9 @@ class LocalMemoryStoreTest extends utest.Test {
 		var store = new LocalMemoryStore(map);
 
         var expected = [];
-        expected.push(new KVX(TestVals.foo, TestVals.bar));
-        expected.push(new KVX(TestVals.foo2, TestVals.bar2));
-        expected.push(new KVX(TestVals.foo3, TestVals.bar3));
+        expected.push(new KVC(TestVals.foo, TestVals.bar));
+        expected.push(new KVC(TestVals.foo2, TestVals.bar2));
+        expected.push(new KVC(TestVals.foo3, TestVals.bar3));
 
 		store.getMany([TestVals.foo, TestVals.foo2, TestVals.foo3]).next(function(kvs) {
 			kvs.sort(KVX.compareStringKeys);

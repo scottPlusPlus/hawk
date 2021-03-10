@@ -1,8 +1,9 @@
 package hawk_test.store;
 
 import hawk.async_iterator.AsyncIteratorX;
-import hawk.store.KV;
 import tink.CoreApi;
+import hawk.store.KV;
+import hawk.store.KVC;
 import hawk.store.KVX;
 import hawk.store.IKVStore;
 import hawk.store.KVStoreAdapter;
@@ -30,10 +31,10 @@ class KVStoreAdapterTest extends utest.Test {
 			v.sort(KVX.compareIntKeys);
 
 			var expected = new Array<KV<Int, Null<Int>>>();
-			expected.push(new KVX(1, 100));
-			expected.push(new KVX(2, 200));
-			expected.push(new KVX(3, 300));
-			expected.push(new KVX(7, null));
+			expected.push(new KVC(1, 100));
+			expected.push(new KVC(2, 200));
+			expected.push(new KVC(3, 300));
+			expected.push(new KVC(7, null));
 
 			Assert.same(expected, v);
 			return Noise;

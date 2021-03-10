@@ -2,7 +2,7 @@ package hawk.store;
 
 import zenlog.Log;
 import hawk.store.ArrayKV;
-import hawk.store.KVX;
+import hawk.store.KVC;
 import haxe.Constraints.IMap;
 import tink.CoreApi;
 
@@ -27,9 +27,9 @@ class DataStoreIndex<K,V> implements IDataStoreIndex<K,V> {
         for (k in keys){
             var p = _get(k).next(function(v){
                 if (v == null){
-                    res.push(new KVX(k, null));
+                    res.push(new KVC(k, null));
                 } else {
-                    res.push(new KVX(k, v));
+                    res.push(new KVC(k, v));
                 }
                 return Noise;
             });

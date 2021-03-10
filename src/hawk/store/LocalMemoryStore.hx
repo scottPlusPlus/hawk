@@ -29,7 +29,7 @@ class LocalMemoryStore implements IKVStore<String,String> {
         var kvs = new Array<KV<String,Null<String>>>();
         for (k in keys){
             var v = _map.get(k);
-            var kv = new KVX(k, v);
+            var kv = new KVC(k, v);
             kvs.push(kv);
         }
         return kvs;
