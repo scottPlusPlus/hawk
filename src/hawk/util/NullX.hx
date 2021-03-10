@@ -12,4 +12,11 @@ class NullX {
         }
         return n;
     }
+
+    public static inline function nullThrows<T>(n:Null<T>):T {
+        if (n == null){
+            throw('unexpected null!');
+        }
+        return n;
+    }
 }

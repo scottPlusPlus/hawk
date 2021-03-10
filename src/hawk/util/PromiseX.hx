@@ -5,6 +5,7 @@ import haxe.Timer;
 import tink.core.Error;
 import tink.CoreApi;
 using hawk.util.OutcomeX;
+using hawk.util.NullX;
 
 class PromiseX {
 
@@ -56,15 +57,15 @@ class PromiseX {
 		});
 	}
 
-	// public static function then<T1, T2>(p1:Promise<T1>, handler:Outcome<T1,Error>->Promise<T2>):Promise<T2> {
-	// 	var res = new PromiseTrigger<T2>();
-	// 	p1.handle(function(o1:Outcome<T1,Error>) {
-    //         var prom = handler(o1.sure());
-    //         prom.handle(function(o2:Outcome<T2,Error>){
-    //             res.trigger(o2);
-    //         });
-	// 	});
-	// 	return res.asPromise();
-	// }
+	public static function nullFallback<T>(p:Promise<Null<T>>, fallback:T):Promise<T> {
+		return p.next(function(maybe){
+			if (maybe == null){
+				return Success(fallback);
+			}
+			var sure = maybe.nullThrows();
+			return Success(sure);
+		});
+	}
+
 
 }

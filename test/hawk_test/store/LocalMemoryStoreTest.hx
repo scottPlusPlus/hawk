@@ -63,7 +63,7 @@ class LocalMemoryStoreTest extends utest.Test {
 			.next(function(v:String) {
 				Assert.equals(foo2, v);
 
-				return store.getSure(bar);
+				return store.getOrErr(bar);
 			})
 			.next(function(v:String) {
 				Assert.equals(foo2, v);
