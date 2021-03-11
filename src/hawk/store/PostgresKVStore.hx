@@ -70,7 +70,7 @@ class PostgresKVStore implements IKVStore<String, String> {
 		var getPromises = new Array<Promise<KV<String, Null<String>>>>();
 		for (k in keys) {
 			var p = get(k).next(function(ns):KV<String, Null<String>> {
-				return new KVX(k, ns);
+				return new KVC(k, ns);
 			});
 			getPromises.push(p);
 		}
@@ -119,7 +119,7 @@ class PostgresKVStore implements IKVStore<String, String> {
 			var rows:Array<PostgresRow> = res.rows;
 			var arr = new Array<KV<String, String>>();
 			for (r in rows) {
-				var kv = new KVX(r.key, r.val);
+				var kv = new KVC(r.key, r.val);
 				arr.push(kv);
 			}
 			return arr;

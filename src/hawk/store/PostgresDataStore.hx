@@ -130,7 +130,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
 	private function setByPK(primaryKey:String, data:IMap<String,String>):Promise<Noise> {
 		var query = " UPDATE _table_
         SET _setters_
-        WHERE _pkField_ = _pk_";
+        WHERE _pkField_ = '_pk_'";
 
 		query = StringTools.replace(query, "_table_", _tableName);
 		query = StringTools.replace(query, "_pkField_", _primaryKeyFieldName);
