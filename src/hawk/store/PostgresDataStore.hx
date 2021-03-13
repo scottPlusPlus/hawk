@@ -141,7 +141,7 @@ class PostgresDataStore<T> implements IDataStore<T> {
 	}
 
 	private function deleteByPK(pk:String):Promise<Bool> {
-		var query = "DELETE FROM _table_ WHERE _pkField_ = _pk_";
+		var query = "DELETE FROM _table_ WHERE _pkField_ = '_pk_'";
 		query = StringTools.replace(query, "_pkField_", _primaryKeyFieldName);
 		query = StringTools.replace(query, "_table_", _tableName);
 		query = StringTools.replace(query, "_pk_", pk);
