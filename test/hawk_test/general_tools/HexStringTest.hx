@@ -24,6 +24,20 @@ class HexStringTest extends utest.Test {
 		var actual = blobOut.data.toStringUTF8();
 		Assert.equals(TestVals.gibberish, actual);
 	}
+
+	function testJsonArray() {
+		var array = new Array<HexString>();
+		var hex = HexString.fromStringUTF8(TestVals.gibberish);
+		array.push(hex);
+		hex = HexString.fromStringUTF8(TestVals.jibbaJabba);
+
+		var writer = new json2object.JsonWriter<Array<HexString>>();
+		var json = writer.write(array);
+
+		var parser = new json2object.JsonParser<Array<HexString>>();
+		var arrayOut = parser.fromJson(json);
+		Assert.equals(array[0], arrayOut[0]);
+	}
 }
 
 class Foo {

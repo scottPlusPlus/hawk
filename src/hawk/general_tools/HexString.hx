@@ -21,4 +21,14 @@ abstract HexString(String) {
         var b = Bytes.ofHex(this);
         return b.toString();
     }
+
+    @:from
+	static public function fromString(s:String) {
+		return new HexString(s);
+	}
+
+	@:to
+	public function toString() {
+		return this;
+	}
 } 
