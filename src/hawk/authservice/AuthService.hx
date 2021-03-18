@@ -45,11 +45,11 @@ class AuthService {
 	}
 
 	public function register(email:Email, password:Password):Promise<AuthResponse> {
-		var validateEmail = email.isValid();
+		var validateEmail = Email.validOrErr(email);
 		if (validateEmail.isFailure()) {
 			return Failure(validateEmail.failure());
 		}
-		var validatePassword = password.isValid();
+		var validatePassword = Password.validOrErr(password);
 		if (validatePassword.isFailure()) {
 			return Failure(validatePassword.failure());
 		}

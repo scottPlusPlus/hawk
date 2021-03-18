@@ -5,10 +5,10 @@ import utest.Assert;
 
 class EmailTest extends utest.Test {
 	function testValidates() {
-        var attempt = Email.createValid("mymail@gmail.com");
+        var attempt = Email.validOrErr("mymail@gmail.com");
         Assert.isTrue(attempt.isSuccess());
 
-        attempt = Email.createValid("gibberish");
+        attempt = Email.validOrErr("gibberish");
         Assert.isFalse(attempt.isSuccess());
     }
 }

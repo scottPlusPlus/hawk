@@ -18,37 +18,33 @@ abstract Password(String) {
 		return this;
 	}
 
-	public function isValid():Outcome<Noise, Error> {
+	public static function stringAdapter():Adapter<Password, String> {
+		var toStr = function(p:Password):String {
+			return p.toString();
+		}
+		return new Adapter<Password, String>(toStr, Password.fromString);
+	}
+
+	public function validationErrs():Array<String> {
+		var errs = new Array<String>();
+
 		if (this != StringTools.trim(this)) {
-			var err = new Error('password should be trim');
-			return Failure(err);
+			errs.push('password should be trim');
 		}
 		if (this.length < 8) {
-			var err = new Error('password should be at least 8 characters');
-			return Failure(err);
+			errs.push('password should be at least 8 characters');
 		}
 		if (this.length > 128) {
-			var err = new Error('password must be less than 128 chars');
-			return Failure(err);
+			errs.push('password must be less than 128 chars');
 		}
-		return Success(Noise);
+		return errs;
 	}
 
-	public static function createValid(str:String):Outcome<Password, Error> {
-		str = StringTools.trim(str);
-		if (str.length < 8) {
-			return Failure(new Error('password must be at least 8 characters'));
+	public static function validOrErr(password:Password):Outcome<Password, Error> {
+		var errs = password.validationErrs();
+		if (errs.length > 0) {
+			return Failure(new Error('Invalid Password: ${errs.join(', ')}'));
 		}
-		if (str.length > 128) {
-			return Failure(new Error('password must be less than 128 chars'));
-		}
-		return Success(new Password(str));
-	}
-
-	public static function stringAdapter():Adapter<Password,String> {
-		var toStr = function(p:Password):String {
-		  return p.toString();
-		}
-		return new Adapter<Password,String>(toStr, Password.fromString);
+		return Success(password);
 	}
 }

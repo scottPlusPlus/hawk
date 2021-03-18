@@ -67,5 +67,11 @@ class PromiseX {
 		});
 	}
 
+	public static function recoverWith<T>(p:Promise<T>, fallback:T):Promise<T> {
+		return p.recover(function(err:Error):T {
+			return fallback;
+		});
+	}
+
 
 }

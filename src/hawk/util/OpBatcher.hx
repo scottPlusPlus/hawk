@@ -1,5 +1,6 @@
 package hawk.util;
 
+import haxe.display.Display.Package;
 import haxe.Timer;
 import tink.core.Noise;
 import tink.core.Promise;
@@ -9,9 +10,14 @@ import tink.core.Outcome;
 class OpBatcher {
 	public var limitMS(default, null):UInt; // only trigger once every this many millis
 	public var signal(get, never):Signal<OpBatcher>;
+	public var idle(get, never):Bool;
 
 	public function get_signal():Signal<OpBatcher> {
 		return _signalTrigger.asSignal();
+	}
+
+	public function get_idle():Bool {
+		return _next == null;
 	}
 
 	private var _signalTrigger:SignalTrigger<OpBatcher>;

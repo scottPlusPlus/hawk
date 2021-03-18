@@ -10,7 +10,7 @@ class PasswordTest extends utest.Test {
 
 	function testValidates() {
 
-        var attempt = Password.createValid("short"); //too short
+        var attempt = Password.validOrErr("short"); //too short
         Assert.isTrue(attempt.isFailure());
 
         var longPass = "1234567890";
@@ -18,10 +18,10 @@ class PasswordTest extends utest.Test {
             longPass += longPass;
         }
 
-        attempt = Password.createValid(longPass);
+        attempt = Password.validOrErr(longPass);
         Assert.isTrue(attempt.isFailure());
 
-        attempt = Password.createValid("some_fair_password");
+        attempt = Password.validOrErr("some_fair_password");
         Assert.isTrue(attempt.isSuccess());
     }
 }

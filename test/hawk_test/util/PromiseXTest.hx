@@ -1,29 +1,31 @@
-
 package hawk_test.util;
 
 import tink.CoreApi;
 import utest.Assert;
 import hawk.util.FutureX;
 
+using hawk.testutils.PromiseTestUtils;
 using hawk.util.PromiseX;
 
 class PromiseXTest extends utest.Test {
-	function testThenSuccess() {
-        Assert.isTrue(true);
-        // var actual = 0;
-        // var err = "";
+	
+    function testRecoverWithOnFailure(async:utest.Async) {
 
-        // var pt = new PromiseTrigger<Int>();
+        var pt = new PromiseTrigger<Int>();
+        pt.reject(new Error('a wild err appeared!'));
+        pt.asPromise().recoverWith(5).next(function(v){
+            Assert.equals(5, v);
+            return Noise;
+        }).closeTestChain(async);
+    }
 
-        // pt.asPromise()
-        // .then(function(v:Int){
-        //     return Promise.resolve(v++);
-        // }).then(function(v:Int){
-        //     actual = v;
-        //     return Promise.resolve(Noise);
-        // });
+    function testRecoverWithOnSuccess(async:utest.Async) {
 
-        // pt.resolve(1);
-        //Assert.equals(2, actual);
+        var pt = new PromiseTrigger<Int>();
+        pt.resolve(11);
+        pt.asPromise().recoverWith(5).next(function(v){
+            Assert.equals(11, v);
+            return Noise;
+        }).closeTestChain(async);
     }
 }
