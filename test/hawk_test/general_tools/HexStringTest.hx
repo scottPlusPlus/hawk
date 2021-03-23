@@ -2,7 +2,6 @@ package hawk_test.general_tools;
 
 import hawk.testutils.TestVals;
 import hawk.general_tools.HexString;
-import hawk.testutils.TestLogger;
 import zenlog.Log;
 import utest.Assert;
 

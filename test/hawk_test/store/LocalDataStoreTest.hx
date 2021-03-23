@@ -2,16 +2,13 @@ package hawk_test.store;
 
 import test_utils.ExampleTable;
 import test_utils.ExampleUser;
-
 import zenlog.Log;
-import hawk.testutils.TestLogger;
 import tink.CoreApi;
-
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
 using hawk.util.PromiseX;
+using hawk.testutils.PromiseTestUtils;
 
 class LocalDataStoreTest extends utest.Test {
 	private var _userX:ExampleUser;
@@ -68,7 +65,7 @@ class LocalDataStoreTest extends utest.Test {
 				.errOnNull()
 				.next(function(foundUser) {
 					foundUser.name = _userY.name;
-					return table.update(foundUser); 
+					return table.update(foundUser);
 				})
 				.assertErrAndContinue('expected err, conflicting name');
 		}).closeTestChain(async);
@@ -97,7 +94,6 @@ class LocalDataStoreTest extends utest.Test {
 	}
 
 	public function testCreateGetRemove(async:utest.Async) {
-		// TestLogger.filter.enableDebug = true;
 		var table = new ExampleTable();
 		var indexByName = table.indexByName();
 		table.create(_userX).next(function(_) {
@@ -115,8 +111,6 @@ class LocalDataStoreTest extends utest.Test {
 	}
 
 	public function testGetMany(async:utest.Async) {
-		//TestLogger.setDebug(true);
-		TestLogger.resetIdent();
 		var table = new ExampleTable();
 		var indexByName = table.indexByName();
 

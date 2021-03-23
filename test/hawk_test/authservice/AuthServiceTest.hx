@@ -6,7 +6,7 @@ import hawk.store.KVStoreAdapter;
 import hawk.store.LocalMemoryStore;
 import hawk.general_tools.adapters.Adapter;
 import hawk.authservice.EvNewUser;
-import hawk.testutils.TestLogger;
+import hawk.testutils.TestLog;
 import hawk.datatypes.Password;
 import tink.CoreApi.Outcome;
 import tink.core.Noise;
@@ -48,7 +48,7 @@ class AuthServiceTest extends utest.Test {
 			var err = o.failure().nullSure();
 			Assert.equals(ErrorCode.Unauthorized, err.code);
 			async.done();
-			//TestLogger.setDebug(false);
+			//TestLog.setDebug(false);
 			return Noise;
 		}).eager();
 	}
@@ -65,15 +65,13 @@ class AuthServiceTest extends utest.Test {
 			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Assert.isTrue(o.isFailure());
 				async.done();
-				//TestLogger.setDebug(false);
+				//TestLog.setDebug(false);
 				return Noise;
 			})
 			.eager();
 	}
 
 	function testGoodRegisterLogin(async:utest.Async) {
-		//TestLogger.setDebug(true);
-		Log.debug('testGoodRegisterLogin');
 		var service = authServiceTester();
 
 		var mail:Email = "some@email.com";
@@ -94,14 +92,13 @@ class AuthServiceTest extends utest.Test {
 				var actor = service.actorFromToken(r.token).sure();
 				Assert.equals(res.id, actor);
 				async.done();
-				//TestLogger.setDebug(false);
+				//TestLog.setDebug(false);
 				return Noise;
 			})
 			.eager();
 	}
 
 	function testGoodRegisterBadLoginFails(async:utest.Async) {
-		Log.debug('testGoodRegisterBadLoginFails');
 		var service = authServiceTester();
 
 		var mail:Email = "some@email.com";
@@ -118,15 +115,13 @@ class AuthServiceTest extends utest.Test {
 				var err = o.failure().nullSure();
 				Assert.equals(ErrorCode.Unauthorized, err.code);
 				async.done();
-				//TestLogger.setDebug(false);
+				//TestLog.setDebug(false);
 				return Noise;
 			})
 			.eager();
 	}
 
 	function testDoubleRegisterFails(async:utest.Async){
-		//TestLogger.setDebug(true);
-		Log.debug('testDoubleRegisterFails');
 		var service = authServiceTester();
 
 		var mail:Email = "some@email.com";
@@ -148,9 +143,6 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function testDisplayNames(async:utest.Async){
-		TestLogger.setDebug(true);
-		TestLogger.resetIdent();
-		Log.debug('AuthServiceTest.testDisplayNames');
 		var service = authServiceTester();
 
 		var pass:Password = "somepass";

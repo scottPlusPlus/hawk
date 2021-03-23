@@ -2,7 +2,6 @@ package hawk_test.store;
 
 import hawk.store.KVC;
 import hawk.store.KVX;
-import hawk.testutils.TestLogger;
 import zenlog.Log;
 import hawk.testutils.TestVals;
 import tink.core.Noise;
@@ -74,7 +73,6 @@ class LocalMemoryStoreTest extends utest.Test {
 	}
 
 	public function testGetMany(async:utest.Async) {
-        TestLogger.setDebug(true);
 		var map = new Map<String, String>();
 
 		map.set(TestVals.foo, TestVals.bar);

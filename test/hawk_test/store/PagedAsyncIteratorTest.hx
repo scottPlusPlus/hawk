@@ -1,6 +1,5 @@
 package hawk_test.store;
 
-import hawk.testutils.TestLogger;
 import zenlog.Log;
 import hawk.async_iterator.AsyncIteratorX;
 import hawk.async_iterator.PagedAsyncIterator;
@@ -13,8 +12,6 @@ using hawk.testutils.PromiseTestUtils;
 class PagedAsyncIteratorTest  extends utest.Test {
 
 	public function testHappy(async:utest.Async) {
-        TestLogger.setDebug(false);
-        Log.debug("PagedAsyncIteratorTest.testHappy");
         var data = [[1,2,3],[4,5,6],[7,8,9]];
         var server = new PageServer(data);
 
@@ -33,8 +30,6 @@ class PagedAsyncIteratorTest  extends utest.Test {
     }
 
     public function testError(async:utest.Async) {
-        TestLogger.setDebug(false);
-        Log.debug("PagedAsyncIteratorTest.testError");
         var data = [[1,2,3],[4,5,6],[7,8,9]];
         var server = new PageServer(data);
 

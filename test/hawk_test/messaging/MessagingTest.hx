@@ -25,11 +25,6 @@ class MessagingTest extends utest.Test {
 		var channel = new LocalChannel("foo", toMsg, fromMsg);
 		return channel;
 	}
-	
-	function testSanity() {
-		Assert.equals(2, 1 + 1);
-	}
-
 
 
 	function testPushesSingleMessage(async:utest.Async) {

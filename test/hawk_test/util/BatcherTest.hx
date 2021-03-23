@@ -1,6 +1,5 @@
 package hawk_test.util;
 
-import hawk.testutils.TestLogger;
 import zenlog.Log;
 import hawk.util.PromiseX;
 import hawk.util.Batcher;
@@ -11,94 +10,89 @@ import haxe.Constraints.IMap;
 using hawk.testutils.PromiseTestUtils;
 
 class BatcherTest extends utest.Test {
+	private var _fetchedWaves:Array<Array<Int>>;
+	private var _fetcherBegins:SignalTrigger<Noise>;
 
-    private var _fetchedWaves:Array<Array<Int>>;
-    private var _fetcherBegins:SignalTrigger<Noise>;
-
-    public function setup(){
-        _fetchedWaves = [];
-        _fetcherBegins = new SignalTrigger();
-    }
-
-	function testSimple(async:utest.Async) {
-
-        var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
-        
-        var p1 = batcher.request(2).next(function(val){
-            Assert.equals(4, val);
-            return Noise;
-        }).eager();
-
-        var p2 = batcher.request(3).next(function(val){
-            Assert.equals(6, val);
-            return Noise;
-        }).eager();
-
-        Promise.inParallel([p1,p2]).next(function(_){
-            Assert.equals(1, _fetchedWaves.length);
-            return Noise;
-        }).closeTestChain(async);
+	public function setup() {
+		_fetchedWaves = [];
+		_fetcherBegins = new SignalTrigger();
 	}
 
-    function testNullable(async:utest.Async) {
-        var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
-        
-        var p1 = batcher.request(1).next(function(val){
-            Assert.equals(2, val);
-            return Noise;
-        }).eager();
+	function testSimple(async:utest.Async) {
+		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
 
-        var p2 = batcher.request(-1).next(function(val){
-            Assert.isNull(val);
-            return Noise;
-        }).eager();
+		var p1 = batcher.request(2).next(function(val) {
+			Assert.equals(4, val);
+			return Noise;
+		}).eager();
 
-        Promise.inParallel([p1,p2]).closeTestChain(async);
-    }
+		var p2 = batcher.request(3).next(function(val) {
+			Assert.equals(6, val);
+			return Noise;
+		}).eager();
 
-    @:timeout(500)
-    function testBatches(async:utest.Async) {
-        TestLogger.setDebug(true);
-        var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
-        
-        var p1 = batcher.request(1).next(function(val){
-            Assert.equals(2, val);
-            return Noise;
-        }).eager();
+		Promise.inParallel([p1, p2]).next(function(_) {
+			Assert.equals(1, _fetchedWaves.length);
+			return Noise;
+		}).closeTestChain(async);
+	}
 
-        var p2 = batcher.request(-1).next(function(val){
-            Assert.isNull(val);
-            return Noise;
-        }).eager();
+	function testNullable(async:utest.Async) {
+		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
 
-        var p3 = PromiseX.waitPromise(60).next(function(_){
-            return batcher.request(3).next(function(val){
-                Assert.equals(6, val);
-                return Noise;
-            });
-        }).eager();
+		var p1 = batcher.request(1).next(function(val) {
+			Assert.equals(2, val);
+			return Noise;
+		}).eager();
 
-        Promise.inParallel([p1,p2, p3]).next(function(_){
-            Assert.equals(2, _fetchedWaves.length);
-            return Noise;
-        }).closeTestChain(async);
-    }
+		var p2 = batcher.request(-1).next(function(val) {
+			Assert.isNull(val);
+			return Noise;
+		}).eager();
 
+		Promise.inParallel([p1, p2]).closeTestChain(async);
+	}
 
+	@:timeout(500)
+	function testBatches(async:utest.Async) {
+		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
 
-    function exampleFetcher(keys:Array<Int>):Promise<IMap<Int,Int>> {
-        Log.debug('trigger fetch: ${keys}');
-        _fetcherBegins.trigger(Noise);
-        return PromiseX.waitPromise(100).next(function(_){
-            Log.debug('fetch complete for ${keys}');
-            _fetchedWaves.push(keys);
-            var res:IMap<Int,Int> = new Map<Int,Int>();
-            for(key in keys){
-                if (key > 0){
-                    res.set(key, key * 2);
-                }
-            }
-            return res;
-        });
-    }
+		var p1 = batcher.request(1).next(function(val) {
+			Assert.equals(2, val);
+			return Noise;
+		}).eager();
+
+		var p2 = batcher.request(-1).next(function(val) {
+			Assert.isNull(val);
+			return Noise;
+		}).eager();
+
+		var p3 = PromiseX.waitPromise(60).next(function(_) {
+			return batcher.request(3).next(function(val) {
+				Assert.equals(6, val);
+				return Noise;
+			});
+		}).eager();
+
+		Promise.inParallel([p1, p2, p3]).next(function(_) {
+			Assert.equals(2, _fetchedWaves.length);
+			return Noise;
+		}).closeTestChain(async);
+	}
+
+	function exampleFetcher(keys:Array<Int>):Promise<IMap<Int, Int>> {
+		Log.debug('trigger fetch: ${keys}');
+		_fetcherBegins.trigger(Noise);
+		return PromiseX.waitPromise(100).next(function(_) {
+			Log.debug('fetch complete for ${keys}');
+			_fetchedWaves.push(keys);
+			var res:IMap<Int, Int> = new Map<Int, Int>();
+			for (key in keys) {
+				if (key > 0) {
+					res.set(key, key * 2);
+				}
+			}
+			return res;
+		});
+	}
 }
