@@ -2,17 +2,12 @@ package hawk_test.authservice;
 
 import hawk.authservice.AuthUserStore;
 import hawk.store.LocalDataStore;
-import hawk.store.KVStoreAdapter;
-import hawk.store.LocalMemoryStore;
-import hawk.general_tools.adapters.Adapter;
 import hawk.authservice.EvNewUser;
-import hawk.testutils.TestLog;
 import hawk.datatypes.Password;
 import tink.CoreApi.Outcome;
 import tink.core.Noise;
 import tink.core.Error;
 import hawk.messaging.LocalChannel;
-import hawk.authservice.AuthUser;
 import hawk.datatypes.Email;
 import zenlog.Log;
 import hawk.authservice.AuthService;

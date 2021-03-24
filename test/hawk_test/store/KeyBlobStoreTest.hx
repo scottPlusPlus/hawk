@@ -4,7 +4,6 @@ import hawk.store.LocalDataStore;
 import hawk.testutils.TestVals;
 import tink.CoreApi;
 import hawk.store.KeyBlobStore;
-import hawk.store.LocalMemoryStore;
 import utest.Assert;
 import utest.Async;
 

@@ -1,4 +1,4 @@
-package hawk.store;
+package hawk.store.postgres;
 
 import hawk.async_iterator.PagedAsyncIterator;
 import hawk.async_iterator.AsyncIterator;
@@ -22,8 +22,6 @@ class PostgresKVStore implements IKVStore<String, String> {
 	}
 
 	public function init():Promise<PostgresKVStore> {
-		var p = new PromiseTrigger<PostgresKVStore>();
-
 		var query = '
         CREATE TABLE IF NOT EXISTS ${_tableName} (
             id SERIAL PRIMARY KEY,

@@ -1,4 +1,4 @@
-package hawk.store;
+package hawk.store.postgres;
 
 import haxe.Constraints.IMap;
 import hawk.async_iterator.PagedAsyncIterator;

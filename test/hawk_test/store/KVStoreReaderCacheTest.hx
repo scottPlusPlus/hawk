@@ -2,7 +2,7 @@ package hawk_test.store;
 
 import tink.CoreApi;
 import hawk.testutils.TestVals;
-import hawk.store.LocalMemoryStore;
+import hawk.store.LocalKVStore;
 import hawk.store.KVStoreReaderLRUCache;
 import hawk.store.IKVStoreReader;
 import hawk.store.IKVStore; 
@@ -76,12 +76,12 @@ class KVStoreReaderCacheTest extends utest.Test {
 	}
 
 	public function createAggregate():Aggregate {
-		var local = new LocalMemoryStore();
+		var local = new LocalKVStore();
 		var backingMap = new Map<String, String>();
 		backingMap.set(TestVals.key1, TestVals.val1);
 		backingMap.set(TestVals.key2, TestVals.val2);
 		backingMap.set(TestVals.key3, TestVals.val3);
-		var backing = new LocalMemoryStore(backingMap);
+		var backing = new LocalKVStore(backingMap);
 		var cache = new KVStoreReaderLRUCache(local, backing);
 		return {
 			localStore: local,

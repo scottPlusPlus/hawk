@@ -6,8 +6,8 @@ import tink.CoreApi;
 
 
  // we only provide String/String to ensure types passed in are serializable
- // for a local store of different types, wrap LocalMemoryStore in an adapter
-class LocalMemoryStore implements IKVStore<String,String> {
+ // for a local store of different types, wrap LocalKVStore in an adapter
+class LocalKVStore implements IKVStore<String,String> {
     
     private var _map:Map<String,String> = [];
 

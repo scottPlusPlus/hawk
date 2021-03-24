@@ -5,16 +5,16 @@ import hawk.store.KVX;
 import zenlog.Log;
 import hawk.testutils.TestVals;
 import tink.core.Noise;
-import hawk.store.LocalMemoryStore;
+import hawk.store.LocalKVStore;
 import utest.Assert;
 import utest.Async;
 
 using hawk.store.IKVStoreX;
 using hawk.testutils.PromiseTestUtils;
 
-class LocalMemoryStoreTest extends utest.Test {
+class LocalKVStoreTest extends utest.Test {
 	public function testHappy(async:utest.Async) {
-		var store = new LocalMemoryStore();
+		var store = new LocalKVStore();
 		var foo = "foo";
 		var foo2 = "footwo";
 		var bar = "bar";
@@ -79,7 +79,7 @@ class LocalMemoryStoreTest extends utest.Test {
 		map.set(TestVals.foo2, TestVals.bar2);
 		map.set(TestVals.foo3, TestVals.bar3);
 
-		var store = new LocalMemoryStore(map);
+		var store = new LocalKVStore(map);
 
         var expected = [];
         expected.push(new KVC(TestVals.foo, TestVals.bar));

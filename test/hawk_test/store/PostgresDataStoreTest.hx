@@ -1,7 +1,7 @@
 package hawk_test.store;
 
 import hawk.authservice.AuthUserStore;
-import hawk.store.PostgresDataStore;
+import hawk.store.postgres.PostgresDataStore;
 import utest.Assert;
 import utest.Async;
 

@@ -29,7 +29,7 @@ class MessagingTest extends utest.Test {
 
 	function testPushesSingleMessage(async:utest.Async) {
 		var channel = newStringChannel();
-		var sub = new SubscriberTest();
+		var sub = new SubscriberTester<String>();
 		channel.subscribe(sub.handler);
 
 		var expected = "my secret message";
@@ -48,8 +48,8 @@ class MessagingTest extends utest.Test {
 
 	function testMultipleSubscribers(async:utest.Async) {
 		var channel = newStringChannel();
-		var sub1 = new SubscriberTest();
-		var sub2 = new SubscriberTest();
+		var sub1 = new SubscriberTester<String>();
+		var sub2 = new SubscriberTester<String>();
 		channel.subscribe(sub1.handler);
 		channel.subscribe(sub2.handler);
 
@@ -64,17 +64,5 @@ class MessagingTest extends utest.Test {
 
 			return Noise;
 		}).closeTestChain(async);
-	}
-}
-
-class SubscriberTest {
-	public function new() {}
-
-	public var messages:Array<String> = [];
-	public var nextHandleResponse = Success(Noise);
-
-	public function handler(msg:String):Promise<Noise> {
-		messages.push(msg);
-		return nextHandleResponse;
 	}
 }
