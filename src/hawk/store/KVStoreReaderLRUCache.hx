@@ -3,7 +3,7 @@ package hawk.store;
 import zenlog.Log;
 import tink.CoreApi;
 
-class KVStoreReaderLRUCache<K, V> implements IKVStoreReader<K,V> {
+class KVStoreReaderLRUCache<K, V> implements IClientKVStore<K,V> {
 	private var _localStore:IKVStore<K, V>;
 	private var _backingStore:IKVStoreReader<K, V>;
 
@@ -44,19 +44,11 @@ class KVStoreReaderLRUCache<K, V> implements IKVStoreReader<K,V> {
 	}
 
 	public function getMany(keys:Array<K>):Promise<Array<KV<K, Null<V>>>> {
-		var res = new Array<KV<K, Null<V>>>();
-		var promises = new Array<Promise<Noise>>();
-		for (key in keys) {
-			var p = get(key).next(function(nv) {
-				var kvc = new KVC(key, nv);
-				res.push(kvc);
-				return Noise;
-			});
-			promises.push(p);
-		}
-		return Promise.inParallel(promises).next(function(_) {
-			return res;
-		});
+		return IKVStoreX.getMany(keys, get);
+	}
+
+	public function set(key:K, val:V):Promise<V> {
+		return _localStore.set(key, val);
 	}
 
 	public function remove(key:K):Promise<Bool> {

@@ -1,5 +1,6 @@
 package hawk.store;
 
+import haxe.Constraints.IMap;
 import tink.CoreApi;
 import tink.core.Error;
 
@@ -12,5 +13,12 @@ class KVCX {
 			}
 		}
 		return Success(arr);
+	}
+
+	public static function toMap<K,V>(arr:Array<KVC<K,Null<V>>>, emptyMap:IMap<K,V>):IMap<K,V> {
+		for (kvc in arr){
+			emptyMap.set(kvc.key, kvc.value);
+		}
+		return emptyMap;
 	}
 }

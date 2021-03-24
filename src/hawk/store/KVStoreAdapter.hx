@@ -56,14 +56,6 @@ class KVStoreAdapter<K1, K2, V1, V2> implements IKVStore<K1, V1> {
 		});
 	}
 
-	// public function setMany(keyValues:Array<KV<K1,V1>>):Promise<Array<KV<K1,V1>>> {
-	// 	var kv2in =  AdapterX.arrayToB(_kvAdapter, keyValues);
-	// 	return _wrappedStore.setMany(kv2in).next(function(kv2out){
-	// 		var kv1out = AdapterX.arrayToA(_kvAdapter, kv2out);
-	// 		return kv1out;
-	// 	});
-	// }
-
 	public function remove(key:K1):Promise<Bool> {
 		var k2 = _keyAdapter.toB(key);
 		return _wrappedStore.remove(k2);

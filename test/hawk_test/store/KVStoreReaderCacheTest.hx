@@ -5,7 +5,7 @@ import hawk.testutils.TestVals;
 import hawk.store.LocalMemoryStore;
 import hawk.store.KVStoreReaderLRUCache;
 import hawk.store.IKVStoreReader;
-import hawk.store.IKVStore;
+import hawk.store.IKVStore; 
 import utest.Assert;
 import utest.Async;
 import zenlog.Log;
