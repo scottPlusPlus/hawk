@@ -38,11 +38,6 @@ class DebugStoreAccess {
 		}
 
 		switch command {
-			case "exists":
-				return s.exists(key).next(function(b:Bool) {
-					return Std.string(b);
-				});
-
 			case "get":
 				return s.get(key);
 
@@ -61,7 +56,7 @@ class DebugStoreAccess {
 				return dropAll(s, key);
 
 			default:
-				return Failure(new Error('dont recognize command ${command}.  Try exists, get, set, remove'));
+				return Failure(new Error('dont recognize command ${command}.  Try get, set, remove, print, drop'));
 		}
 	}
 

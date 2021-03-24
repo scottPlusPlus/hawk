@@ -22,11 +22,6 @@ class KVStoreAdapter<K1, K2, V1, V2> implements IKVStore<K1, V1> {
 		_kvAdapter = new  KVAdapter(_keyAdapter, _valAdapter);
 	}
 
-	public function exists(key:K1):Promise<Bool> {
-		var k2 = _keyAdapter.toB(key);
-		return _wrappedStore.exists(k2);
-	}
-
 	public function get(key:K1):Promise<Null<V1>> {
 		var k2 = _keyAdapter.toB(key);
 		var p = _wrappedStore.get(k2);
