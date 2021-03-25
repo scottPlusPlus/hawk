@@ -11,10 +11,10 @@ class PostgresKVStore implements IKVStore<String, String> {
 
 	public function new(postgresClient:Dynamic, tableName:String) {
 		if (tableName.toLowerCase() != tableName) {
-			throw('table name should be lowercase');
+			throw('table name should be lowercase:  ${tableName}');
 		}
 		if (StringTools.trim(tableName) != tableName) {
-			throw('table name should be trimmed...');
+			throw('table name should be trimmed:  ${tableName}');
 		}
 
 		_postgresClient = postgresClient;
