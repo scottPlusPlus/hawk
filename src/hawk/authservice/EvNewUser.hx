@@ -2,6 +2,7 @@ package hawk.authservice;
 
 import hawk.datatypes.Timestamp;
 import hawk.messaging.Message;
+import hawk.general_tools.adapters.Adapter;
 
 class EvNewUser implements DataClass {
 
@@ -17,9 +18,9 @@ class EvNewUser implements DataClass {
         return parser.fromJson(str);
     }
 
-    public function toJson():String {
+    public static function toJson(ev:EvNewUser):String {
         var writer = new json2object.JsonWriter<EvNewUser>();
-        return writer.write(this);
+        return writer.write(ev);
     }
 
     public static function testExample():EvNewUser {
@@ -30,7 +31,7 @@ class EvNewUser implements DataClass {
     }
 
     public static function toMessage(ev:EvNewUser):Message {
-        var str = ev.toJson();
+        var str = toJson(ev);
         var msg = Message.fromString(str);
         return msg;
     }
@@ -39,5 +40,9 @@ class EvNewUser implements DataClass {
         var str = msg.toString();
         var ev = fromJson(str);
         return ev;
+    }
+
+    public static function stringAdapter():Adapter<EvNewUser,String> {
+        return new Adapter<EvNewUser,String>(toJson, fromJson);
     }
 }
