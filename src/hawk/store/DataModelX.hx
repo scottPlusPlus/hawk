@@ -1,5 +1,9 @@
 package hawk.store;
 
+import hawk.util.Json;
+import hawk.util.IMapX;
+import hawk.general_tools.adapters.Adapter;
+
 class DataModelX {
 
     public static function stringAdapter<T>(model:DataModel<T>):Adapter<T,String>{
@@ -15,6 +19,6 @@ class DataModelX {
 			return model.adapter.toA(m);
 		}
 
-		return new Adapter(toStr, toOBj);
+		return new Adapter(toStr, toObj);
 	}
 }

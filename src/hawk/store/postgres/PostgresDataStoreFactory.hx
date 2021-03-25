@@ -22,7 +22,7 @@ class PostgresDatatoreFactory implements IDataStoreFactory {
 
 	public function get<T>(name:String, model:DataModel<T>):Promise<IDataStore<T>> {
 		return genStore(name, model).next(function(store) {
-			var adapter = DataModelX.stringAdapter(model);
+			var adapter = DataModelX.stringAdapter(model).invert();
 			var stringStore = new DataStoreAdapter(adapter, store);
 			_onNewStoreTrigger.trigger({ 
 				name: name,
