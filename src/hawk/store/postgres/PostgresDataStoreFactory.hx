@@ -1,8 +1,5 @@
 package hawk.store.postgres;
 
-import hawk.util.Json;
-import hawk.util.IMapX;
-import hawk.general_tools.adapters.Adapter;
 import zenlog.Log;
 import tink.CoreApi;
 
@@ -10,11 +7,11 @@ using hawk.util.ErrorX;
 
 class PostgresDatatoreFactory implements IDataStoreFactory {
 	private var _postgres:Dynamic;
-	private var _onNewStoreTrigger:SignalTrigger<StoreWithName>;
+	private var _onNewStoreTrigger:SignalTrigger<DataStoreWithName>;
 
-	public var onNewStore(get, never):Signal<StoreWithName>;
+	public var onNewStore(get, never):Signal<DataStoreWithName>;
 
-	public function get_onNewStore():Signal<StoreWithName> {
+	public function get_onNewStore():Signal<DataStoreWithName> {
 		return _onNewStoreTrigger.asSignal();
 	}
 
@@ -62,7 +59,7 @@ class PostgresDatatoreFactory implements IDataStoreFactory {
 
 }
 
-typedef StoreWithName = {
+typedef DataStoreWithName = {
 	name:String,
 	store:IDataStore<String>
 }

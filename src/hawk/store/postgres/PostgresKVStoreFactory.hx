@@ -7,11 +7,11 @@ using hawk.util.ErrorX;
 
 class PostgresKVStoreFactory implements IKVStoreFactory {
 	private var _postgres:Dynamic;
-	private var _onNewStoreTrigger:SignalTrigger<StoreWithName>;
+	private var _onNewStoreTrigger:SignalTrigger<KVStoreWithName>;
 
-	public var onNewStore(get, never):Signal<StoreWithName>;
+	public var onNewStore(get, never):Signal<KVStoreWithName>;
 
-	public function get_onNewStore():Signal<StoreWithName> {
+	public function get_onNewStore():Signal<KVStoreWithName> {
 		return _onNewStoreTrigger.asSignal();
 	}
 
@@ -56,7 +56,7 @@ class PostgresKVStoreFactory implements IKVStoreFactory {
 	}
 }
 
-typedef StoreWithName = {
+typedef KVStoreWithName = {
 	name:String,
 	store:IKVStore<String, String>
 }
