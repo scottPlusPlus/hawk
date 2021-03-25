@@ -57,6 +57,11 @@ class CommonJsonWriters {
         var writer = new json2object.JsonWriter<Array<Int>>();
         return writer.write(x);
     }
+
+    public function fromMapOfStringString(x:Map<String,String>):String {
+        var writer = new json2object.JsonWriter<Map<String,String>>();
+        return writer.write(x);
+    }
 }
 
 class CommonJsonReaders {
@@ -70,6 +75,11 @@ class CommonJsonReaders {
 
     public function toArrayOfInt(json:String):Array<Int>{
         var parser = new json2object.JsonParser<Array<Int>>();
+        return parser.fromJson(json);
+    }
+
+    public function toMapOfStringString(json:String):Map<String,String> {
+        var parser = new json2object.JsonParser<Map<String,String>>();
         return parser.fromJson(json);
     }
 }
