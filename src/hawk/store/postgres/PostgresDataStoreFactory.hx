@@ -5,6 +5,7 @@ import tink.CoreApi;
 import hawk.util.PromiseX;
 
 using hawk.util.ErrorX;
+using hawk.util.PromiseX;
 
 class PostgresDataStoreFactory implements IDataStoreFactory {
 	private var _postgres:Dynamic;
