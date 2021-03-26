@@ -152,14 +152,21 @@ class PostgresKVStore implements IKVStore<String, String> {
 		var qid = _queryID++;
 		Log.debug('postgres query ${qid}:  ${query}');
 		var p = new PromiseTrigger<Dynamic>();
-		_postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
-			if (err != null) {
-				var e = new Error('err with postgres query ${qid}:  ${err}');
-				Log.error(e);
-				p.reject(e);
-			}
-			p.resolve(res);
-		});
+		try {
+			_postgresClient.query(query, function(err:Dynamic, res:Dynamic) {
+				if (err != null) {
+					var e = new Error('err with postgres query ${qid}:  ${err}');
+					Log.error(e);
+					p.reject(e);
+				}
+				p.resolve(res);
+			});
+		} catch (ex){
+			var emsg = 'exception with postgres query ${qid}:  ${ex.message}';
+			Log.error(emsg);
+			p.reject(new Error(emsg));
+		}
+
 		return p;
 	}
 }
