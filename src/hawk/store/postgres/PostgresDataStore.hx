@@ -15,10 +15,14 @@ class PostgresDataStore<T> implements IDataStore<T> {
 
 	public function new(postgresClient:Dynamic, tableName:String, model:DataModel<T>) {
 		if (tableName.toLowerCase() != tableName) {
-			throw('table name should be lowercase:  ${tableName}');
+			var err = 'table name should be lowercase:  ${tableName}';
+			Log.error(err);
+			throw(err);
 		}
 		if (StringTools.trim(tableName) != tableName) {
-			throw('table name should be trimmed...:  ${tableName}');
+			var err = 'table name should be trimmed...:  ${tableName}';
+			Log.error(err);
+			throw(err);
 		}
 
 		_postgresClient = postgresClient;
