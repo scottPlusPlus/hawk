@@ -124,4 +124,40 @@ class PromiseX {
 		}
 		return trigger.asPromise();
 	}
+
+	public static function withTimeout<T>(p:Promise<T>, timeoutMS:UInt):Promise<T> {
+		var trigger = new PromiseTrigger<T>();
+		p.handle(function(o){
+			passResultIfWaitng(trigger, o);
+		});
+
+		PromiseX.waitPromise(timeoutMS).eager().handle(function(_){
+			var err = new Error('Promise timed out after ${timeoutMS}');
+			var o = Failure(err);
+			passResultIfWaitng(trigger, o);
+		});
+
+		return trigger.asPromise();
+	}
+
+	public static function passResultIfWaitng<T>(pt:PromiseTrigger<T>, outcome:Outcome<T,Error>){
+		var status = pt.getStatus();
+		switch (status){
+			case Awaited:
+				passResult(pt, outcome);
+			case EagerlyAwaited:
+				passResult(pt, outcome);
+			default:
+				Log.debug('Have result, but next Promise status == ${status}, so ignoring');
+		}
+	}
+
+	public static function passResult<T>(pt:PromiseTrigger<T>, outcome:Outcome<T,Error>){
+		switch (outcome){
+			case Success(data):
+				pt.resolve(data);
+			case Failure(failure):
+				pt.reject(failure);
+		}
+	}
 }

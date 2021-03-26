@@ -5,6 +5,7 @@ import zenlog.Log;
 import tink.CoreApi;
 
 using hawk.util.ErrorX;
+using hawk.util.PromiseX;
 
 class PostgresKVStoreFactory implements IKVStoreFactory {
 	private var _postgres:Dynamic;
@@ -36,7 +37,8 @@ class PostgresKVStoreFactory implements IKVStoreFactory {
 			return genLocalStore(name);
 		}
 		return PromiseX.tryOrErr(function(){
-			return genPostgesStore(name);
+			Log.debug('attempt genPostgresStore for ${name}');
+			return genPostgresStore(name).withTimeout(2000);
 		}).recover(function(err) {
 			Log.error(err.wrap('Failed to init postgres store ${name}.  Will use LocalStore as fallback'));
 			_postgres = null;
@@ -44,7 +46,7 @@ class PostgresKVStoreFactory implements IKVStoreFactory {
 		});
 	}
 
-	private function genPostgesStore(name:String):Promise<IKVStore<String, String>> {
+	private function genPostgresStore(name:String):Promise<IKVStore<String, String>> {
 		var store = new PostgresKVStore(_postgres, name);
 		return store.init().next(function(res) {
 			var iface:IKVStore<String, String> = res;

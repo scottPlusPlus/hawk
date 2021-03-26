@@ -37,16 +37,17 @@ class PostgresDataStoreFactory implements IDataStoreFactory {
 		if (_postgres == null) {
 			return genLocalStore(name, model);
 		}
-		return genPostgesStore(name, model).recover(function(err) {
+		return genPostgresStore(name, model).recover(function(err) {
 			Log.error(err.wrap('Failed to init postgres store ${name}.  Will use LocalStore as fallback'));
 			_postgres = null;
 			return genLocalStore(name, model);
 		});
 	}
-	private function genPostgesStore<T>(name:String, model:DataModel<T>):Promise<IDataStore<T>> {
+	private function genPostgresStore<T>(name:String, model:DataModel<T>):Promise<IDataStore<T>> {
 		var store = new PostgresDataStore(_postgres, name, model);
 		return PromiseX.tryOrErr(function() {
-			return store.init();
+			Log.debug('attempt genPostgresStore for ${name}');
+			return store.init().withTimeout(2000);
 		}).next(function(pgs) {
 			var istore:IDataStore<T> = store;
 			return Success(istore);

@@ -81,4 +81,29 @@ class PromiseXTest extends utest.Test {
 			return err;
 		}).recoverWith(Noise).closeTestChain(async);
 	}
+
+	public function testTimeoutFailure(async:utest.Async) {
+		PromiseX.waitPromise(50).withTimeout(10).eager().handle(function(o){
+			switch(o){
+				case Success(data):
+					Assert.fail('expected timeout failure');
+				case Failure(failure):
+					Assert.stringContains('timed out', failure.message);
+					Assert.pass('expected an err here');
+			}
+			async.done();
+		});
+	}
+
+	public function testTimeoutSuccess(async:utest.Async) {
+		PromiseX.waitPromise(10).withTimeout(50).eager().handle(function(o){
+			switch(o){
+				case Success(data):
+					Assert.pass('expected path');
+				case Failure(failure):
+					Assert.pass('expected success, got err: ${failure.message}');
+			}
+			async.done();
+		});
+	}
 }
