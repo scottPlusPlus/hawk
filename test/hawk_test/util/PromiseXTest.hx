@@ -44,7 +44,7 @@ class PromiseXTest extends utest.Test {
 		Assert.equals(err, actual);
 	}
 
-    public function testResultPremature() {
+	public function testResultPremature() {
 		var pt = new PromiseTrigger<Int>();
 		var res = pt.asPromise();
 		Assert.isTrue(res.result().isFailure());
@@ -68,5 +68,17 @@ class PromiseXTest extends utest.Test {
 		return PromiseX.waitPromise(delayMS).next(function(_) {
 			return val;
 		});
+	}
+
+	public function testTry(async:utest.Async) {
+		var errmsg = 'trow in a promise';
+		PromiseX.tryOrErr(function():Promise<Noise>{
+			throw(errmsg);
+			return Noise;
+		}).mapError(function(err){
+			Assert.stringContains(errmsg, err.message);
+			Assert.pass('expected an error here');
+			return err;
+		}).recoverWith(Noise).closeTestChain(async);
 	}
 }

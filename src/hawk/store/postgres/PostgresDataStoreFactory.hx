@@ -2,10 +2,11 @@ package hawk.store.postgres;
 
 import zenlog.Log;
 import tink.CoreApi;
+import hawk.util.PromiseX;
 
 using hawk.util.ErrorX;
 
-class PostgresDatatoreFactory implements IDataStoreFactory {
+class PostgresDataStoreFactory implements IDataStoreFactory {
 	private var _postgres:Dynamic;
 	private var _onNewStoreTrigger:SignalTrigger<DataStoreWithName>;
 
@@ -42,10 +43,11 @@ class PostgresDatatoreFactory implements IDataStoreFactory {
 			return genLocalStore(name, model);
 		});
 	}
-
 	private function genPostgesStore<T>(name:String, model:DataModel<T>):Promise<IDataStore<T>> {
 		var store = new PostgresDataStore(_postgres, name, model);
-		return store.init().next(function(pgs){
+		return PromiseX.tryOrErr(function() {
+			return store.init();
+		}).next(function(pgs) {
 			var istore:IDataStore<T> = store;
 			return Success(istore);
 		});

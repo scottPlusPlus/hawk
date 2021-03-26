@@ -101,4 +101,27 @@ class PromiseX {
 		arr.push(p.noise());
 		return p;
 	}
+
+	
+	/**
+	 * Wraps the passed f in a try/catch.  If an exception is thrown,  
+	 * it is caught and returned as an Error
+	 */
+	public static function tryOrErr<T>(f:Void->Promise<T>):Promise<T> {
+		var trigger = new PromiseTrigger<T>();
+		try {
+			f().eager().handle(function(o){
+				switch (o){
+					case Failure(err):
+						trigger.reject(err);
+					case Success(data):
+						trigger.resolve(data);
+				}
+			});
+		} catch (ex) {
+			var err = new Error(ex.message);
+			trigger.reject(err);
+		}
+		return trigger.asPromise();
+	}
 }
