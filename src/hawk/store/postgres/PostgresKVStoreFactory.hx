@@ -1,5 +1,6 @@
 package hawk.store.postgres;
 
+import hawk.util.PromiseX;
 import zenlog.Log;
 import tink.CoreApi;
 
@@ -34,7 +35,9 @@ class PostgresKVStoreFactory implements IKVStoreFactory {
 		if (_postgres == null) {
 			return genLocalStore(name);
 		}
-		return genPostgesStore(name).recover(function(err) {
+		return PromiseX.tryOrErr(function(){
+			return genPostgesStore(name);
+		}).recover(function(err) {
 			Log.error(err.wrap('Failed to init postgres store ${name}.  Will use LocalStore as fallback'));
 			_postgres = null;
 			return genLocalStore(name);
