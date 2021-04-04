@@ -2,6 +2,7 @@ package hawk.datatypes;
 
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
+import hawk.datatypes.validator.StringValidator;
 
 abstract Password(String) {
 	public function new(str:String) {
@@ -26,18 +27,12 @@ abstract Password(String) {
 	}
 
 	public function validationErrs():Array<String> {
-		var errs = new Array<String>();
-
-		if (this != StringTools.trim(this)) {
-			errs.push('password should be trim');
-		}
-		if (this.length < 8) {
-			errs.push('password should be at least 8 characters');
-		}
-		if (this.length > 128) {
-			errs.push('password must be less than 128 chars');
-		}
-		return errs;
+		var validator = new StringValidator("Password")
+		.nonNull()
+		.minChar(8)
+		.maxChar(128)
+		.trim();
+		return validator.errors(this);
 	}
 
 	public static function validOrErr(password:Password):Outcome<Password, Error> {

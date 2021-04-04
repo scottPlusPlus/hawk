@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import hawk.datatypes.validator.StringValidator;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
 import js.html.audio.BiquadFilterNode;
@@ -30,18 +31,12 @@ abstract Email(String) {
 	}
 
 	public function validationErrs():Array<String> {
-		var errs = new Array<String>();
-
-		if (this != StringTools.trim(this)) {
-			errs.push('email should be trim');
-		}
-		if (this.length > 128) {
-			errs.push('email must be less than 128 chars');
-		}
-		if (!_regex.match(this)) {
-			errs.push('invalid email address');
-		}
-		return errs;
+		var validator = new StringValidator("Email")
+			.nonNull()
+			.maxChar(128)
+			.trim()
+			.regex(_regex, "Invalid email address");
+		return validator.errors(this);
 	}
 
 	public static function validOrErr(email:Email):Outcome<Email, Error> {
