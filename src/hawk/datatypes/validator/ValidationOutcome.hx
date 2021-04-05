@@ -2,6 +2,6 @@ package hawk.datatypes.validator;
 
 enum ValidationOutcome {
 	Pass();
-	Fail(msg:String);
-	FailAndExit(msg:String);
+	Fail(errors:Array<String>);
+	FailAndExit(errors:Array<String>);
 }

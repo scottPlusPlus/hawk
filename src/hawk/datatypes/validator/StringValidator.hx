@@ -14,7 +14,7 @@ class StringValidator extends Validator<String> {
     public function minChar(v:UInt):StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (str.length < v){
-                return Fail('${_fieldName} must be at least ${v} chars.');
+                return Fail(['${_fieldName} must be at least ${v} chars.']);
             }
             return Pass;
         }
@@ -25,7 +25,7 @@ class StringValidator extends Validator<String> {
     public function maxChar(v:UInt):StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (str.length > v){
-                return Fail('${_fieldName} must be less than ${v} chars.');
+                return Fail(['${_fieldName} must be less than ${v} chars.']);
             }
             return Pass;
         }
@@ -36,7 +36,7 @@ class StringValidator extends Validator<String> {
     public function regex(regex:EReg, err:String):StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (!regex.match(str)){
-                return Fail(err);
+                return Fail([err]);
             }
             return Pass;
         }
@@ -47,7 +47,7 @@ class StringValidator extends Validator<String> {
     public function trim():StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (StringTools.trim(str) != str){
-                return Fail('${_fieldName} must not have any extra spaces.');
+                return Fail(['${_fieldName} must not have any extra spaces.']);
             }
             return Pass;
         }
@@ -58,7 +58,7 @@ class StringValidator extends Validator<String> {
     public function nonNull():StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (str == null){
-                return FailAndExit('${_fieldName} cannot be null.');
+                return FailAndExit(['${_fieldName} cannot be null.']);
             }
             return Pass;
         }
