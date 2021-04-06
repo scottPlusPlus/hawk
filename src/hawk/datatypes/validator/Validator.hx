@@ -29,7 +29,17 @@ class Validator<T> {
         return Pass;
     }
 
-    public function addRule(r:ValidationRule<T>){
+    public function addRule(r:ValidationRule<T>):Validator<T> {
         _rules.push(r);
+        return this;
+    }
+
+    public function addSubValidator<X>(mapper:T->X, subValidator:Validator<X>):Validator<T> {
+        var rule = function(t:T):ValidationOutcome {
+            var x = mapper(t);
+            var errs = subValidator.errors(x);
+            return outcomeFromArray(errs);
+        }
+        return this.addRule(rule);
     }
 }

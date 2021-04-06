@@ -55,6 +55,17 @@ class StringValidator extends Validator<String> {
         return this;
     }
 
+    public function contains(needle:String):StringValidator {
+        var f = function(str:String):ValidationOutcome {
+            if (!StringTools.contains(str, needle)){
+                return Fail(['${_fieldName} must contain ${needle}.']);
+            }
+            return Pass;
+        }
+        _rules.push(f);
+        return this;
+    }
+
     public function nonNull():StringValidator {
         var f = function(str:String):ValidationOutcome {
             if (str == null){
