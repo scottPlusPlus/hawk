@@ -1,5 +1,8 @@
 package hawk.datatypes;
 
+import tink.core.Outcome;
+import tink.core.Error;
+
 /*
 * Represents a unix timestamp, in milliseconds
 */
@@ -51,13 +54,28 @@ abstract Timestamp(UInt) {
         return Timestamp.fromDate(Date.now());
     }
 
-    public static function toString(t:Timestamp):String {
+    public static function toString(t:Timestamp):String { 
       return Std.string(t.toUInt());
     }
 
     public static function fromString(str:String):Timestamp {
       var i = Std.parseInt(str);
       return fromInt(i);
+    }
+
+
+    static final _regex = ~/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/i;
+
+    public static function fromFormString(str:String):Outcome<Timestamp,Error> {
+      var str = StringTools.replace(str, "T", " ");
+      while (str.length < 19){
+        str += ":00";
+      }
+      if (!_regex.match(str)){
+        return Failure(new Error('no match'));
+      }
+      var d = Date.fromString(str);
+      return Success(fromDate(d)); 
     }
 
 

@@ -22,6 +22,10 @@ class Validator<T> {
         return errs;
     }
 
+    public function errorsShift(x:T):Null<String> {
+        return errors(x).shift();
+    }
+
     public static function outcomeFromArray(v:Array<String>):ValidationOutcome {
         if (v.length > 0){
             return Fail(v);
