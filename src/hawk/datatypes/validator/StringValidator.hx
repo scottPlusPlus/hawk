@@ -76,4 +76,9 @@ class StringValidator extends Validator<String> {
         _rules.push(f);
         return this;
     }
+
+    public override function addRule(r:ValidationRule<String>): StringValidator {
+        _rules.push(r);
+        return this;
+    }
 }
