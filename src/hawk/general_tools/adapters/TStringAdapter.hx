@@ -19,7 +19,7 @@ abstract TStringAdapter<T>(Adapter<T,String>) {
     }
 
     @:to
-    public function toAdapter<T>():Adapter<T,String> {
+    public function toAdapter():Adapter<T,String> {
         return this;
     }
 

@@ -19,7 +19,7 @@ abstract StringTAdapter<T>(Adapter<String,T>) {
     }
 
     @:to
-    public function toAdapter<T>():Adapter<String,T> {
+    public function toAdapter():Adapter<String,T> {
         return this;
     }
 

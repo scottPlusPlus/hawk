@@ -19,7 +19,7 @@ abstract TIntAdapter<T>(Adapter<T,Int>) {
     }
 
     @:to
-    public function toAdapter<T>():Adapter<T,Int> {
+    public function toAdapter():Adapter<T,Int> {
         return this;
     }
 
