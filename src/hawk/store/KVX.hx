@@ -1,5 +1,6 @@
 package hawk.store;
 
+import haxe.Constraints.IMap;
 import tink.CoreApi;
 import tink.core.Error;
 
@@ -21,5 +22,12 @@ class KVX {
 
 	public static inline function compareIntKeys(a:KV<Int, Dynamic>, b:KV<Int, Dynamic>) {
 		return if (a.key < b.key) -1 else if (a.key > b.key) 1 else 0;
+	}
+
+	public static function toMap<K,V>(arr:Array<KV<K,Null<V>>>, emptyMap:IMap<K,V>):IMap<K,V> {
+		for (kv in arr){
+			emptyMap.set(kv.key, kv.value);
+		}
+		return emptyMap;
 	}
 }

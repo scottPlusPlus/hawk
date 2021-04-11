@@ -9,7 +9,7 @@ import haxe.Constraints.IMap;
 class ClientKVStore {
 	public static function create<K, V>(keyAdapter:TStringAdapter<K>, valAdapter:TStringAdapter<V>,
 			getManyWebRequest:Array<K>->Promise<IMap<K, V>>):KVStoreReaderLRUCache<K, V> {
-		var localStoreStr = new LocalMemoryStore();
+		var localStoreStr = new LocalKVStore();
 		var localStore = new KVStoreAdapter(keyAdapter, valAdapter, localStoreStr);
 
 		var createMap = function() {
