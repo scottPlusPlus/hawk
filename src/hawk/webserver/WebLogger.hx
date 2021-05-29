@@ -11,7 +11,6 @@ class WebLogger {
 
         store = new StoredLogger(new TraceLogger());
 		filter = new FilteredLogger(store);
-		filter.calibrateIndentStart();
 		filter.enableDebug = true;
         zenlog.Log.Logger = filter;
         

@@ -1,7 +1,5 @@
 package hawk.util;
 
-import haxe.display.Display.Package;
-import haxe.Timer;
 import tink.core.Noise;
 import tink.core.Promise;
 import tink.core.Signal;
