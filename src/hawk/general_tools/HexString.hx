@@ -1,5 +1,6 @@
 package hawk.general_tools;
 
+import hawk.general_tools.adapters.StringTAdapter;
 import haxe.io.Bytes;
 
 /**
@@ -20,6 +21,10 @@ abstract HexString(String) {
     public function toStringUTF8():String {
         var b = Bytes.ofHex(this);
         return b.toString();
+    }
+
+    public function adapterFromUtf8():StringAdapter<HexString> {
+        return new StringTAdapter(toStringUTF8, fromStringUTF8);
     }
 
     @:from
