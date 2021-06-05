@@ -18,13 +18,13 @@ abstract HexString(String) {
         return new HexString(hex);
     }
 
-    public function toStringUTF8():String {
-        var b = Bytes.ofHex(this);
+    public static function toStringUTF8(hex:HexString):String {
+        var b = Bytes.ofHex(hex);
         return b.toString();
     }
 
-    public function adapterFromUtf8():StringAdapter<HexString> {
-        return new StringTAdapter(toStringUTF8, fromStringUTF8);
+    public static function adapterFromUtf8():StringTAdapter<HexString> {
+        return new StringTAdapter(fromStringUTF8, toStringUTF8);
     }
 
     @:from
