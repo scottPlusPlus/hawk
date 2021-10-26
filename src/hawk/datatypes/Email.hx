@@ -3,7 +3,6 @@ package hawk.datatypes;
 import hawk.datatypes.validator.StringValidator;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
-import js.html.audio.BiquadFilterNode;
 
 abstract Email(String) {
 	// see also: http://emailregex.com/

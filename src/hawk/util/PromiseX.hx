@@ -147,6 +147,9 @@ class PromiseX {
 				passResult(pt, outcome);
 			case EagerlyAwaited:
 				passResult(pt, outcome);
+				
+			case Ready(_):
+				Log.debug('Have result, but next Promise status == Raeady, so ignoring');
 			default:
 				Log.debug('Have result, but next Promise status == ${status}, so ignoring');
 		}
