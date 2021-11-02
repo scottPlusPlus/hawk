@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import hawk.macros.Jsonize;
 /*
 * Represents a user performing actions.  Assumes that the user has been authenticated.
 */

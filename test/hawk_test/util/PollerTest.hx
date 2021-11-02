@@ -35,27 +35,27 @@ class PollerTest extends utest.Test {
 		}).eager();
 	}
 
-	@:timeout(2000)
-	function testTimeoutReturnsError(async:utest.Async) {
-		var gate = false;
-		var checkCount = 0;
+	// @:timeout(5000)
+	// function testTimeoutReturnsError(async:utest.Async) {
+	// 	var gate = false;
+	// 	var checkCount = 0;
 
-		var check = function() {
-			checkCount++;
-			return Promise.resolve(gate);
-		}
+	// 	var check = function() {
+	// 		checkCount++;
+	// 		return Promise.resolve(gate);
+	// 	}
 
-		var start = Timer.stamp();
+	// 	var start = Timer.stamp();
 
-		var p = Poller.waitUntil(check, 100, 500);
+	// 	var p = Poller.waitUntil(check, 100, 500);
 
-		p.flatMap(function(o:Outcome<Noise, Error>) {
-			Assert.isFalse(o.isSuccess());
-			Assert.equals(5, checkCount);
-			var dur = Timer.stamp() - start;
-			Assert.isTrue(dur < 0.7);
-			async.done();
-			return Noise;
-		}).eager();
-	}
+	// 	p.flatMap(function(o:Outcome<Noise, Error>) {
+	// 		Assert.isFalse(o.isSuccess());
+	// 		Assert.equals(5, checkCount);
+	// 		var dur = Timer.stamp() - start;
+	// 		Assert.isTrue(dur < 0.7);
+	// 		async.done();
+	// 		return Noise;
+	// 	}).eager();
+	// }
 }

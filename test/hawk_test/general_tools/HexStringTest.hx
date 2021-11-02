@@ -8,7 +8,7 @@ import utest.Assert;
 class HexStringTest extends utest.Test {
 	function testInOut() {
 		var hex = HexString.fromStringUTF8(TestVals.gibberish);
-		var strRes = hex.toStringUTF8();
+		var strRes = HexString.toStringUTF8(hex);
 		Assert.equals(TestVals.gibberish, strRes);
 	}
 
@@ -20,7 +20,7 @@ class HexStringTest extends utest.Test {
 
 		var parser = new json2object.JsonParser<Foo>();
 		var blobOut = parser.fromJson(json);
-		var actual = blobOut.data.toStringUTF8();
+		var actual =  HexString.toStringUTF8(blobOut.data);
 		Assert.equals(TestVals.gibberish, actual);
 	}
 
