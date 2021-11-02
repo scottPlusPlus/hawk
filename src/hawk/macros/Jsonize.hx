@@ -11,7 +11,6 @@ import haxe.macro.ExprTools;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-using tink.MacroApi;
 #end
 
 class Jsonize {
