@@ -1,6 +1,7 @@
 package hawk.macros;
 
 import hawk.general_tools.adapters.TStringAdapter;
+
 #if macro
 import haxe.macro.Type.ClassField;
 import haxe.macro.ComplexTypeTools;
@@ -11,9 +12,14 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 using tink.MacroApi;
+#end
 
 class Jsonize {
 	// TODO - better check for overrides...
+	#if !macro 
+	public static function process(){}
+	#end
+	#if macro
 	macro public static function process():Array<Field> {
 		var fields = Context.getBuildFields();
 
@@ -153,5 +159,6 @@ class Jsonize {
 		}
 		return false;
 	}
+	#end
 }
-#end
+
