@@ -43,6 +43,10 @@ class Jsonize {
 			fields.push(buildfromJson(xClass, cType));
 		}
 
+		if (!exists(fields, 'toString')) {
+			fields.push(buildToString(xClass, cType));
+		}
+
 		// if (!exists(fields, 'jsonAdapter')) {
 		// 	fields.push(buildAdapter(xClass, cType));
 		// }
@@ -108,6 +112,31 @@ class Jsonize {
 			access: [APublic, AStatic],
 			kind: FFun(funcDef),
 			name: 'fromJson',
+			pos: Context.currentPos()
+		}
+		return field;
+	}
+
+	private static function buildToString(xType:ClassType, cType:ComplexType):Field {
+
+		var name = xType.name;
+
+		var code = '{
+			return $name.toJson(this);
+		}';
+
+		var funcBody = Context.parse(code, Context.currentPos());
+
+		var funcDef:Function = {
+			expr: funcBody,
+			ret: macro:String,
+			args: []
+		};
+
+		var field = {
+			access: [APublic],
+			kind: FFun(funcDef),
+			name: 'toString',
 			pos: Context.currentPos()
 		}
 		return field;

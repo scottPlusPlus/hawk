@@ -10,6 +10,9 @@ class JsonizeTest extends utest.Test {
         var json = JTest.toJson(obj);
         var obj2 = JTest.fromJson(json);
 		Assert.equals(4, obj2.data);
+
+        var j2 = obj.toString();
+        Assert.equals(json, j2);
 	}
 }
 
