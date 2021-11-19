@@ -1,28 +1,30 @@
 package hawk.weberror;
 
+import tink.core.Noise;
+import tink.core.Promise;
 import haxe.Constraints.IMap;
 import hawk.general_tools.adapters.Adapter;
-import zenlog.Log;
 import hawk.async_iterator.AsyncIterator;
 import hawk.store.*;
-import hawk.datatypes.UUID;
 import hawk.datatypes.Timestamp;
 
+@:forward(update)
 abstract WebErrorStore(IDataStore<WebErrorLog>) {
     
-    final fCode = "code";
-    final fMessage = "message";
-    final fPos = "pos";
-    final fPublicMsg = "publicMsg";
-    final fTime = "time";
-    final fUid = "uid";
+    static final fCode = "code";
+    static final fMessage = "message";
+    static final fPos = "pos";
+    static final fPublicMsg = "publicMsg";
+    static final fTime = "time";
+    static final fUid = "uid";
 
     public function new(store:IDataStore<WebErrorLog>){
         this = store;
     }
 
-    public inline function create(data:WebErrorLog):Promise<WebErrorLog>{
-        return this.create(data);
+    public inline function push(err:WebError):Promise<Noise> {
+        var log = WebErrorLog.fromWebError(err);
+        return this.create(log).noise();
     }
 
     public inline function indexByID():IDataStoreIndex<String, WebErrorLog> {
@@ -40,11 +42,11 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
     public static function model(): DataModel<WebErrorLog> {
         var toMap = function(x:WebErrorLog):IMap<String,String> {
             var m = new Map<String,String>();
-            m.set(fCode, x.code);
+            m.set(fCode, Std.string(x.code));
             m.set(fMessage, x.message);
             m.set(fPos, x.pos);
             m.set(fPublicMsg, x.publicMsg);
-            m.set(fTime, x.time);
+            m.set(fTime, Timestamp.toString(x.time));
             m.set(fUid, x.uid);
 			return m;
 		};
@@ -54,9 +56,9 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
             x.message = data.get(fMessage);
             x.pos = data.get(fPos);
             x.publicMsg = data.get(fPublicMsg);
-            x.time = data.get(fTime);
+            x.time = Timestamp.fromString( data.get(fTime));
             x.uid = data.get(fUid);
-			return u;
+			return x;
 		};
 
 		var adapter = new Adapter<WebErrorLog, IMap<String,String>>(toMap, toX);

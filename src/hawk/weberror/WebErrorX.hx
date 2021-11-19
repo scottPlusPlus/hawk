@@ -5,6 +5,8 @@ import zenlog.Log;
 import hawk.weberror.Data;
 import tink.core.Error;
 
+using yaku_core.PromiseX;
+
 @:access(tink.core.TypedError)
 class WebErrorX {
 
@@ -20,7 +22,7 @@ class WebErrorX {
     }
 
 
-    public static function asWebErr(err:Error):Null<WebError> {
+    public static function asWebErr(err:Error):WebError {
         if (!isWebError(err)){
             throw('Error is not a WebError');
         }
@@ -43,6 +45,36 @@ class WebErrorX {
             var we = wrapAsWebErr(err, code, publicMsg);
             return we.asErr();
 		});
+    }
+
+    public static function errContext<T>(p:Promise<T>, msg:String):Promise<T> {
+		return p.mapError(function(err:Error) {
+            if (!isWebError(err)){
+                Log.warn('attempting to add context to an Error, but it is not a webError. Context:  $msg');
+                return err;
+            }
+            var w = asWebErr(err);
+            w.addContext(msg);
+            return err;
+		});
+    }
+
+    public static function logWebErr<T>(p:Promise<T>, ?store:WebErrorStore):Promise<T> {
+        return p.mapError(function(err:Error){
+            Log.warn(err.message);
+            if (!isWebError(err)){
+                Log.warn('attempting to logWebErr, but it is not a webError');
+                return err;
+            }
+            if (store != null){
+                //this is done async
+                store.push(asWebErr(err)).mapError(function(err:Error){
+                    Log.error('WebErrorStore failure! ${err.message}');
+                    return err;
+                }).eager();
+            }
+            return err;
+        });
     }
 
 }

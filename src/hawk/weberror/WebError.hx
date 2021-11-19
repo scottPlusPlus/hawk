@@ -10,14 +10,14 @@ abstract WebError(tink.core.Error.TypedError<Data>) {
 
     public function new(code:ErrorCode, message:String, publicMsg:String = "An error occurred", ?pos:Pos){
         var data = new Data();
-        data.publicMsg = publicMsg;
+        data.publicMsg = '${publicMsg} (${data.uid})';
+        message = '${message} (${data.uid})';
         this = Error.typed(code, message, data, pos);
     }
 
     public var publicMsg(get,set):String;
     public function get_publicMsg():String {
-        var d = this.data;
-        return '${d.publicMsg} (${d.uid})';
+        return this.data.publicMsg;
     }
     public function set_publicMsg(value:String){
         this.data.publicMsg = value;
