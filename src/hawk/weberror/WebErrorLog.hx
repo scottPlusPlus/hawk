@@ -12,12 +12,14 @@ class WebErrorLog {
 	public var publicMsg:String;
 	public var pos:String;
 	public var time:Timestamp;
+	public var context:String;
 
 	public function new() {}
 
 	public static function fromWebError(err:WebError):WebErrorLog {
 		var x = new WebErrorLog();
 		x.code = err.code;
+		x.context = err.context.join(" - ");
 		x.message = err.message;
 		x.pos = err.printPos();
 		x.publicMsg = err.data.publicMsg;

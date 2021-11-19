@@ -8,10 +8,11 @@ import hawk.async_iterator.AsyncIterator;
 import hawk.store.*;
 import hawk.datatypes.Timestamp;
 
-@:forward(update)
+
 abstract WebErrorStore(IDataStore<WebErrorLog>) {
     
     static final fCode = "code";
+    static final fContext = "context";
     static final fMessage = "message";
     static final fPos = "pos";
     static final fPublicMsg = "publicMsg";
@@ -43,6 +44,7 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
         var toMap = function(x:WebErrorLog):IMap<String,String> {
             var m = new Map<String,String>();
             m.set(fCode, Std.string(x.code));
+            m.set(fContext, x.context);
             m.set(fMessage, x.message);
             m.set(fPos, x.pos);
             m.set(fPublicMsg, x.publicMsg);
@@ -53,6 +55,7 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
 		var toX = function(data:IMap<String,String>):WebErrorLog {
 			var x = new WebErrorLog();
 			x.code = Std.parseInt(data.get(fCode));
+            x.context = data.get(fContext);
             x.message = data.get(fMessage);
             x.pos = data.get(fPos);
             x.publicMsg = data.get(fPublicMsg);
@@ -65,6 +68,7 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
 		var fields = new Array<DataField>();
 		fields.push(new DataField(fUid, DataFieldType.Primary));
         fields.push(new DataField(fCode));
+        fields.push(new DataField(fContext));
         fields.push(new DataField(fMessage));
         fields.push(new DataField(fPos));
         fields.push(new DataField(fPublicMsg));

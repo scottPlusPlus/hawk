@@ -29,7 +29,7 @@ class WebErrorX {
         return (cast err:WebError);
     }
 
-    public static function wrapAsWebErr(err:Error,  code:ErrorCode, publicMsg:String = "An error occurred"):WebError {
+    private static inline function wrapAsWebErr(err:Error,  code:ErrorCode, publicMsg:String = "An error occurred"):WebError {
         var data = new Data();
         data.publicMsg = publicMsg;
         err.code = code;
