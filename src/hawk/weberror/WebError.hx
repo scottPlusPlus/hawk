@@ -36,4 +36,8 @@ abstract WebError(tink.core.Error.TypedError<Data>) {
     public inline function addContext(msg:String){
         this.data.context.push(msg);
     }
+
+    public inline function asErr():Error {
+        return (cast this);
+    }
 }

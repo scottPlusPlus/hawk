@@ -10,6 +10,8 @@
 -lib jwt
 -lib polygonal-ds
 -lib thx.core
+-lib yaku_core
+-lib yaku_beta
 
 -debug
 -cp src

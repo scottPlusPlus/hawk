@@ -1,5 +1,6 @@
 package hawk.weberror;
 
+import tink.core.Promise;
 import zenlog.Log;
 import hawk.weberror.Data;
 import tink.core.Error;
@@ -32,6 +33,16 @@ class WebErrorX {
         err.code = code;
         err.data = data;
         return (cast err:WebError);
+    }
+
+    public static function ensureWebErr<T>(p:Promise<T>, code:ErrorCode, publicMsg:String):Promise<T> {
+        return p.mapError(function(err:Error) {
+            if (isWebError(err)){
+                return err;
+            }
+            var we = wrapAsWebErr(err, code, publicMsg);
+            return we.asErr();
+		});
     }
 
 }

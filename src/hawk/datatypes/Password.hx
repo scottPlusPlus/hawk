@@ -1,8 +1,8 @@
 package hawk.datatypes;
 
+import yaku_beta.valid.StringValidator;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
-import hawk.datatypes.validator.StringValidator;
 
 abstract Password(String) {
 	public function new(str:String) {
@@ -27,12 +27,12 @@ abstract Password(String) {
 	}
 
 	public function validationErrs():Array<String> {
-		var validator = new StringValidator("Password")
-		.nonNull()
-		.minChar(8)
-		.maxChar(128)
-		.trim();
-		return validator.errors(this);
+		// var validator = new Validator<String>(("Password"))
+		// .minLength(8)
+		// .maxLength(128)
+		// .isTrim();
+		// return validator.errors(this);
+		return [];
 	}
 
 	public static function validOrErr(password:Password):Outcome<Password, Error> {

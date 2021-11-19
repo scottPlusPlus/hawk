@@ -1,8 +1,10 @@
 package hawk.datatypes;
 
-import hawk.datatypes.validator.StringValidator;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
+import yaku_beta.valid.*;
+
+using yaku_core.OutcomeX;
 
 abstract Email(String) {
 	// see also: http://emailregex.com/
@@ -30,19 +32,17 @@ abstract Email(String) {
 	}
 
 	public function validationErrs():Array<String> {
-		var validator = new StringValidator("Email")
-			.nonNull()
-			.maxChar(128)
-			.trim()
-			.regex(_regex, "Invalid email address");
-		return validator.errors(this);
+		return validator().errors(this);
 	}
 
-	public static function validOrErr(email:Email):Outcome<Email, Error> {
-		var errs = email.validationErrs();
-		if (errs.length > 0) {
-			return Failure(new Error('Invalid Email: ${errs.join(', ')}'));
-		}
-		return Success(email);
+	public function validOutcome():Outcome<Email,Error> {
+		return validator().validOutcome(this).adapt(stringAdapter().toA);
+	}
+
+	private static function validator():StringValidator{
+		return new StringValidator("Email")
+		.maxLength(128)
+		.isTrim()
+		.regex(_regex, "Invalid email address");
 	}
 }
