@@ -1,5 +1,6 @@
 package hawk.store;
 
+import yaku_core.IteratorAdapter;
 import haxe.Constraints.IMap;
 import tink.CoreApi;
 import tink.core.Error;

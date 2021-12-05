@@ -1,10 +1,9 @@
 package hawk.datatypes;
 
-import yaku_beta.valid.StringValidator;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
 
-abstract Password(String) {
+abstract Password(String) to String {
 	public function new(str:String) {
 		this = str;
 	}
