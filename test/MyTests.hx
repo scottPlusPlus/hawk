@@ -4,7 +4,8 @@ import utest.ui.Report;
 import utest.Assert;
 import utest.Async;
 import utest.Runner;
-import hawk.testutils.TestLog;
+
+import yaku_core.test_utils.TestLog;
 
 class MyTests {
 	public static function main() {
