@@ -1,7 +1,10 @@
 package hawk.datatypes;
 
+import yaku_beta.valid.Validation;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
+
+using yaku_beta.valid.StringValidation;
 
 abstract Password(String) to String {
 	public function new(str:String) {
@@ -25,20 +28,11 @@ abstract Password(String) to String {
 		return new Adapter<Password, String>(toStr, Password.fromString);
 	}
 
-	public function validationErrs():Array<String> {
-		// var validator = new Validator<String>(("Password"))
-		// .minLength(8)
-		// .maxLength(128)
-		// .isTrim();
-		// return validator.errors(this);
-		return [];
+	public static function validation(password:Password, name:String = "Password"):Validation<String>{
+		var v = new Validation<String>(password, name);
+		v.minLength(8);
+		v.maxLength(128);
+		return v;
 	}
 
-	public static function validOrErr(password:Password):Outcome<Password, Error> {
-		var errs = password.validationErrs();
-		if (errs.length > 0) {
-			return Failure(new Error('Invalid Password: ${errs.join(', ')}'));
-		}
-		return Success(password);
-	}
 }

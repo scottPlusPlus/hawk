@@ -1,10 +1,11 @@
 package hawk.datatypes;
 
+import yaku_beta.valid.Validation;
 import hawk.general_tools.adapters.Adapter;
 import tink.CoreApi;
-import yaku_beta.valid.*;
 
 using yaku_core.OutcomeX;
+using yaku_beta.valid.StringValidation;
 
 abstract Email(String) {
 	// see also: http://emailregex.com/
@@ -31,18 +32,10 @@ abstract Email(String) {
 		return new Adapter<Email, String>(toStr, Email.fromString);
 	}
 
-	public function validationErrs():Array<String> {
-		return validator().errors(this);
-	}
-
-	public function validOutcome():Outcome<Email,Error> {
-		return validator().validOutcome(this).adapt(stringAdapter().toA);
-	}
-
-	private static function validator():StringValidator{
-		return new StringValidator("Email")
-		.maxLength(128)
-		.isTrim()
-		.regex(_regex, "Invalid email address");
+	public static function validation(email:Email, name:String = "Email"):Validation<String>{
+		var v = new Validation<String>(email, name);
+		v.maxLength(128);
+		v.regex(_regex, "Invalid email address");
+		return v;
 	}
 }

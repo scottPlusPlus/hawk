@@ -10,8 +10,8 @@ abstract Url(String) to String {
 
 	@:from
 	static public function fromString(s:String) {
-        var tu:tink.Url = s;
-		return new Url(tu.toString());
+		//TODO - ensure it's an actual url
+		return new Url(s);
 	}
 
 	@:to
