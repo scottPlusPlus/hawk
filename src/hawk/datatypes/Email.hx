@@ -16,7 +16,7 @@ abstract Email(String) {
 	}
 
 	@:from
-	static public function fromString(s:String) {
+	public static function fromString(s:String) {
 		return new Email(s);
 	}
 

@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import yaku_core.CommonSorters;
 import hawk.general_tools.adapters.Adapter;
 import uuid.*;
 
@@ -44,6 +45,10 @@ abstract UUID(String) {
       var res:Array<UUID> = cast v;
       return res;
       //return v.map(fromString);
+    }
+
+    public static function sortAscending(a:UUID, b:UUID):Int {
+      return CommonSorters.stringsAscending(a, b);
     }
     
 }
