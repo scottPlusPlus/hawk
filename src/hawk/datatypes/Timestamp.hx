@@ -2,11 +2,11 @@ package hawk.datatypes;
 
 import tink.core.Outcome;
 import tink.core.Error;
-
+import hawk.general_tools.adapters.StringTAdapter;
 /*
 * Represents a unix timestamp, in milliseconds
 */
-abstract Timestamp(UInt) {
+abstract Timestamp(UInt) to UInt to Int {
 
     private function new(v:UInt){
         this = v;
@@ -82,4 +82,14 @@ abstract Timestamp(UInt) {
     public static final HOUR:Timestamp = Timestamp.fromUInt(1000 * 60 * 60);
     public static final SECOND:Timestamp = Timestamp.fromUInt(1000);
     public static final DAY:Timestamp = Timestamp.fromUInt(1000 * 60 * 60 * 24);
+
+    public static function fromJson(j:String):Timestamp {
+      return Timestamp.fromString(j);
+    }
+  
+    public static function toJson(x:Timestamp):String {
+      return Timestamp.toString(x);
+    }
+  
+    public static final jsonAdapter = new StringTAdapter(Timestamp.fromJson, Timestamp.toJson);
 }

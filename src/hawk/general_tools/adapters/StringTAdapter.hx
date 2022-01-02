@@ -1,6 +1,6 @@
 package hawk.general_tools.adapters;
 
-abstract StringTAdapter<T>(Adapter<String,T>) {
+abstract StringTAdapter<T>(Adapter<String,T>) to Adapter<String,T> from Adapter<String,T>{
     
     public function new(fromString:String->T, toString:T->String){
         this = new Adapter<String,T>(fromString, toString);

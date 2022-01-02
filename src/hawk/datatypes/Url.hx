@@ -1,6 +1,6 @@
 package hawk.datatypes;
 
-import hawk.general_tools.adapters.TStringAdapter;
+import hawk.general_tools.adapters.StringTAdapter;
 
 abstract Url(String) to String {
 
@@ -19,7 +19,13 @@ abstract Url(String) to String {
 		return this;
 	}
 
-	public static function stringAdapter(): TStringAdapter<Url>{
-        return new TStringAdapter(Std.string, fromString);
+	public static function fromJson(j:String):Url {
+		return new Url(j);
 	}
+
+	public static function toJson(x:Url):String {
+		return x;
+	}
+
+	public static final jsonAdapter = new StringTAdapter(Url.fromJson, Url.toJson);
 }

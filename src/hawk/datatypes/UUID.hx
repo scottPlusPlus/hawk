@@ -3,6 +3,7 @@ package hawk.datatypes;
 import yaku_core.CommonSorters;
 import hawk.general_tools.adapters.Adapter;
 import uuid.*;
+import hawk.general_tools.adapters.StringTAdapter;
 
 abstract UUID(String) {
 
@@ -47,8 +48,18 @@ abstract UUID(String) {
       //return v.map(fromString);
     }
 
-    public static function sortAscending(a:UUID, b:UUID):Int {
+    public static inline function sortAscending(a:UUID, b:UUID):Int {
       return CommonSorters.stringsAscending(a, b);
     }
+
+    public static function fromJson(j:String):UUID {
+      return new UUID(j);
+    }
+  
+    public static function toJson(x:UUID):String {
+      return x;
+    }
+  
+    public static final jsonAdapter = new StringTAdapter(UUID.fromJson, UUID.toJson);
     
 }

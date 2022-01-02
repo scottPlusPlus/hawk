@@ -1,13 +1,12 @@
 package hawk.datatypes;
 
 import yaku_beta.valid.Validation;
-import hawk.general_tools.adapters.Adapter;
-import tink.CoreApi;
+import hawk.general_tools.adapters.StringTAdapter;
 
 using yaku_core.OutcomeX;
 using yaku_beta.valid.StringValidation;
 
-abstract Email(String) {
+abstract Email(String) to String {
 	// see also: http://emailregex.com/
 	static final _regex = ~/[A-Z0-9._%-]+@[A-Z0-9.-]+.[A-Z][A-Z][A-Z]?/i;
 
@@ -25,12 +24,15 @@ abstract Email(String) {
 		return this;
 	}
 
-	public static function stringAdapter():Adapter<Email, String> {
-		var toStr = function(e:Email):String {
-			return e.toString();
-		}
-		return new Adapter<Email, String>(toStr, Email.fromString);
+	public static function fromJson(j:String):Email {
+		return new Email(j);
 	}
+
+	public static function toJson(x:Email):String {
+		return x;
+	}
+
+	public static final jsonAdapter = new StringTAdapter(Email.fromJson, Email.toJson);
 
 	public static function validation(email:Email, name:String = "Email"):Validation<String>{
 		var v = new Validation<String>(email, name);

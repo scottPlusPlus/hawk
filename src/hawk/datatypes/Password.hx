@@ -1,11 +1,11 @@
 package hawk.datatypes;
 
 import yaku_beta.valid.Validation;
-import hawk.general_tools.adapters.Adapter;
-import tink.CoreApi;
+import hawk.general_tools.adapters.StringTAdapter;
 
 using yaku_beta.valid.StringValidation;
 
+//@:build(hawk.macros.Jsonize.process())
 abstract Password(String) to String {
 	public function new(str:String) {
 		this = str;
@@ -21,12 +21,15 @@ abstract Password(String) to String {
 		return this;
 	}
 
-	public static function stringAdapter():Adapter<Password, String> {
-		var toStr = function(p:Password):String {
-			return p.toString();
-		}
-		return new Adapter<Password, String>(toStr, Password.fromString);
+	public static function fromJson(j:String):Password {
+		return new Password(j);
 	}
+
+	public static function toJson(x:Password):String {
+		return x;
+	}
+
+	public static final jsonAdapter = new StringTAdapter(Password.fromJson, Password.toJson);
 
 	public static function validation(password:Password, name:String = "Password"):Validation<String>{
 		var v = new Validation<String>(password, name);

@@ -1,6 +1,6 @@
 package hawk.datatypes;
 
-import hawk.general_tools.adapters.Adapter;
+import hawk.general_tools.adapters.StringTAdapter;
 
 /*
 * A UUID to reprsent a UserId
@@ -21,10 +21,13 @@ abstract UserId(UUID) to UUID from UUID {
       return this;
     }
 
-    public static function stringAdapter():Adapter<UserId,String> {
-        var toStr = function(x:UserId):String {
-          return x.toString();
-        }
-        return new Adapter<UserId,String>(toStr, UUID.fromString);
-      }
+    public static function fromJson(j:String):UserId {
+      return new UserId(UUID.fromString(j));
+    }
+  
+    public static function toJson(x:UserId):String {
+      return x.toString();
+    }
+  
+    public static final jsonAdapter = new StringTAdapter(UserId.fromJson, UserId.toJson);
 }
