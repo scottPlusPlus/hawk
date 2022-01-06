@@ -7,8 +7,8 @@ import tink.CoreApi;
 import utest.Assert;
 import utest.Async;
 
-using hawk.util.PromiseX;
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.PromiseX;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class LocalDataStoreTest extends utest.Test {
 	private var _userX:ExampleUser;

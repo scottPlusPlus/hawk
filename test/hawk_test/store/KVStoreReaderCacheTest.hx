@@ -1,7 +1,7 @@
 package hawk_test.store;
 
 import tink.CoreApi;
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import hawk.store.LocalKVStore;
 import hawk.store.KVStoreReaderLRUCache;
 import hawk.store.IKVStoreReader;
@@ -10,7 +10,7 @@ import utest.Assert;
 import utest.Async;
 import zenlog.Log;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class KVStoreReaderCacheTest extends utest.Test {
 	public function testHappy(async:utest.Async) {

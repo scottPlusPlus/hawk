@@ -7,7 +7,7 @@ import hawk.async_iterator.AsyncIteratorX;
 import hawk.async_iterator.AsyncIterator;
 import tink.CoreApi;
 
-using hawk.util.NullX;
+using yaku_core.NullX;
 
 class DebugStoreAccess {
 	private final DROP = "drop";

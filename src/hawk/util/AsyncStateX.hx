@@ -1,7 +1,7 @@
 package hawk.util;
 
 import tink.CoreApi;
-using hawk.util.NullX;
+using yaku_core.NullX;
 
 class AsyncStateX {
 	public static function fromPromise<T>(p:Promise<T>):AsyncState<T> {

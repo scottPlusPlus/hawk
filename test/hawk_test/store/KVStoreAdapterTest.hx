@@ -13,7 +13,7 @@ import hawk.general_tools.adapters.Adapter;
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class KVStoreAdapterTest extends utest.Test {
 	public function testSetGet(async:utest.Async) {

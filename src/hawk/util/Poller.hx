@@ -5,7 +5,7 @@ import hawk.datatypes.Timestamp;
 import haxe.Timer;
 import tink.CoreApi;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class Poller {
 

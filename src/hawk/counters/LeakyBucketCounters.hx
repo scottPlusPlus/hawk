@@ -4,7 +4,7 @@ import hawk.datatypes.Timestamp;
 import json2object.JsonParser;
 import json2object.JsonWriter;
 
-using hawk.util.NullX;
+using yaku_core.NullX;
 
 class LeakyBucketCounters {
 	public var durationMS(default, null):UInt; // 60 seconds
@@ -37,7 +37,7 @@ class LeakyBucketCounters {
 			c = new Counter();
 			_counters[key] = c;
 		}
-		var counter = c.nullSure();
+		var counter = c.nullThrows();
 		var now = _getTime();
 		var timePassed = now - counter.last;
 		counter.count -= timePassed.toInt() * leakPerMS;

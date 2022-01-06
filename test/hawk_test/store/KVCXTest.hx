@@ -5,7 +5,7 @@ import utest.Async;
 import hawk.store.KVCX;
 import hawk.store.KVC;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class KVCXTest  extends utest.Test {
 

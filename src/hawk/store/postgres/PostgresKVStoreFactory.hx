@@ -1,11 +1,11 @@
 package hawk.store.postgres;
 
-import hawk.util.PromiseX;
+import yaku_core.PromiseX;
 import zenlog.Log;
 import tink.CoreApi;
 
-using hawk.util.ErrorX;
-using hawk.util.PromiseX;
+using yaku_core.ErrorX;
+using yaku_core.PromiseX;
 
 class PostgresKVStoreFactory implements IKVStoreFactory {
 	private var _postgres:Dynamic;

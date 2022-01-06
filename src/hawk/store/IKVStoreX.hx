@@ -2,7 +2,7 @@ package hawk.store;
 
 import tink.CoreApi;
 
-using hawk.util.PromiseX;
+using yaku_core.PromiseX;
 
 class IKVStoreX {
 
@@ -26,7 +26,7 @@ class IKVStoreX {
 		});
 	}
 
-	public static inline function getMany<K,V>(keys:Array<K>, getMethod:K->Promise<Null<V>>):Promise<Array<KV<K, Null<V>>>> {
+	public static inline function getMany<K,V>(keys:Array<K>, getMethod:K->Promise<Null<V>>):Promise<GetManyRes<K,V>> {
 		var getPromises = new Array<Promise<KV<K, Null<V>>>>();
 		for (k in keys) {
 			var p = getMethod(k).next(function(ns):KV<K, Null<V>> {

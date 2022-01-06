@@ -14,10 +14,10 @@ import hawk.datatypes.UUID;
 import tink.CoreApi.Outcome;
 import hawk.datatypes.Email;
 
-using hawk.util.OutcomeX;
-using hawk.util.ErrorX;
-using hawk.util.PromiseX;
-using hawk.util.NullX;
+using yaku_core.OutcomeX;
+using yaku_core.ErrorX;
+using yaku_core.PromiseX;
+using yaku_core.NullX;
 
 class AuthService {
 	private final BAD_LOGIN_MSG = 'invalid email / password';
@@ -119,7 +119,7 @@ class AuthService {
 			if (res == null) {
 				return Failure(new Error(BAD_LOGIN_CODE, BAD_LOGIN_MSG));
 			}
-			var user = res.nullSure();
+			var user = res.nullThrows();
 			Log.debug("AuthService.login have user");
 			var hashed = hashPass(pass, user.salt);
 			if (hashed != user.passHash) {

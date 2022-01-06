@@ -5,7 +5,7 @@ import haxe.ds.Map;
 import haxe.Constraints.IMap;
 import tink.CoreApi;
 
-using hawk.util.PromiseX;
+using yaku_core.PromiseX;
 
 
 class Batcher<X,Y> {

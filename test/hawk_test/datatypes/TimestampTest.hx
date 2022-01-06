@@ -6,7 +6,7 @@ import utest.Assert;
 import tink.core.Outcome;
 import zenlog.Log;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class TimestampTest extends utest.Test {
 

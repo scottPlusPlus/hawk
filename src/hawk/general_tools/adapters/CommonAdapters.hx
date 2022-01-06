@@ -1,6 +1,6 @@
 package hawk.general_tools.adapters;
 
-using hawk.util.NullX;
+using yaku_core.NullX;
 
 class CommonAdapters {
 

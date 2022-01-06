@@ -1,6 +1,6 @@
 package hawk_test.util;
 
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import hawk.util.AsyncStateX;
 import hawk.util.AsyncState;
 import tink.CoreApi;

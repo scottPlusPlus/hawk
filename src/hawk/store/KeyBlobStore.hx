@@ -12,8 +12,6 @@ class KeyBlobStore {
 	private var _built:Map<String, UInt> = [];
 	private var _index:IDataStoreIndex<String, KVC<String, String>>;
 
-	
-
 	public function new(store:IDataStore<KVC<String, String>>) {
 		_store = store;
 		_index = _store.getIndexByColName(KEY_FIELD);

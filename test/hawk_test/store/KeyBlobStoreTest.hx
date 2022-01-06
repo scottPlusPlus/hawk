@@ -1,13 +1,13 @@
 package hawk_test.store;
 
 import hawk.store.LocalDataStore;
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import tink.CoreApi;
 import hawk.store.KeyBlobStore;
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class KeyBlobStoreTest  extends utest.Test {
 

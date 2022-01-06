@@ -1,13 +1,13 @@
 package hawk_test.store;
 
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import hawk.store.IKVStore;
 import hawk.store.LocalKVStoreFactory;
 import utest.Assert;
 import utest.Async;
 import tink.CoreApi;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class LocalKVStoreFactoryTest extends utest.Test {
 	public function testLocalKVStoreFactory(async:utest.Async) {

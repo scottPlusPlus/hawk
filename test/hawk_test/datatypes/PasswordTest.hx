@@ -4,7 +4,7 @@ package hawk_test.datatypes;
 import hawk.datatypes.Password;
 import utest.Assert;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class PasswordTest extends utest.Test {
 

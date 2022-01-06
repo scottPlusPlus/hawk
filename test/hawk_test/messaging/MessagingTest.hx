@@ -10,8 +10,8 @@ import utest.Async;
 import haxe.io.Bytes;
 
 using tink.CoreApi.OutcomeTools;
-using hawk.util.PromiseX;
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.PromiseX;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class MessagingTest extends utest.Test {
 	

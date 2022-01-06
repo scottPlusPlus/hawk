@@ -1,13 +1,13 @@
 package hawk_test.util;
 
 import zenlog.Log;
-import hawk.util.PromiseX;
+import yaku_core.PromiseX;
 import hawk.util.Batcher;
 import utest.Assert;
 import tink.CoreApi;
 import haxe.Constraints.IMap;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class BatcherTest extends utest.Test {
 	private var _fetchedWaves:Array<Array<Int>>;

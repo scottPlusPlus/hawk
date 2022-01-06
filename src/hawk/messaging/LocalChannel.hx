@@ -8,7 +8,7 @@ import tink.CoreApi.Error;
 import tink.CoreApi.Noise;
 import tink.CoreApi.Outcome;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class LocalChannel<T> implements IPublisher<T> implements ISubscriber<T> {
 	public final key:String;

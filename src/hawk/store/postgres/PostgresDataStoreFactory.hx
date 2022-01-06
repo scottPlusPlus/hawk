@@ -2,10 +2,10 @@ package hawk.store.postgres;
 
 import zenlog.Log;
 import tink.CoreApi;
-import hawk.util.PromiseX;
+import yaku_core.PromiseX;
 
-using hawk.util.ErrorX;
-using hawk.util.PromiseX;
+using yaku_core.PromiseX;
+using yaku_core.ErrorX;
 
 class PostgresDataStoreFactory implements IDataStoreFactory {
 	private var _postgres:Dynamic;

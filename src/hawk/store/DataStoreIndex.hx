@@ -6,7 +6,7 @@ import hawk.store.KVC;
 import haxe.Constraints.IMap;
 import tink.CoreApi;
 
-using hawk.util.ErrorX;
+using yaku_core.ErrorX;
 
 @:generic
 class DataStoreIndex<K,V> implements IDataStoreIndex<K,V> {

@@ -15,9 +15,9 @@ import hawk.datatypes.UUID;
 import utest.Assert;
 
 
-using hawk.util.OutcomeX;
-using hawk.util.PromiseX;
-using hawk.util.NullX;
+using yaku_core.OutcomeX;
+using yaku_core.PromiseX;
+using yaku_core.NullX;
 using hawk.testutils.PromiseTestUtils;
 
 class AuthServiceTest extends utest.Test {
@@ -40,7 +40,7 @@ class AuthServiceTest extends utest.Test {
 		service.signIn("some@email.com", "anypassword").map(function(o:Outcome<AuthResponse, Error>) {
 			Log.debug('testBadLoginFails handle outcome');
 			Assert.isTrue(o.isFailure());
-			var err = o.failure().nullSure();
+			var err = o.failure().nullThrows();
 			Assert.equals(ErrorCode.Unauthorized, err.code);
 			async.done();
 			//TestLog.setDebug(false);
@@ -107,7 +107,7 @@ class AuthServiceTest extends utest.Test {
 			.flatMap(function(o:Outcome<AuthResponse, Error>) {
 				Log.debug('testBadLoginFails handle outcome');
 				Assert.isTrue(o.isFailure());
-				var err = o.failure().nullSure();
+				var err = o.failure().nullThrows();
 				Assert.equals(ErrorCode.Unauthorized, err.code);
 				async.done();
 				//TestLog.setDebug(false);

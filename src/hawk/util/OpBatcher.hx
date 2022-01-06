@@ -5,6 +5,8 @@ import tink.core.Promise;
 import tink.core.Signal;
 import tink.core.Outcome;
 
+import yaku_core.PromiseX;
+
 class OpBatcher {
 	public var limitMS(default, null):UInt; // only trigger once every this many millis
 	public var signal(get, never):Signal<OpBatcher>;

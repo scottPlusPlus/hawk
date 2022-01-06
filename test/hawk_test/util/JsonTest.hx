@@ -1,6 +1,6 @@
 package hawk_test.util;
 
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import zenlog.Log;
 import utest.Assert;
 import hawk.util.Json;

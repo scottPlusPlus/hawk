@@ -8,8 +8,8 @@ import test_utils.ExampleTable;
 import utest.Assert;
 import hawk.store.DebugDataStoreAccess;
 
-using hawk.testutils.PromiseTestUtils;
-using hawk.util.PromiseX;
+using yaku_core.test_utils.PromiseTestUtils;
+using yaku_core.PromiseX;
 
 class DebugDataStoreAccessTest extends utest.Test {
 	private var _debugStore:DebugDataStoreAccess;

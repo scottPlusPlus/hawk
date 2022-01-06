@@ -1,6 +1,6 @@
 package hawk_test.general_tools;
 
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import hawk.general_tools.HexString;
 import zenlog.Log;
 import utest.Assert;

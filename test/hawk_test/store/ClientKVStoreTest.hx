@@ -11,7 +11,7 @@ import hawk.store.LocalKVStore;
 import utest.Assert;
 
 using hawk.store.KVX;
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class ClientKVStoreTest  extends utest.Test {
 

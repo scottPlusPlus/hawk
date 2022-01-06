@@ -35,7 +35,7 @@ class CustomFetcher<K, V> implements IKVStoreReader<K, V> {
 		return _fetch(key);
 	}
 
-	public function getMany(keys:Array<K>):Promise<Array<KV<K, Null<V>>>> {
+	public function getMany(keys:Array<K>):Promise<GetManyRes<K,V>> {
 		return IKVStoreX.getMany(keys, _fetch);
 	}
 }

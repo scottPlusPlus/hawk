@@ -1,7 +1,7 @@
 package hawk_test.messaging;
 
-import hawk.util.PromiseX;
-import hawk.testutils.TestVals;
+import yaku_core.PromiseX;
+import yaku_core.test_utils.TestVals;
 import hawk.messaging.*;
 import utest.Assert;
 import utest.Async;

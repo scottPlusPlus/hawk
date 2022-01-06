@@ -3,7 +3,7 @@ package hawk.messaging;
 import hawk.messaging.*;
 import tink.CoreApi;
 
-using hawk.util.NullX;
+using yaku_core.NullX;
 
 class LocalChannelFactory implements IChannelFactory<String> {
 

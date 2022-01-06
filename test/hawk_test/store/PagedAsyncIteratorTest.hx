@@ -7,7 +7,7 @@ import tink.CoreApi;
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class PagedAsyncIteratorTest  extends utest.Test {
 

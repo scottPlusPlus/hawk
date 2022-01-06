@@ -1,9 +1,6 @@
 package hawk;
 
-import zenlog.ILogger;
-
-
-class StoredLogger implements ILogger {
+class StoredLogger {
 
     public var wrappedLogger:ILogger;
 

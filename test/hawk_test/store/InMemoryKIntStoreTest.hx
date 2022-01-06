@@ -7,7 +7,7 @@ import hawk.store.InMemoryKIntStore;
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class InMemoryKIntStoreTest extends utest.Test {
 	public function testSetAddGet(async:utest.Async) {

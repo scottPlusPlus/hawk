@@ -1,13 +1,13 @@
 package hawk_test.store;
 
 import hawk.store.LocalKVStore;
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import tink.core.Noise;
 import hawk.store.DebugStoreAccess;
 import utest.Assert;
 import utest.Async;
 
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class DebugStoreAccessTest extends utest.Test {
 

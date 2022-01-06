@@ -6,7 +6,7 @@ import hawk.store.KV;
 import hawk.store.KVX;
 import hawk.store.KVC;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class KVXTest  extends utest.Test {
 

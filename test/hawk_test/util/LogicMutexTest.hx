@@ -1,7 +1,7 @@
 package hawk_test.util;
 
 import tink.CoreApi;
-import hawk.util.PromiseX;
+import yaku_core.PromiseX;
 import hawk.util.LogicMutex;
 import utest.Assert;
 import utest.Async;

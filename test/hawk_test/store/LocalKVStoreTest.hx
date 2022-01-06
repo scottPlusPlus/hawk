@@ -3,14 +3,14 @@ package hawk_test.store;
 import hawk.store.KVC;
 import hawk.store.KVX;
 import zenlog.Log;
-import hawk.testutils.TestVals;
+import yaku_core.test_utils.TestVals;
 import tink.core.Noise;
 import hawk.store.LocalKVStore;
 import utest.Assert;
 import utest.Async;
 
 using hawk.store.IKVStoreX;
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class LocalKVStoreTest extends utest.Test {
 	public function testHappy(async:utest.Async) {

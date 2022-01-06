@@ -4,7 +4,7 @@ import zenlog.Log;
 import tink.CoreApi;
 import utest.Assert;
 
-using hawk.util.OutcomeX;
+using yaku_core.OutcomeX;
 
 class PromiseTestUtils {
 	public function new(){}
