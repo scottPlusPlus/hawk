@@ -1,10 +1,10 @@
 package hawk.datatypes;
 
 import hawk.general_tools.adapters.StringTAdapter;
+
 /*
 * Represents a user performing actions.  Assumes that the user has been authenticated.
 */
-
 abstract Actor(UUID) to UUID {
     
     private function new(id:UUID){

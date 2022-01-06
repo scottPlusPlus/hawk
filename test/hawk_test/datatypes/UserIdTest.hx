@@ -19,9 +19,8 @@ class UserIdTest extends utest.Test {
     }
 
     function testAdapter(){
-        var u1 = UUID.gen();
-        var user = new UserId(u1);
-        var adapter = UserId.jsonAdapter;
+        var user:UserId = UUID.gen();
+        var adapter = UUID.jsonAdapter;
         var str = adapter.toString(user);
         var user2 = adapter.fromString(str);
         Assert.isTrue(user == user2);
