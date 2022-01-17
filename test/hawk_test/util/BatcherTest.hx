@@ -1,5 +1,6 @@
 package hawk_test.util;
 
+import yaku_core.test_utils.TestVals;
 import hawk.store.KVC;
 import hawk.store.ArrayKV;
 import zenlog.Log;
@@ -10,26 +11,32 @@ import tink.CoreApi;
 import haxe.Constraints.IMap;
 
 using yaku_core.test_utils.PromiseTestUtils;
+using yaku_core.NullX;
 
 class BatcherTest extends utest.Test {
-	private var _fetchedWaves:Array<Array<Int>>;
+	private var _fetchedWaves:Array<Array<String>>;
 	private var _fetcherBegins:SignalTrigger<Noise>;
+	private var _fetchedData:Map<String,String>;
 
 	public function setup() {
 		_fetchedWaves = [];
 		_fetcherBegins = new SignalTrigger();
+		_fetchedData = new Map();
+		_fetchedData.set(TestVals.key1, TestVals.val1);
+		_fetchedData.set(TestVals.key2, TestVals.val2);
+		_fetchedData.set(TestVals.key3, TestVals.val3);
 	}
 
 	function testSimple(async:utest.Async) {
-		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
+		var batcher = new Batcher(exampleFetcher, 50);
 
-		var p1 = batcher.request(2).next(function(val) {
-			Assert.equals(4, val);
+		var p1 = batcher.request(TestVals.key1).next(function(val) {
+			Assert.equals(TestVals.val1, val);
 			return Noise;
 		}).eager();
 
-		var p2 = batcher.request(3).next(function(val) {
-			Assert.equals(6, val);
+		var p2 = batcher.request(TestVals.key2).next(function(val) {
+			Assert.equals(TestVals.val2, val);
 			return Noise;
 		}).eager();
 
@@ -39,39 +46,24 @@ class BatcherTest extends utest.Test {
 		}).closeTestChain(async);
 	}
 
-	function testNullable(async:utest.Async) {
-		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
-
-		var p1 = batcher.request(1).next(function(val) {
-			Assert.equals(2, val);
-			return Noise;
-		}).eager();
-
-		var p2 = batcher.request(-1).next(function(val) {
-			Assert.isNull(val);
-			return Noise;
-		}).eager();
-
-		Promise.inParallel([p1, p2]).closeTestChain(async);
-	}
 
 	@:timeout(500)
 	function testBatches(async:utest.Async) {
-		var batcher = Batcher.createIntBatcher(exampleFetcher, 50);
+		var batcher = new Batcher(exampleFetcher, 50);
 
-		var p1 = batcher.request(1).next(function(val) {
-			Assert.equals(2, val);
+		var p1 = batcher.request(TestVals.key1).next(function(val) {
+			Assert.equals(TestVals.val1, val);
 			return Noise;
 		}).eager();
 
-		var p2 = batcher.request(-1).next(function(val) {
-			Assert.isNull(val);
+		var p2 = batcher.request(TestVals.key2).next(function(val) {
+			Assert.equals(TestVals.val2, val);
 			return Noise;
 		}).eager();
 
 		var p3 = PromiseX.waitPromise(60).next(function(_) {
-			return batcher.request(3).next(function(val) {
-				Assert.equals(6, val);
+			return batcher.request(TestVals.key3).next(function(val) {
+				Assert.equals(TestVals.val3, val);
 				return Noise;
 			});
 		}).eager();
@@ -82,17 +74,16 @@ class BatcherTest extends utest.Test {
 		}).closeTestChain(async);
 	}
 
-	function exampleFetcher(keys:Array<Int>):Promise<ArrayKV<Int, Int>> {
+	function exampleFetcher(keys:Array<String>):Promise<ArrayKV<String, String>> {
 		Log.debug('trigger fetch: ${keys}');
 		_fetcherBegins.trigger(Noise);
 		return PromiseX.waitPromise(100).next(function(_) {
 			Log.debug('fetch complete for ${keys}');
 			_fetchedWaves.push(keys);
-			var res = new ArrayKV<Int,Int>();
+			var res = new ArrayKV<String,String>();
 			for (key in keys) {
-				if (key > 0) {
-					res.push(new KVC(key, key * 2));
-				}
+				var val = _fetchedData.get(key).nullThrows();
+				res.push(new KVC(key, val));
 			}
 			return res;
 		});

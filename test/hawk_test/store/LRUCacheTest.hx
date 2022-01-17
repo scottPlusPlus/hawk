@@ -14,7 +14,7 @@ class LRUCacheTest extends utest.Test {
 
     var _data:Map<String,String>;
     var _trueStore:KVStoreReaderTester<String,String>;
-    var _lru: LRUCache<String,String>;
+    var _lru: LRUCache<String>;
 
     public function setup(){
         _data = new Map<String,String>();
