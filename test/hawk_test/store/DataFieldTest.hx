@@ -1,6 +1,5 @@
 package hawk_test.store;
 
-import zenlog.Log;
 import hawk.store.DataField;
 import utest.Assert;
 

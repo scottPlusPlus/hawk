@@ -10,7 +10,7 @@ import utest.Async;
 using yaku_core.PromiseX;
 using yaku_core.test_utils.PromiseTestUtils;
 
-class LocalDataStoreTest extends utest.Test {
+class LocalMemDataStoreTest extends utest.Test {
 	private var _userX:ExampleUser;
 	private var _userY:ExampleUser;
 	private var _userZ:ExampleUser;

@@ -3,7 +3,7 @@ package hawk.store;
 import hawk.async_iterator.AsyncIterator;
 import tink.CoreApi.Promise;
 
-interface  IKVStore<K, V> extends IKVStoreReader<K,V> extends IClientKVStore<K,V>{
+interface  IKVStore<K, V> extends IKVStoreReader<K,V> extends IClientKVStore<K,V> extends IKVStoreReader<K,V> {
 
 	function get(key:K):Promise<Null<V>>;
 	function set(key:K, value:V):Promise<V>;

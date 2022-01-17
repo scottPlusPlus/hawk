@@ -2,19 +2,19 @@ package hawk_test.store;
 
 import hawk.store.KVC;
 import hawk.store.KVX;
-import zenlog.Log;
-import yaku_core.test_utils.TestVals;
+import hawk.store.LocalMemKVStore;
 import tink.core.Noise;
-import hawk.store.LocalKVStore;
 import utest.Assert;
 import utest.Async;
+import yaku_core.test_utils.TestVals;
+import zenlog.Log;
 
 using hawk.store.IKVStoreX;
 using yaku_core.test_utils.PromiseTestUtils;
 
-class LocalKVStoreTest extends utest.Test {
+class LocalMemKVStoreTest extends utest.Test {
 	public function testHappy(async:utest.Async) {
-		var store = new LocalKVStore();
+		var store = new LocalMemKVStore(new Map<String,String>());
 		var foo = "foo";
 		var foo2 = "footwo";
 		var bar = "bar";
@@ -79,7 +79,7 @@ class LocalKVStoreTest extends utest.Test {
 		map.set(TestVals.foo2, TestVals.bar2);
 		map.set(TestVals.foo3, TestVals.bar3);
 
-		var store = new LocalKVStore(map);
+		var store = new LocalMemKVStore(map);
 
         var expected = [];
         expected.push(new KVC(TestVals.foo, TestVals.bar));

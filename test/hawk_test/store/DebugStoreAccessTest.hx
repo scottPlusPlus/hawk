@@ -1,6 +1,6 @@
 package hawk_test.store;
 
-import hawk.store.LocalKVStore;
+import hawk.store.LocalMemKVStore;
 import yaku_core.test_utils.TestVals;
 import tink.core.Noise;
 import hawk.store.DebugStoreAccess;
@@ -14,7 +14,7 @@ class DebugStoreAccessTest extends utest.Test {
 	public function testHappy(async:utest.Async) {
 		var name = "name";
 
-		var store = new LocalKVStore();
+		var store = LocalMemKVStore.newStringStore();
 		store.set(TestVals.key1, TestVals.val1);
 		var direct = new DebugStoreAccess();
 		direct.register(name, store);
@@ -35,7 +35,7 @@ class DebugStoreAccessTest extends utest.Test {
 		map.set(TestVals.foo, TestVals.bar);
 		map.set(TestVals.foo2, TestVals.bar2);
 
-		var store = new LocalKVStore(map);
+		var store = new LocalMemKVStore(map);
 		var direct = new DebugStoreAccess();
 		var name = "name";
 		direct.register(name, store);

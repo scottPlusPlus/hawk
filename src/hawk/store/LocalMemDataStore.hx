@@ -7,7 +7,7 @@ import hawk.async_iterator.AsyncIterator;
 import zenlog.Log;
 import tink.CoreApi;
 
-class LocalDataStore<T> implements IDataStore<T> {
+class LocalMemDataStore<T> implements IDataStore<T> {
 	// NOTE: we don't worry about any of these transactions being atomic, because none of the data is persisted
 	private var _model:DataModel<T>;
 

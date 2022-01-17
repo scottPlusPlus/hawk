@@ -1,6 +1,6 @@
 package hawk_test.store;
 
-import hawk.store.LocalDataStore;
+import hawk.store.LocalMemDataStore;
 import yaku_core.test_utils.TestVals;
 import tink.CoreApi;
 import hawk.store.KeyBlobStore;
@@ -14,7 +14,7 @@ class KeyBlobStoreTest  extends utest.Test {
 	public function testHappy(async:utest.Async) {
 	
         var model = KeyBlobStore.model();
-        var backingStore = new LocalDataStore(model);
+        var backingStore = new LocalMemDataStore(model);
         var keyBlobStore = new KeyBlobStore(backingStore);
 
         var stringStore:KeyBlobStringStore;

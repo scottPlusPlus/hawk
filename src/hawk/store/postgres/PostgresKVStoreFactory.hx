@@ -55,9 +55,8 @@ class PostgresKVStoreFactory implements IKVStoreFactory {
 	}
 
 	private function genLocalStore(name:String):IKVStore<String, String> {
-		var store = new LocalKVStore();
-		var iface:IKVStore<String, String> = store;
-		return iface;
+		var store = new LocalMemKVStore(new Map<String,String>());
+		return store;
 	}
 }
 

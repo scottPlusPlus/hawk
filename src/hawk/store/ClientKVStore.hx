@@ -1,41 +1,49 @@
 package hawk.store;
 
-import hawk.general_tools.adapters.MapAdapterK;
+
 import hawk.util.Batcher;
 import tink.CoreApi;
-import hawk.general_tools.adapters.TStringAdapter;
-import haxe.Constraints.IMap;
 
 class ClientKVStore {
-	public static function create<K, V>(keyAdapter:TStringAdapter<K>, valAdapter:TStringAdapter<V>,
-			getManyWebRequest:Array<K>->Promise<IMap<K, V>>):KVStoreReaderLRUCache<K, V> {
-		var localStoreStr = new LocalKVStore();
-		var localStore = new KVStoreAdapter(keyAdapter, valAdapter, localStoreStr);
+	// public static inline function createLocalMemCache<K, V>(getManyWebRequest:Array<K>->Promise<GetManyRes<K,V>>, localMap:Map<K,V>, batchDelayMS:UInt = 100, cacheCount:UInt = 128):LRUCache<K, V> {
 
-		var createMap = function() {
-			var map = new Map<String, PromiseTrigger<Null<V>>>();
-			var adaptedMap = new MapAdapterK(keyAdapter, map);
-			return adaptedMap;
+	// 	//var localMap = new Map<K,V>();
+	// 	var localStore = new LocalMemKVStore(localMap);
+
+	// 	var m = new Map<K,PromiseTrigger<Null<V>>>();
+	// 	var batcher = new Batcher<K,Null<V>>(getManyWebRequest, batchDelayMS, m);
+	// 	var fetchMany = function(keys:Array<K>):Promise<GetManyRes<K,V>> {
+	// 		return IKVStoreX.getMany(keys, batcher.request);
+	// 	}
+	// 	var fetcher = new CustomKVReader<K, V>(batcher.request, fetchMany);
+	// 	return new LRUCache(localStore, fetcher, cacheCount);
+	// }
+
+	public static inline function createLocalMemCacheStringKey<V>(getManyWebRequest:Array<String>->Promise<GetManyRes<String,V>>, batchDelayMS:UInt = 100, cacheCount:UInt = 128):LRUCache<String, V> {
+
+		var localMap = new Map<String,V>();
+		var localStore = new LocalMemKVStore(localMap);
+
+		var m = new Map<String,PromiseTrigger<Null<V>>>();
+		var batcher = new Batcher<String,Null<V>>(getManyWebRequest, batchDelayMS, m);
+		var fetchMany = function(keys:Array<String>):Promise<GetManyRes<String,V>> {
+			return IKVStoreX.getMany(keys, batcher.request);
 		}
-
-		var batcher = new Batcher(getManyWebRequest, 100, createMap);
-		var fetcher = new CustomFetcher<K, V>(batcher.request);
-		return new KVStoreReaderLRUCache(localStore, fetcher, 32);
-	}
-}
-
-class CustomFetcher<K, V> implements IKVStoreReader<K, V> {
-	private var _fetch:K->Promise<Null<V>>;
-
-	public function new(fetch:K->Promise<Null<V>>) {
-		_fetch = fetch;
+		var fetcher = new CustomKVReader<String, V>(batcher.request, fetchMany);
+		return new LRUCache(localStore, fetcher, cacheCount);
 	}
 
-	public function get(key:K):Promise<Null<V>> {
-		return _fetch(key);
-	}
+	public static inline function createLocalMemCacheIntKey<V>(getManyWebRequest:Array<Int>->Promise<GetManyRes<Int,V>>, batchDelayMS:UInt = 100, cacheCount:UInt = 128):LRUCache<Int, V> {
 
-	public function getMany(keys:Array<K>):Promise<GetManyRes<K,V>> {
-		return IKVStoreX.getMany(keys, _fetch);
+		var localMap = new Map<Int,V>();
+		var localStore = new LocalMemKVStore(localMap);
+
+		var m = new Map<Int,PromiseTrigger<Null<V>>>();
+		var batcher = new Batcher<Int,Null<V>>(getManyWebRequest, batchDelayMS, m);
+		var fetchMany = function(keys:Array<Int>):Promise<GetManyRes<Int,V>> {
+			return IKVStoreX.getMany(keys, batcher.request);
+		}
+		var fetcher = new CustomKVReader<Int, V>(batcher.request, fetchMany);
+		return new LRUCache(localStore, fetcher, cacheCount);
 	}
 }

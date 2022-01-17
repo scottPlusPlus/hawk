@@ -56,7 +56,7 @@ class PostgresDataStoreFactory implements IDataStoreFactory {
 	}
 
 	private function genLocalStore<T>(name:String, model:DataModel<T>):IDataStore<T> {
-		var store:IDataStore<T> = new LocalDataStore(model);
+		var store:IDataStore<T> = new LocalMemDataStore(model);
 		var iface:IDataStore<T> = store;
 		return iface;
 	}

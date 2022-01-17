@@ -7,9 +7,9 @@ import hawk.store.DataModel;
 import hawk.store.DataField;
 import hawk.general_tools.adapters.Adapter;
 import zenlog.Log;
-import hawk.store.LocalDataStore;
+import hawk.store.LocalMemDataStore;
 
-class ExampleTable extends LocalDataStore<ExampleUser> {
+class ExampleTable extends LocalMemDataStore<ExampleUser> {
 	public function new() {
 		Log.debug("try create new table");
 		var toMap = function(u:ExampleUser):IMap<String,String> {

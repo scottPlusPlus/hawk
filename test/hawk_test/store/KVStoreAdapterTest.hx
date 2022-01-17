@@ -1,6 +1,6 @@
 package hawk_test.store;
 
-import hawk.store.LocalKVStore;
+import hawk.store.LocalMemKVStore;
 import hawk.async_iterator.AsyncIteratorX;
 import tink.CoreApi;
 import hawk.store.KV;
@@ -8,7 +8,6 @@ import hawk.store.KVC;
 import hawk.store.KVX;
 import hawk.store.IKVStore;
 import hawk.store.KVStoreAdapter;
-import hawk.store.LocalKVStore;
 import hawk.general_tools.adapters.Adapter;
 import utest.Assert;
 import utest.Async;
@@ -63,7 +62,7 @@ class KVStoreAdapterTest extends utest.Test {
 		m.set("1", "100");
 		m.set("2", "200");
 		m.set("3", "300");
-		var localStore = new LocalKVStore(m);
+		var localStore = new LocalMemKVStore(m);
 		var intStringAdapter = new Adapter<Int, String>(Std.string, Std.parseInt);
 		var store:IKVStore<Int, Int> = new KVStoreAdapter(intStringAdapter, intStringAdapter, localStore);
 		return store;

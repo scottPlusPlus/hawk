@@ -2,7 +2,7 @@ package hawk_test.store;
 
 import yaku_core.test_utils.TestVals;
 import hawk.store.IKVStore;
-import hawk.store.LocalKVStoreFactory;
+import hawk.store.LocalMemKVStoreFactory;
 import utest.Assert;
 import utest.Async;
 import tink.CoreApi;
@@ -11,7 +11,7 @@ using yaku_core.test_utils.PromiseTestUtils;
 
 class LocalKVStoreFactoryTest extends utest.Test {
 	public function testLocalKVStoreFactory(async:utest.Async) {
-		var factory = new LocalKVStoreFactory();
+		var factory = new LocalMemKVStoreFactory();
 		var store:IKVStore<String, String>;
 		var setup = function() {
 			return factory.get("foo").next(function(res) {

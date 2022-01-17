@@ -1,7 +1,7 @@
 package hawk_test.authservice;
 
 import hawk.authservice.AuthUserStore;
-import hawk.store.LocalDataStore;
+import hawk.store.LocalMemDataStore;
 import hawk.authservice.EvNewUser;
 import hawk.datatypes.Password;
 import tink.CoreApi.Outcome;
@@ -171,7 +171,7 @@ class AuthServiceTest extends utest.Test {
 	}
 
 	function authServiceTester():AuthService {
-		var localStore = new LocalDataStore(AuthUserStore.model());
+		var localStore = new LocalMemDataStore(AuthUserStore.model());
 		var store = new AuthUserStore(localStore);
 
 		var channel = new LocalChannel("authNewUser", EvNewUser.toMessage, EvNewUser.fromMessage);

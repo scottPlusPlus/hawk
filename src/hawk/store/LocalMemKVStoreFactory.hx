@@ -2,11 +2,11 @@ package hawk.store;
 
 import hawk.store.IKVStore;
 import tink.CoreApi;
-import hawk.store.LocalKVStore;
+import hawk.store.LocalMemKVStore;
 
-class LocalKVStoreFactory implements IKVStoreFactory {
+class LocalMemKVStoreFactory implements IKVStoreFactory {
 
-    private var _map:Map<String,LocalKVStore> = [];
+    private var _map:Map<String,LocalMemKVStore<String,String>> = [];
 
     public function new(){}
 
@@ -15,7 +15,7 @@ class LocalKVStoreFactory implements IKVStoreFactory {
             var err = new Error('IKVStore ${name} was already created. Only use IKVStoreFactory to create NEW stores');
             return err;
         }
-        var store = new LocalKVStore();
+        var store = new LocalMemKVStore(new Map<String,String>());
         _map.set(name, store);
         var iface:IKVStore<String,String> = store;
         return iface;

@@ -1,5 +1,6 @@
 package hawk_test.store;
 
+import hawk.store.GetManyRes;
 import utest.Async;
 import hawk.general_tools.adapters.SelfAdapter;
 import hawk.store.KVStoreAdapter;
@@ -7,7 +8,7 @@ import hawk.general_tools.adapters.CommonAdapters;
 import hawk.store.ClientKVStore;
 import haxe.Constraints.IMap;
 import tink.CoreApi;
-import hawk.store.LocalKVStore;
+import hawk.store.LocalMemKVStore;
 import utest.Assert;
 
 using hawk.store.KVX;
@@ -20,20 +21,13 @@ class ClientKVStoreTest  extends utest.Test {
         var intStringAdapter = CommonAdapters.stringIntAdapter().invert();
         var stringStringAdapter = SelfAdapter.create();
 
-        var localMap = new Map<String,String>();
-        var localStore = new LocalKVStore(localMap);
-        var localIntStore = new KVStoreAdapter(intStringAdapter, stringStringAdapter, localStore);
+        var truthMap = new Map<String,String>();
+        var truthStore = new LocalMemKVStore(truthMap);
+        var truthIntStore = new KVStoreAdapter(intStringAdapter, stringStringAdapter, truthStore);
 
-        var fetchMany = function(keys:Array<Int>):Promise<IMap<Int, String>> {
-            return localIntStore.getMany(keys).next(function(kvs){
-                var emptyMap = new Map<Int,String>();
-                return kvs.toMap(emptyMap);
-            });
-        }
-
-        var clientStore = ClientKVStore.create(intStringAdapter, stringStringAdapter, fetchMany);
+        var clientStore = ClientKVStore.createLocalMemCacheIntKey(truthIntStore.getMany);
         var expected = "one";
-        localMap.set("1", expected );
+        truthMap.set("1", expected );
         clientStore.get(1).next(function(val){
             Assert.equals(expected, val);
             return Noise;

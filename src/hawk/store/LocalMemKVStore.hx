@@ -6,14 +6,12 @@ import tink.CoreApi;
 
 
  // In-Memory KV Store.  (it's a map)
-class MemKVStore<K,V> implements IKVStore<K,V> {
+class LocalMemKVStore<K,V> implements IKVStore<K,V> {
     
-    private var _map:Map<K,V> = [];
+    private var _map:Map<K,V>;
 
-    public function new(?map:Map<K,V>){
-        if (map != null){
-            _map = map;
-        }
+    public function new(map:Map<K,V>){
+        _map = map;
     }
 
     public function exists(key:K):Promise<Bool> {
@@ -46,5 +44,9 @@ class MemKVStore<K,V> implements IKVStore<K,V> {
     public function keyValueIterator():AsyncIterator<KV<K,V>> {
         var i = _map.keyValueIterator();
         return new AsyncIteratorWrapper(i);
+    }
+
+    public static function newStringStore():LocalMemKVStore<String,String> {
+        return new LocalMemKVStore(new Map<String,String>());
     }
 }

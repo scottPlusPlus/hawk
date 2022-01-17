@@ -1,5 +1,7 @@
 package hawk_test.util;
 
+import hawk.store.KVC;
+import hawk.store.ArrayKV;
 import zenlog.Log;
 import yaku_core.PromiseX;
 import hawk.util.Batcher;
@@ -80,16 +82,16 @@ class BatcherTest extends utest.Test {
 		}).closeTestChain(async);
 	}
 
-	function exampleFetcher(keys:Array<Int>):Promise<IMap<Int, Int>> {
+	function exampleFetcher(keys:Array<Int>):Promise<ArrayKV<Int, Int>> {
 		Log.debug('trigger fetch: ${keys}');
 		_fetcherBegins.trigger(Noise);
 		return PromiseX.waitPromise(100).next(function(_) {
 			Log.debug('fetch complete for ${keys}');
 			_fetchedWaves.push(keys);
-			var res:IMap<Int, Int> = new Map<Int, Int>();
+			var res = new ArrayKV<Int,Int>();
 			for (key in keys) {
 				if (key > 0) {
-					res.set(key, key * 2);
+					res.push(new KVC(key, key * 2));
 				}
 			}
 			return res;
