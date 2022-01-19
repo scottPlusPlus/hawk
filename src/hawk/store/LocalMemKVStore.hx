@@ -8,24 +8,24 @@ import tink.CoreApi;
  // In-Memory KV Store.  (it's a map)
 class LocalMemKVStore<K,V> implements IKVStore<K,V> {
     
-    private var _map:Map<K,V>;
+    private var myMap:Map<K,V>;
 
     public function new(map:Map<K,V>){
-        _map = map;
+        myMap = map;
     }
 
     public function exists(key:K):Promise<Bool> {
-        return _map.exists(key);
+        return myMap.exists(key);
     }
 
 	public function get(key:K):Promise<Null<V>>{
-        return _map.get(key);
+        return myMap.get(key);
     }
 
     public function getMany(keys:Array<K>):Promise<GetManyRes<K,V>> {
         var kvs = new GetManyRes<K,V>();
         for (k in keys){
-            var v = _map.get(k);
+            var v = myMap.get(k);
             var kv = new KVC(k, v);
             kvs.push(kv);
         }
@@ -33,16 +33,16 @@ class LocalMemKVStore<K,V> implements IKVStore<K,V> {
     }
 
 	public function set(key:K, val:V):Promise<V>{
-        _map.set(key, val);
+        myMap.set(key, val);
         return  val;
     }
 
 	public function remove(key:K):Promise<Bool>{
-        return _map.remove(key);
+        return myMap.remove(key);
     }
 
     public function keyValueIterator():AsyncIterator<KV<K,V>> {
-        var i = _map.keyValueIterator();
+        var i = myMap.keyValueIterator();
         return new AsyncIteratorWrapper(i);
     }
 

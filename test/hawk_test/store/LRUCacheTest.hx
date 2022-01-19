@@ -23,7 +23,7 @@ class LRUCacheTest extends utest.Test {
         var trueStore = new LocalMemKVStore(_data);
         _trueStore = new KVStoreReaderTester(trueStore);
         var cacheStore = new LocalMemKVStore(new Map<String,String>());
-        _lru = new LRUCache(cacheStore, _trueStore);
+        _lru = new LRUCache(_trueStore, cacheStore);
     }
 
 	public function testCaches(async:utest.Async) {

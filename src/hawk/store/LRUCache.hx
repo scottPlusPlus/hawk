@@ -15,7 +15,12 @@ class LRUCache<V> implements IKVStoreReader<String, V> implements IClientKVStore
 	private var _lruNodes:Map<String, DLListNode<String>>;
 	private var _capacity:UInt;
 
-	public function new(cacheStore:IKVStore<String, V>, truthStore:IKVStoreReader<String, V>, capacity:UInt = 128) {
+	public function new(truthStore:IKVStoreReader<String, V>, ?cacheStore:IKVStore<String, V>,  capacity:UInt = 128) {
+
+		if (cacheStore == null){
+			cacheStore = new LocalMemKVStore(new Map<String,V>());
+		}
+
 		_capacity = capacity;
 		_lruKeys = new DoublyLinkedList();
 		_cacheStore = cacheStore;

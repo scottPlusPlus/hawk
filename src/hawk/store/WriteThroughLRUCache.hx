@@ -7,8 +7,8 @@ class WriteThroughLRUCache<V> extends LRUCache<V> implements IKVStore<String,V> 
 
     private var _fullTruthStore:IKVStore<String,V>;
 
-    public function new(cacheStore:IKVStore<String, V>, truthStore:IKVStore<String, V>, capacity:UInt = 128) {
-        super(cacheStore, truthStore, capacity);
+    public function new(truthStore:IKVStore<String, V>, ?cacheStore:IKVStore<String, V>, capacity:UInt = 128) {
+        super(truthStore, cacheStore, capacity);
         _fullTruthStore = truthStore;   
     }
 
@@ -21,5 +21,4 @@ class WriteThroughLRUCache<V> extends LRUCache<V> implements IKVStore<String,V> 
     public function keyValueIterator():AsyncIterator<KV<String,V>>{
         return _fullTruthStore.keyValueIterator();
     }
-
 }
