@@ -40,17 +40,11 @@ class LRUCache<V> implements IKVStoreReader<String, V> implements IClientKVStore
 				return localVal;
 			} // else, if item did not exist
 			return _truthStore.get(key).next(function(trueVal) {
-				Log.debug('got ${key} from backing store == ${trueVal}');
-				_cacheStore.set(key, trueVal);
-				var newNode = _lruKeys.push(key);
-				_lruNodes.set(key, newNode);
-				if (_lruKeys.length < _capacity) {
+				Log.debug('got ${key} from truthStore == ${trueVal}');
+				if (trueVal == null){
 					return trueVal;
 				}
-				var oldestKey = _lruKeys.pop().nullThrows().item;
-				return removeKey(oldestKey).next(function(_) {
-					return trueVal;
-				});
+				return setCache(key, trueVal);
 			});
 		});
 	}
@@ -66,13 +60,39 @@ class LRUCache<V> implements IKVStoreReader<String, V> implements IClientKVStore
 					pendingRes.set(kv.key, kv);
 				}
 			}
-			return _truthStore.getMany(missedKeys).next(function(trueRes) {
+			return _truthStore.getMany(missedKeys)
+			.next(function(trueRes) {
+				var setPromises = new Array<Promise<Noise>>();
+				for(res in trueRes){
+					if (res.value != null){
+						var p = setCache(res.key, res.value.nullThrows()).noise();
+						setPromises.push(p);
+					}
+				}
+				return Promise.inSequence(setPromises).next(function(_){
+					return trueRes;
+				});
+			}).next(function(trueRes) {
 				for (kv in trueRes) {
 					var pendingKV = pendingRes.get(kv.key).nullThrows('no pending Res for ${kv.key}');
 					pendingKV.value = kv.value;
 				}
 				return res;
 			});
+		});
+	}
+
+	private function setCache(key:String, val:V):Promise<V> {
+		return _cacheStore.set(key, val).next(function(_){
+			var newNode = _lruKeys.push(key);
+			_lruNodes.set(key, newNode);
+			if (_lruKeys.length < _capacity) {
+				return val;
+			}
+			var oldestKey = _lruKeys.pop().nullThrows().item;
+			return removeKey(oldestKey);
+		}).next(function(_){
+			return val;
 		});
 	}
 
@@ -86,6 +106,6 @@ class LRUCache<V> implements IKVStoreReader<String, V> implements IClientKVStore
 	}
 
 	public function set(key:String, value:V):Promise<V> {
-		return _cacheStore.set(key, value);
+		return setCache(key, value);
 	}
 }
