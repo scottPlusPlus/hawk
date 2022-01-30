@@ -10,8 +10,7 @@ abstract WebError(tink.core.Error.TypedError<Data>) {
 
     public function new(code:ErrorCode, message:String, publicMsg:String = "An error occurred", ?pos:Pos){
         var data = new Data();
-        data.publicMsg = '${publicMsg} (${data.uid})';
-        message = '${message} (${data.uid})';
+        data.publicMsg = publicMsg;
         this = Error.typed(code, message, data, pos);
     }
 
@@ -39,5 +38,9 @@ abstract WebError(tink.core.Error.TypedError<Data>) {
 
     public inline function asErr():Error {
         return (cast this);
+    }
+
+    public inline function print():String {
+        return '${publicMsg} (${ this.data.uid})';
     }
 }
