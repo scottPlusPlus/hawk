@@ -21,7 +21,7 @@ class WebErrorTest extends utest.Test {
 
         var pt = new PromiseTrigger<String>();
         var p = pt.asPromise();
-        p.enhanceError(expectedContext, expectedPublicMessage).mapError(function(err){
+        p.enhanceErr(expectedContext, expectedPublicMessage).mapError(function(err){
             Log.debug('mapping error');
             var webErr = err.asWebErr();
             Assert.equals(expectedPublicMessage, webErr.publicMsg);

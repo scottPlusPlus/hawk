@@ -31,10 +31,8 @@ class WebErrorX {
 		return (cast err : WebError);
 	}
 
-	public static function enhanceError<T>(p:Promise<T>, ?context:String, ?publicMsgOverride:String, ?publicMsgFallback:String):Promise<T> {
-		Log.debug('enhancing error');
+	public static function enhanceErr<T>(p:Promise<T>, ?context:String, ?publicMsgFallback:String, ?publicMsgOverride:String):Promise<T> {
 		return p.mapError(function(err:Error) {
-			Log.debug('inside enhancing error');
 			var we = asWebErr(err);
 			if (context != null) {
 				we.addContext(context);
