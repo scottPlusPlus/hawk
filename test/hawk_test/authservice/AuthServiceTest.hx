@@ -18,7 +18,7 @@ import utest.Assert;
 using yaku_core.OutcomeX;
 using yaku_core.PromiseX;
 using yaku_core.NullX;
-using hawk.testutils.PromiseTestUtils;
+using yaku_core.test_utils.PromiseTestUtils;
 
 class AuthServiceTest extends utest.Test {
 	// @:timeout(600)

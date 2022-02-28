@@ -1,13 +1,9 @@
 package hawk_test.messaging;
 
-import tink.core.Promise;
-import tink.CoreApi.Error;
-import tink.CoreApi.Noise;
-import tink.CoreApi.Outcome;
+import tink.CoreApi;
 import hawk.messaging.*;
 import utest.Assert;
 import utest.Async;
-import haxe.io.Bytes;
 
 using tink.CoreApi.OutcomeTools;
 using yaku_core.PromiseX;

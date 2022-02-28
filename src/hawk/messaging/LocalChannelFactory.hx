@@ -1,5 +1,6 @@
 package hawk.messaging;
 
+import hawk.general_tools.adapters.Adapter;
 import hawk.messaging.*;
 import tink.CoreApi;
 
@@ -11,17 +12,19 @@ class LocalChannelFactory implements IChannelFactory<String> {
 
     public function new(){}
 
-    public function getPub(name:String):Promise<IPublisher<String>>{
+    public function getPub<T>(name:String, adapter:Adapter<T,String>):Promise<IPublisher<T>>{
         createChannelIfNotExists(name);
         var channel = _channels.get(name).nullThrows();
-        var iface:IPublisher<String> = channel;
+        var pubAdapter = new PubAdapter(channel, adapter);
+        var iface:IPublisher<T> = pubAdapter;
         return iface;
     }
 
-    public function getSub(name:String):Promise<ISubscriber<String>>{
+    public function getSub<T>(name:String, adapter:Adapter<T,String>):Promise<ISubscriber<T>>{
         createChannelIfNotExists(name);
         var channel = _channels.get(name).nullThrows();
-        var iface:ISubscriber<String> = channel;
+        var subAdapter = new SubAdapter(channel, adapter);
+        var iface:ISubscriber<T> = subAdapter;
         return iface;
     }
 
@@ -33,11 +36,11 @@ class LocalChannelFactory implements IChannelFactory<String> {
         _channels.set(name, ch);
     }
 
-    private function msgToString(msg:Message):String {
+    private static inline function msgToString(msg:Message):String {
         return msg.toString();
     }
 
-    private function msgFromString(str:String):Message{
+    private static inline function msgFromString(str:String):Message{
         return Message.fromString(str);
     }
 }
