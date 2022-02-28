@@ -1,4 +1,4 @@
-package hawk_test.webserver;
+package hawk.webserver;
 
 import hawk.weberror.WebErrorLog;
 import tink.CoreApi;
