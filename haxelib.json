@@ -21,6 +21,7 @@
 		"compiletime": "",
 		"uuid": "",
 		"tink_core": "",
+		"tink_http":"",
 		"jwt": "",
 		"thx.core": ""
 	}
