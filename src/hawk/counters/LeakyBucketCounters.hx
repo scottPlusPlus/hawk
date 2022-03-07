@@ -70,12 +70,12 @@ class LeakyBucketCounters {
 	}
 
 	public static function fromJson(str:String):LeakyBucketCounters {
-		var parser = new json2object.JsonParser<LeakyBucketCounters>();
+		var parser = new JsonParser<LeakyBucketCounters>();
 		return parser.fromJson(str);
 	}
 
 	public function toJson():String {
-		var writer = new json2object.JsonWriter<LeakyBucketCounters>();
+		var writer = new JsonWriter<LeakyBucketCounters>();
 		return writer.write(this);
 	}
 }

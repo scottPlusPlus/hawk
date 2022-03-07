@@ -3,13 +3,15 @@ package hawk.webserver;
 import hawk.weberror.WebErrorLog;
 import tink.CoreApi;
 import haxe.Exception;
+import haxe.http.HttpMethod;
 import zenlog.Log;
 
-import tink.http.Method;
-
 using hawk.weberror.WebErrorX;
+using yaku_core.IteratorX;
 
 class ExpressRouter {
+
+    public final DEFAULT_ROUTE = "/*";
 
     var routes:Map<String,Dynamic->Promise<String>>;
     public var express:Dynamic;
@@ -20,7 +22,7 @@ class ExpressRouter {
         this.express = express;
     }
 
-    public function registerRoute(route:String, method:Method, handler:Dynamic->Promise<String>){
+    public function registerRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<String>){
         if (routes.exists(route)){
             var err = 'Route $route already registered to this Express Adapter';
             Log.error(err);
@@ -30,9 +32,9 @@ class ExpressRouter {
         try {
             var expressHandler = buildDebugHandler(handler);
             switch (method){
-                case GET:
+                case HttpMethod.Get:
                     express.get(route, expressHandler);
-                case POST:
+                case HttpMethod.Post:
                     express.post(route, expressHandler);
                 default:
                     throw(new Exception('not currently handling method $method'));
@@ -44,6 +46,10 @@ class ExpressRouter {
         }
         
         routes.set(route, handler);
+    }
+
+    public function printRoutes():Array<String> {
+        return routes.keys().collect();
     }
 
     private inline function buildDebugHandler(handler:Dynamic->Promise<String>):Dynamic->Dynamic->Void {

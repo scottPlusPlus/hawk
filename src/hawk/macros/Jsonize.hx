@@ -51,7 +51,7 @@ class Jsonize {
 		// 	fields.push(buildAdapter(xClass, cType));
 		// }
 
-		trace('--- done with ${xClass.name} ---');
+		//trace('--- done with ${xClass.name} ---');
 		return fields;
 	}
 
