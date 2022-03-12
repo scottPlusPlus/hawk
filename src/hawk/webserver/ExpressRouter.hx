@@ -68,9 +68,9 @@ class ExpressRouter {
             var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
             Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
             var p = handler(req);
-            if (!Std.isOfType(p, Promise)){
-                Log.error('REQUEST $reqId:  handler did not return a promise!');
-            }
+            // if (!Std.isOfType(p, Promise)){
+            //     Log.error('REQUEST $reqId:  handler did not return a promise!');
+            // }
             p.enhanceErr(contextMsg, 'Unknown Error').flatMap( function(o:Outcome<Dynamic,Error>){
                 switch(o){
                     case Success(data):
