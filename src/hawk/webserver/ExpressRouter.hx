@@ -26,7 +26,7 @@ class ExpressRouter {
 		Registers a new route to the ExpressRouter.  By default the result of the handler you pass in
 		is served via res.json
 	 */
-	public function registerJsonRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<Dynamic>) {
+	public function registerJsonRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<String>) {
 		if (routes.exists(route)) {
 			var err = 'Route $route already registered to this Express Adapter';
 			Log.error(err);
@@ -62,32 +62,33 @@ class ExpressRouter {
 		}
 	}
 
-	private inline function buildDebugJsonHandler(handler:Dynamic->Promise<Dynamic>):Dynamic->Dynamic->Void {
+	private inline function buildDebugJsonHandler(handler:Dynamic->Promise<String>):Dynamic->Dynamic->Void {
 		var expressHandler = function(req:Dynamic, res:Dynamic) {
 			var reqId = reqCount++;
 			var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
 			Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
 			var p = handler(req);
-			try {
-				p = p.mapError(function(err) {
-					return err;
-				});
-			} catch (e:Exception) {
-				Log.error('REQUEST $reqId:  seems handler did not return a Promise');
-                Log.error(e.message);
-			}
+			// try {
+			// 	p = p.mapError(function(err) {
+			// 		return err;
+			// 	});
+			// } catch (e:Exception) {
+			// 	Log.error('REQUEST $reqId:  seems handler did not return a Promise');
+            //     Log.error(e.message);
+			// }
 			p.enhanceErr(contextMsg, 'Unknown Error').flatMap(function(o:Outcome<Dynamic, Error>) {
 				switch (o) {
 					case Success(data):
 						Log.info('REQUEST $reqId:  res:  $data');
-						res.json(data);
+						res.set('Content-Type', 'application/json');
+						res.send(data);
 					case Failure(err):
 						Log.error(err);
 						var webErr = WebErrorX.asWebErr(err);
 						var wel = WebErrorLog.fromWebError(webErr);
 						var msg = 'REQUEST $reqId:\nuid:${wel.uid}\n ${wel.message}\n ${wel.context}';
 						Log.error(msg);
-						res.json(webErr.print());
+						res.send(webErr.print());
 				}
 				return Noise;
 			}).eager();
