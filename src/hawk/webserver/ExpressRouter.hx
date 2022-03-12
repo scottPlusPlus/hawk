@@ -1,5 +1,6 @@
 package hawk.webserver;
 
+import haxe.Json;
 import hawk.weberror.WebErrorLog;
 import tink.CoreApi;
 import haxe.Exception;
@@ -22,6 +23,10 @@ class ExpressRouter {
         this.express = express;
     }
 
+    /*
+        Registers a new route to the ExpressRouter.  By default the result of the handler you pass in
+        is served via res.json
+    */
     public function registerRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<String>){
         if (routes.exists(route)){
             var err = 'Route $route already registered to this Express Adapter';
@@ -48,8 +53,14 @@ class ExpressRouter {
         routes.set(route, handler);
     }
 
-    public function printRoutes():Array<String> {
-        return routes.keys().collect();
+    public function debugData():String {
+        var r = routes.keys().collect();
+        var buildTime = CompileTime.buildDateString();
+        var res = {
+            build: buildTime,
+            routes: r,
+        }
+        return Json.stringify(res);
     }
 
     private inline function buildDebugHandler(handler:Dynamic->Promise<String>):Dynamic->Dynamic->Void {
@@ -62,13 +73,13 @@ class ExpressRouter {
                 switch(o){
                     case Success(data):
                         Log.info('REQUEST $reqId:  res:  $data');
-                        res.send(data);
+                        res.json(data);
                     case Failure(err):
                         var webErr = WebErrorX.asWebErr(err);
                         var wel = WebErrorLog.fromWebError(webErr);
                         var msg = 'REQUEST $reqId:\nuid:${wel.uid}\n ${wel.message}\n ${wel.context}';
                         Log.error(msg);
-                        res.send(webErr.print());
+                        res.json(webErr.print());
                 }
                 return Noise;
             }).eager();
