@@ -1,6 +1,5 @@
 package hawk.webserver;
 
-import haxe.Json;
 import hawk.weberror.WebErrorLog;
 import tink.CoreApi;
 import haxe.Exception;
@@ -14,7 +13,7 @@ class ExpressRouter {
 
     public final DEFAULT_ROUTE = "/*";
 
-    var routes:Map<String,Dynamic->Promise<String>>;
+    var routes:Map<String,Dynamic->Promise<Dynamic>>;
     public var express:Dynamic;
     public var reqCount:UInt = 0;
 
@@ -27,7 +26,7 @@ class ExpressRouter {
         Registers a new route to the ExpressRouter.  By default the result of the handler you pass in
         is served via res.json
     */
-    public function registerRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<String>){
+    public function registerJsonRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<Dynamic>){
         if (routes.exists(route)){
             var err = 'Route $route already registered to this Express Adapter';
             Log.error(err);
@@ -36,7 +35,7 @@ class ExpressRouter {
         Log.debug('registerring route: $route');
 
         try {
-            var expressHandler = buildDebugHandler(handler);
+            var expressHandler = buildDebugJsonHandler(handler);
             switch (method){
                 case HttpMethod.Get:
                     express.get(route, expressHandler);
@@ -54,17 +53,16 @@ class ExpressRouter {
         routes.set(route, handler);
     }
 
-    public function debugData():String {
+    public function debugData():Dynamic {
         var r = routes.keys().collect();
         var buildTime = CompileTime.buildDateString();
-        var res = {
+        return {
             build: buildTime,
             routes: r,
         }
-        return Json.stringify(res);
     }
 
-    private inline function buildDebugHandler(handler:Dynamic->Promise<String>):Dynamic->Dynamic->Void {
+    private inline function buildDebugJsonHandler(handler:Dynamic->Promise<Dynamic>):Dynamic->Dynamic->Void {
         var expressHandler = function(req:Dynamic, res:Dynamic){
             var reqId = reqCount++;
             var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
