@@ -33,6 +33,7 @@ class ExpressRouter {
             Log.error(err);
             throw (new Exception(err));
         }
+        Log.debug('registerring route: $route');
 
         try {
             var expressHandler = buildDebugHandler(handler);
