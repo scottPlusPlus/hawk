@@ -69,12 +69,14 @@ class ExpressRouter {
             var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
             Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
             var p = handler(req);
-            p.logErr().enhanceErr(contextMsg, 'Unknown Error').flatMap( function(o:Outcome<String,Error>){
+            //p.logErr().enhanceErr(contextMsg, 'Unknown Error')
+            p.flatMap( function(o:Outcome<Dynamic,Error>){
                 switch(o){
                     case Success(data):
                         Log.info('REQUEST $reqId:  res:  $data');
                         res.json(data);
                     case Failure(err):
+                        Log.error(err);
                         var webErr = WebErrorX.asWebErr(err);
                         var wel = WebErrorLog.fromWebError(webErr);
                         var msg = 'REQUEST $reqId:\nuid:${wel.uid}\n ${wel.message}\n ${wel.context}';
