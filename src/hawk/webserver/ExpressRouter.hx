@@ -8,7 +8,6 @@ import zenlog.Log;
 
 using hawk.weberror.WebErrorX;
 using yaku_core.IteratorX;
-using yaku_core.PromiseX;
 
 class ExpressRouter {
 
@@ -71,7 +70,7 @@ class ExpressRouter {
             var p = handler(req);
             if (!Std.isOfType(p, Promise)){
                 Log.error('REQUEST $reqId:  handler did not return a promise!');
-            };
+            }
             p.enhanceErr(contextMsg, 'Unknown Error').flatMap( function(o:Outcome<Dynamic,Error>){
                 switch(o){
                     case Success(data):
