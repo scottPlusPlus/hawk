@@ -8,6 +8,7 @@ import zenlog.Log;
 
 using hawk.weberror.WebErrorX;
 using yaku_core.IteratorX;
+using yaku_core.PromiseX;
 
 class ExpressRouter {
 
@@ -68,7 +69,7 @@ class ExpressRouter {
             var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
             Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
             var p = handler(req);
-            p.enhanceErr(contextMsg, 'Unknown Error').flatMap( function(o:Outcome<String,Error>){
+            p.logErr().enhanceErr(contextMsg, 'Unknown Error').flatMap( function(o:Outcome<String,Error>){
                 switch(o){
                     case Success(data):
                         Log.info('REQUEST $reqId:  res:  $data');
