@@ -93,6 +93,7 @@ class ExpressRouter {
 			} catch (e:Exception){
 				Log.error('REQUEST $reqId threw exception:');
 				Log.error(e.message);
+				Log.error(e.stack.toString());
 				res.status(500);
 				res.send('Something broke with $reqId');
 			}
