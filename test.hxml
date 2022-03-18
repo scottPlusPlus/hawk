@@ -12,7 +12,7 @@
 -lib thx.core
 -lib yaku_core
 -lib yaku_beta
--lib mockatoo
+
 
 -debug
 -cp src

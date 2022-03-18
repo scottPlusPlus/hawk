@@ -12,8 +12,6 @@ import hawk.store.LRUCache;
 
 using yaku_core.test_utils.PromiseTestUtils;
 
-import mockatoo.Mockatoo.*;
-using mockatoo.Mockatoo;
 
 class WriteThroughLRUCacheTest extends utest.Test {
 
@@ -59,7 +57,4 @@ class WriteThroughLRUCacheTest extends utest.Test {
     //         });
     //     }).closeTestChain(async);
     // }
-
-    
-
 }
