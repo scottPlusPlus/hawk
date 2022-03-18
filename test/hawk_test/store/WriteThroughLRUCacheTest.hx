@@ -29,20 +29,20 @@ class WriteThroughLRUCacheTest extends utest.Test {
     //     _lru = new LRUCache(_trueStore, cacheStore);
     // }
 
-    @:access(hawk.store.LocalMemKVStoreMocked)
-    public function testMockatoo(async:utest.Async){
-        var myStore = spy(LocalMemKVStore, [String,String]);
-        var data = new Map<String,String>();
-        myStore.myMap = data;
+    // @:access(hawk.store.LocalMemKVStoreMocked)
+    // public function testMockatoo(async:utest.Async){
+    //     var myStore = spy(LocalMemKVStore, [String,String]);
+    //     var data = new Map<String,String>();
+    //     myStore.myMap = data;
 
-        var someMock:hawk.store.LocalMemKVStoreMocked<String, String> = myStore;
-        return myStore.set("foo","bar").next(function(_){
-            return myStore.get("foo").next(function(val){
-                Assert.equals("bar", val);
-                return Noise;
-            });
-        }).closeTestChain(async);
-    }
+    //     var someMock:hawk.store.LocalMemKVStoreMocked<String, String> = myStore;
+    //     return myStore.set("foo","bar").next(function(_){
+    //         return myStore.get("foo").next(function(val){
+    //             Assert.equals("bar", val);
+    //             return Noise;
+    //         });
+    //     }).closeTestChain(async);
+    // }
 
 
 	// public function testCaches(async:utest.Async) {
