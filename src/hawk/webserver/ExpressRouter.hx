@@ -86,6 +86,7 @@ class ExpressRouter {
 							var wel = WebErrorLog.fromWebError(webErr);
 							var msg = 'REQUEST $reqId:\nuid:${wel.uid}\n ${wel.message}\n ${wel.context}';
 							Log.error(msg);
+							res.status(webErr.code);
 							res.send(webErr.print());
 					}
 					return Noise;
