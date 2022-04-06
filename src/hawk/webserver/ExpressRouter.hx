@@ -14,6 +14,7 @@ class ExpressRouter {
 	public final DEFAULT_ROUTE = "/*";
 
 	var routes:Map<String, Dynamic->Promise<Dynamic>>;
+	var middleWare:Array<ExpressMiddleware> = [];
 
 	public var express:Dynamic;
 	public var reqCount:UInt = 0;
@@ -27,7 +28,7 @@ class ExpressRouter {
 		Registers a new route to the ExpressRouter.  By default the result of the handler you pass in
 		is served via res.json
 	 */
-	public function registerJsonRoute(route:String, method:HttpMethod, handler:Dynamic->Promise<String>) {
+	public function registerJsonRoute(route:String, method:HttpMethod, handler:ExpressReq->Promise<String>) {
 		if (routes.exists(route)) {
 			var err = 'Route $route already registered to this Express Adapter';
 			Log.error(err);
@@ -54,6 +55,10 @@ class ExpressRouter {
 		routes.set(route, handler);
 	}
 
+	public function addMiddleware(mw:ExpressMiddleware){
+		middleWare.push(mw);
+	}
+
 	public function debugData():Dynamic {
 		var r = routes.keys().collect();
 		var buildTime = CompileTime.buildDateString();
@@ -63,11 +68,22 @@ class ExpressRouter {
 		}
 	}
 
-	private inline function buildDebugJsonHandler(handler:Dynamic->Promise<String>):Dynamic->Dynamic->Void {
-		var expressHandler = function(req:Dynamic, res:Dynamic) {
+	private inline function buildDebugJsonHandler(handler:ExpressReq->Promise<String>):ExpressReq->ExpressRes->Void {
+		var expressHandler = function(req:ExpressReq, res:ExpressRes) {
 			var reqId = reqCount++;
 			var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
 			Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
+
+			var p = Promise.resolve(Noise);
+			for(mw in middleWare){
+				p = p.next(function(_){
+					return mw(req, res);
+				});
+			}
+			p = p.next(function(_){
+				return handler(req);
+			});
+
 			var p = handler(req);
 			try {
 				p.enhanceErr(contextMsg, 'Unknown Error').flatMap(function(o:Outcome<String, Error>) {
@@ -102,3 +118,9 @@ class ExpressRouter {
 		return expressHandler;
 	}
 }
+
+
+typedef ExpressReq = Dynamic;
+typedef ExpressRes = Dynamic;
+
+typedef ExpressMiddleware = ExpressReq->ExpressRes->Promise<Noise>;
