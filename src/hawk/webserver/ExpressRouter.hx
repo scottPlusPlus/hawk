@@ -74,17 +74,17 @@ class ExpressRouter {
 			var contextMsg = 'REQUEST $reqId:  ${req.originalUrl}:  ${req.body}';
 			Log.info('REQUEST $reqId:  ${req.originalUrl}:  ${req.body}');
 
-			var p = Promise.resolve(Noise);
+			var mwP = Promise.resolve(Noise);
 			for(mw in middleWare){
-				p = p.next(function(_){
+				mwP = mwP.next(function(_){
+					Log.debug('running some middleware...');
 					return mw(req, res);
 				});
 			}
-			p = p.next(function(_){
+			var p = mwP.next(function(_){
 				return handler(req);
 			});
 
-			var p = handler(req);
 			try {
 				p.enhanceErr(contextMsg, 'Unknown Error').flatMap(function(o:Outcome<String, Error>) {
 					switch (o) {
