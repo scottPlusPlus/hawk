@@ -1,15 +1,17 @@
-package hawk.webserver;
+package hawk.requestlog;
 
 import hawk.datatypes.Timestamp;
-import hawk.store.DataModel;
-import hawk.store.DataFieldType;
-import hawk.store.DataField;
 import hawk.general_tools.adapters.Adapter;
-import hawk.store.IDataStore;
-import hawk.webserver.RequestLog;
+import hawk.store.*;
+import hawk.requestlog.RequestLog;
+import hawk.async_iterator.AsyncIterator;
+import tink.CoreApi;
+import haxe.Constraints.IMap;
+
+using yaku_core.NullX;
 
 abstract RequestLogStore(IDataStore<RequestLog>) {
-	private static final fid = "id";
+	private static final fid = "uid";
 	private static final fip = "fip";
 	private static final ftime = "time";
 	private static final froute = "route";
@@ -41,10 +43,10 @@ abstract RequestLogStore(IDataStore<RequestLog>) {
 		};
 		var toX = function(data:IMap<String, String>):RequestLog {
 			var x = new RequestLog("", "");
-			x.id = data.get(fid);
-			x.ip = data.get(fip);
-			x.route = data.get(froute);
-			x.time = Timestamp.fromString(data.get(ftime));
+			x.id = data.get(fid).nullThrows("requestLog id was null");
+			x.ip = data.get(fip).nullThrows("requestLog ip was null");
+			x.route = data.get(froute).nullThrows("requestLog route was null");
+			x.time = Timestamp.fromString(data.get(ftime).orFallback("s"));
 			return x;
 		};
 		var adapter = new Adapter<RequestLog, IMap<String, String>>(toMap, toX);
