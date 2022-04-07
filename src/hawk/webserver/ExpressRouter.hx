@@ -77,7 +77,6 @@ class ExpressRouter {
 			var mwP = Promise.resolve(Noise);
 			for(mw in middleWare){
 				mwP = mwP.next(function(_){
-					Log.debug('running some middleware...');
 					return mw(req, res);
 				});
 			}
