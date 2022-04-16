@@ -37,7 +37,7 @@ abstract RequestLogStore(IDataStore<RequestLog>) {
 			var m = new Map<String, String>();
 			m.set(fid, Std.string(d.id));
 			m.set(fip, d.ip);
-			m.set(ftime, Timestamp.toString(d.time));
+			m.set(ftime, Timestamp.toJson(d.time));
 			m.set(froute, d.route);
 			return m;
 		};
@@ -46,7 +46,7 @@ abstract RequestLogStore(IDataStore<RequestLog>) {
 			x.id = data.get(fid).nullThrows("requestLog id was null");
 			x.ip = data.get(fip).nullThrows("requestLog ip was null");
 			x.route = data.get(froute).nullThrows("requestLog route was null");
-			x.time = Timestamp.fromString(data.get(ftime).orFallback("s"));
+			x.time = Timestamp.fromJson(data.get(ftime).orFallback("s"));
 			return x;
 		};
 		var adapter = new Adapter<RequestLog, IMap<String, String>>(toMap, toX);

@@ -1,5 +1,6 @@
 package hawk.datatypes;
 
+import haxe.Json;
 import tink.core.Outcome;
 import tink.core.Error;
 import hawk.general_tools.adapters.StringTAdapter;
@@ -54,7 +55,7 @@ abstract Timestamp(UInt) to UInt to Int {
         return Timestamp.fromDate(Date.now());
     }
 
-    public static function toString(t:Timestamp):String { 
+    public function toString(t:Timestamp):String { 
       return t.toDate().toString();
     }
 
@@ -83,12 +84,19 @@ abstract Timestamp(UInt) to UInt to Int {
     public static final SECOND:Timestamp = Timestamp.fromUInt(1000);
     public static final DAY:Timestamp = Timestamp.fromUInt(1000 * 60 * 60 * 24);
 
+    /*
+      Expects Timestamp as string of UInt of ms
+    */
     public static function fromJson(j:String):Timestamp {
-      return Timestamp.fromString(j);
+      var uint:UInt = Json.parse(j);
+      return Timestamp.fromInt(uint);
     }
   
+    /*
+      Returns string of UInt of ms
+    */
     public static function toJson(x:Timestamp):String {
-      return Timestamp.toString(x);
+      return Std.string(x.toUInt());
     }
   
     public static final jsonAdapter = new StringTAdapter(Timestamp.fromJson, Timestamp.toJson);

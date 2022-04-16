@@ -48,7 +48,7 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
             m.set(fMessage, x.message);
             m.set(fPos, x.pos);
             m.set(fPublicMsg, x.publicMsg);
-            m.set(fTime, Timestamp.toString(x.time));
+            m.set(fTime, Timestamp.toJson(x.time));
             m.set(fUid, x.uid);
 			return m;
 		};
@@ -59,7 +59,7 @@ abstract WebErrorStore(IDataStore<WebErrorLog>) {
             x.message = data.get(fMessage);
             x.pos = data.get(fPos);
             x.publicMsg = data.get(fPublicMsg);
-            x.time = Timestamp.fromString( data.get(fTime));
+            x.time = Timestamp.fromJson( data.get(fTime));
             x.uid = data.get(fUid);
 			return x;
 		};
