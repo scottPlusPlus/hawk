@@ -55,12 +55,12 @@ abstract Timestamp(UInt) to UInt to Int {
     }
 
     public static function toString(t:Timestamp):String { 
-      return Std.string(t.toUInt());
+      return t.toDate().toString();
     }
 
     public static function fromString(str:String):Timestamp {
-      var i = Std.parseInt(str);
-      return fromInt(i);
+      var d = Date.fromString(str);
+      return fromDate(d);
     }
 
 
