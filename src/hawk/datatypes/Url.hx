@@ -1,16 +1,17 @@
 package hawk.datatypes;
 
+import tink.Url;
 import hawk.general_tools.adapters.StringTAdapter;
 
 abstract Url(String) to String {
-
-	private function new(str:String) {
-		this = str;
+    
+	public function new(str:String) {
+		var tu:tink.Url = str;
+        var s2 = tu.toString();
+		this = s2;
 	}
 
-	@:from
-	static public function fromString(s:String) {
-		//TODO - ensure it's an actual url
+	@:from static function fromString(s:String):Url {
 		return new Url(s);
 	}
 
