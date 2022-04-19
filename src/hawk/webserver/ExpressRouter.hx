@@ -1,5 +1,7 @@
 package hawk.webserver;
 
+import tink.core.Error.ErrorCode;
+import hawk.weberror.WebError;
 import hawk.weberror.WebErrorLog;
 import tink.CoreApi;
 import haxe.Exception;
@@ -85,7 +87,7 @@ class ExpressRouter {
 			});
 
 			try {
-				p.enhanceErr(contextMsg, 'Unknown Error').flatMap(function(o:Outcome<String, Error>) {
+				p.errOnNull(new Error('Output was null')).enhanceErr(contextMsg, 'Unknown Error').flatMap(function(o:Outcome<String, Error>) {
 					switch (o) {
 						case Success(data):
 							var data_res = data;
