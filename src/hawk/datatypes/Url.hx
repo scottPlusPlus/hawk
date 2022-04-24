@@ -7,13 +7,12 @@ import yaku_beta.valid.Validation;
 using yaku_beta.valid.StringValidation;
 
 abstract Url(String) to String {
-    
 	// https://ihateregex.io/expr/url/  ¯\_(ツ)_/¯
 	static final _regex = ~/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/i;
 
 	public function new(str:String) {
 		var tu:tink.Url = str;
-        var s2 = tu.toString();
+		var s2 = tu.toString();
 		this = s2;
 	}
 
@@ -40,12 +39,12 @@ abstract Url(String) to String {
 
 	public static final jsonAdapter = new StringTAdapter(Url.fromJson, Url.toJson);
 
-	public static function validation(x:Url, name:String = "Url"):Validation<String>{
-		var v = new Validation<String>(x, name);
-		if (x != x.normalize()){
-			v.addError("is not normal");
+	public static function validation(x:Url, name:String = "Url"):Validation<Url> {
+		var vu = new Validation<Url>(x, name);
+		if (x != x.normalize()) {
+			vu.addError("is not normal");
 		}
-		v.regex(_regex, "failed url regex");
-		return v;
+		vu.validateObject(x.toString(), name).regex(_regex, "failed url regex");
+		return vu;
 	}
 }

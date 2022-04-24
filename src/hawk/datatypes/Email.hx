@@ -38,13 +38,15 @@ abstract Email(String) to String {
 		return new Email(this);
 	}
 
-	public static function validation(email:Email, name:String = "Email"):Validation<String>{
-		var v = new Validation<String>(email, name);
+	public static function validation(email:Email, name:String = "Email"):Validation<Email>{
+		var ve = new Validation(email, name);
 		if (email != email.normalize()){
-			v.addError("Needs to be normalied");
+			ve.addError("Needs to be normalied");
 		}
+
+		var v = ve.validateObject(email.toString(), name);
 		v.maxLength(128);
 		v.regex(_regex, "Invalid email address");
-		return v;
+		return ve;
 	}
 }
