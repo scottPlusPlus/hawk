@@ -11,7 +11,7 @@ abstract Email(String) to String {
 	static final _regex = ~/[A-Z0-9._%-]+@[A-Z0-9.-]+.[A-Z][A-Z][A-Z]?/i;
 
 	private function new(str:String) {
-		this = str;
+		this = StringTools.trim(str);
 	}
 
 	@:from
@@ -34,8 +34,15 @@ abstract Email(String) to String {
 
 	public static final jsonAdapter = new StringTAdapter(Email.fromJson, Email.toJson);
 
+	public function normalize():Email {
+		return new Email(this);
+	}
+
 	public static function validation(email:Email, name:String = "Email"):Validation<String>{
 		var v = new Validation<String>(email, name);
+		if (email != email.normalize()){
+			v.addError("Needs to be normalied");
+		}
 		v.maxLength(128);
 		v.regex(_regex, "Invalid email address");
 		return v;
