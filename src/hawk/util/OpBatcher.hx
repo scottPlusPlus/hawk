@@ -1,5 +1,6 @@
 package hawk.util;
 
+import zenlog.Log;
 import tink.core.Noise;
 import tink.core.Promise;
 import tink.core.Signal;

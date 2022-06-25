@@ -1,5 +1,6 @@
 package hawk.webserver;
 
+import zenlog.Log;
 import tink.core.Error.ErrorCode;
 import hawk.util.OpBatcher;
 import tink.CoreApi;
@@ -12,16 +13,28 @@ class RateLimiter {
     private var _trigger:OpBatcher;
     private var _trackers:Array<RequestTracker>;
 
+    public static var rateLimitErr = new Error(ErrorCode.BandwidthLimitExceeded, "you have exceeded your rate limit"); 
 
-    public function newReq(ip:String):Outcome<Noise,Error>{
+    public function new(trackers:Array<RequestTracker>, timeToPruneMs:UInt = 5000){
+        this._trackers = trackers;
+        this._trigger = new OpBatcher(5000);
+        this._trigger.signal.handle(function(_){
+            pruneAndSave();
+        });
+    }
+
+    public function newReq(ip:String):Bool{
         _trigger.trigger();
+        Log.debug("done with trigger");
         for(tracker in _trackers){
             var pass = tracker.newReq(ip);
             if (!pass){
-                return Failure(new Error(ErrorCode.BandwidthLimitExceeded, "you have exceeded your rate limit"));
+                Log.debug("would be false");
+                return false;
             }
         }
-        return Success(Noise);
+        Log.debug("yay pass");
+        return true;
     }
 
     private function pruneAndSave(){
@@ -32,9 +45,6 @@ class RateLimiter {
             }
         }
     }
-
-
-
 }
 
 class RequestTracker {
@@ -43,37 +53,42 @@ class RequestTracker {
     public var requestLimit(default,null):UInt; //10 reqs
 
     private var _msPerReq:Float; // = duration / requestLimit;
-    private var _requests:Map<String,RT>;
+    private var _ips:Map<String,RT>;
+
+    //TODO - make private
+    @:jignored public var _currentTime:Void->Timestamp = Timestamp.now;
 
     public function new(durationMS:UInt, requestLimit:UInt){
         this.durationMS = durationMS;
         this.requestLimit = requestLimit;
-        _msPerReq = durationMS / requestLimit;
-        _requests = new Map();
+        _msPerReq = requestLimit / durationMS;
+        _ips = new Map();
     }
 
-
     public function newReq(ip:String):Bool {
-        var tracker = _requests[ip];
+        var tracker = _ips[ip];
         if (tracker == null){
             tracker = new RT();
-            _requests[ip] = tracker;
+            _ips[ip] = tracker;
         }
-        var now = Timestamp.now();
+        var now = _currentTime();
         var timePassed = now - tracker.last;
-        tracker.count -= timePassed * _msPerReq;
+        //Log.debug('timePassed = ${timePassed.toUInt()} so minus ${timePassed * _msPerReq}');
+        tracker.count -= timePassed.toUInt() * _msPerReq;
         if (tracker.count < 0){
             tracker.count = 0;
         }
         tracker.last = now;
         tracker.count++;
-        return tracker.count < requestLimit;
+       // Log.debug('new request. count now = ${tracker.count} of ${requestLimit}');
+        return tracker.count <= requestLimit;
     }
 
     public function prune(count:UInt):UInt {
+        //Log.debug("tracker.PRune");
         var toRemove = new Array<String>();
-        var timeToPrune = Timestamp.now() - durationMS;
-        for (kv in _requests.keyValueIterator()){
+        var timeToPrune = _currentTime() - durationMS;
+        for (kv in _ips.keyValueIterator()){
             var tracker = kv.value;
             if (tracker.last < timeToPrune){
                 toRemove.push(kv.key);
@@ -84,8 +99,9 @@ class RequestTracker {
             }
         }
         for (k in toRemove){
-            _requests.remove(k);
+            _ips.remove(k);
         }
+        Log.debug("done pruning: " + toRemove.length);
         return toRemove.length;
     }
 
@@ -98,7 +114,6 @@ class RequestTracker {
         var writer = new json2object.JsonWriter<RequestTracker>();
         return writer.write(this);
     }
-
 
 }
 
